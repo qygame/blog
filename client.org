@@ -1,0 +1,481 @@
+#+OPTIONS: ^:nil
+#+OPTIONS: \n:t
+
+* client
+  : 整体简洁, 偶尔几个特效美而不华丽
+  : 千万不要变成 只是特效的堆积
+
+** 脚本目录架构
+   Scripts
+   -- /Define           公共定义
+   -- -- GameRunTimeData.cs  保存了运行时候需要的数据, 比如UserInfo就是其的成员变量
+   -- -- GlobalConst.cs  保存了游戏中的常量
+   -- /Model            模块
+   -- /Net              网络
+   -- -- /NetLogic      网络具体事务处理
+   -- -- /NetSocket     网络底层服务
+   -- /UI
+   -- -- /Surfaces
+   -- -- /Login
+   -- -- -- LoginTransfer.cs ui界面的总控制类， 其底下一般是各种btn的点击函数
+   -- -- -- BtnClick_Logon_Account.cs  账号登录按钮的 响应函数
+   -- /Utility        实用脚本， 可以理解为与系统相关的脚本
+   -- GameApp.cs      Compontes目录下所有类的 管理类
+
+** 配置文件
+   1. AppConfig.json
+      服务器相关, 版本信息, 更新说明
+   2. ResConfig.json
+      模块的资源文件
+   3. ShopConfig.json
+      商城物品资源
+
+** 苹果打包流程
+*** 说明
+   目的: 项目苹果打包指导
+
+   作者: 王成庆
+
+   时间: 2020/3/5
+
+   版本: v2.0
+*** 环境
+   | 工具    | 版本        | 备注 |
+   |---------+-------------+------|
+   | unity3d | 2018.4.11c1 |      |
+   |---------+-------------+------|
+   | xcode   | 11.3        |      |
+   |---------+-------------+------|
+   | 标ios   |             |      |
+   |---------+-------------+------|
+
+*** 打包流程
+   1. Unity工程  File→Build Setting平台切换至IOS
+
+      Run in Xcode as 选择Release
+
+      Player Seetings -> Splash Image -> Splash Screen -> Show Splash Screen去掉勾选(需要破解u3d)
+
+   2. 点击player setting，选择other setting（其他的设置可以保持默认，splash image 加载背景如果需要的话自行替换）
+
+      Target SDK选择Device SDK（真机），我这里只是通过编译，模拟器的坑还没去踩
+
+   3. 打开Xcode，选择右下角的Open another Project，选择我们用Unity发布出来的Xcode工程并打开，或者双击打包好的工程的.xcodeproj文件，如果工程中没有SDK则需要手动添加最新SDK（操作：鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add），如果有则不需要添加
+
+   4. 选择team
+
+      TARGETS→Unity-iPhone→Signing & Capabilities→选择Team（使用已有ID登录）
+
+   5. 修改Enable Bitcode
+
+      TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
+
+   6. 直接点击上方菜单栏Product → Build生成项目，successed
+
+*** 常见问题
+   1. library not found for -lstdc.6.0.9
+
+      TARGETS->Unity-iPhone->Build Phases->Link Binary with Libraries->最底下+号->添加libstdc++.6.0.9.tbd
+
+   2. _res9getservers
+
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libresolv.tbd文件
+
+   3. inflateEnd,referenced from "inflateInit"
+
+      TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libz.tbd文件
+
+   4.  sqlite
+
+      TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libsqlite3.0.tbd文件
+
+   5.  OBJCCLASS_$SKPaymentQueue"
+
+      TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加StoreKit.framework
+
+   6.  OBJCCLASS_$WKWebView:
+
+      TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加WebKit.framework
+
+   7.  _kUTTagClassFilenameExtension:
+
+      TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加MobileCoreServices.framework
+
+   8.  Xcode编译出现OBJCCLASS_$XX问题的解决方案
+
+      TARGETS→Unity-iPhone→Build setting→Linking→Other Linker Flags→将此属性修改成-allload 和 -Objc
+
+   9.  library not found for-liPhone-lib-Xcode整合Unity项目报错
+
+      进入Targets→Build Settings→Search Paths->Library search paths中，把“$（SRCROOT）/Libraries”的双引号去掉，即改为$(SRCROOT)/Libraries就行了
+
+*** 苹果发包说明
+    个人 && 企业
+    Ad-hoc 需要在开发者平台中添加目标设备的uuid, 重新打包, 提交到托管平台(比如蒲公英)分发
+
+    如果想别人可以使用
+    1. 上架苹果商店
+    2. 通过企业签名 -- 一般多为代签
+    3. 通过Test Flight  -- 还未测试
+    4. 把别人的uuid添加进开发者平台中 -- 测试还可以, 正式发布不行
+
+** Java的一些基础
+*** Activity
+    Activity是 java中类的实例化
+
+    activity存在于一些堆栈中, 似于线程的操作
+
+    Activity必须在mainfest.xml中进行注册，才可以启动
+
+    oncreate -- onstart -- onresume -- stop
+
+    activity有显示启动和隐式启动
+
+*** AndroidMainFest.xml
+    类似于activity管理器的配置文件
+
+    决定了哪个activity先启动， 决定了哪些activity可以启动
+
+    inter-filter决定了activity是否是main activity，也决定了activity在什么情形下可以隐式启动
+
+** shareSDK指导文档
+*** 基本说明
+    shareSDK是第三方插件(如果把微信,QQ等比作第一方), 其集成了很多平台, 可以实现快速接入
+
+*** 操作步骤
+    1. 在官网下载对应的SDK包
+       包里面有Android工程 和 U3D(如果sdk是针对u3d)工程
+    2. 编译Android工程, 为自己的U3D工程添加插件
+       Android工程的编译目标是U3D的插件
+    3. 在自己的U3D工程中 导入并修改官方的u3d Demo
+    4. 完成
+
+*** F&Q
+    1. 问: 官方的android工程打不开?
+       答: 根据不同的IDE, 有不同注意事项
+       1) Eclisp IDE的时候, compiler和jdk版本要匹配
+       2) Android stutio, 需要将工程import import
+         官方的android工程是Eclisp的, 需要转换
+    2. 问: Android Stutio如何编译官方的android工程?
+       答: Android Stutio编译的时候需要有以下几个注意点
+       1) 编译器gradlew版本
+	  1) 修改工程下gradle/wrapper/gradle-wrapper.properties文件中的distributionUrl版本为4.1
+	  2) 修改工程下build.gradle文件中的classpath版本为4.1 -- 只影响gradlew指令, 不修改也可以
+       2) app文件的taget从app改为android module
+	  1) 修改工程下app/built.gradle文件中的plugin为apply plugin: 'com.android.library'
+	  2) 删除工程下app/built.gradle文件中的applicationId -- 仅当application才有
+       3) app文件的taget sdk版本修改
+	  1) 修改工程下app/built.gradle文件中的compileSdkVersion和targetSdkVersion为21 (与安装的sdk版本匹配)
+	  2) 修改工程下app/src/main/AndroidManifest.xml中的targetSdkVersion为21
+	  3) 以上的sdk版本 应当与u3d编译时的选项一致
+       4) app文件依赖性修改
+	  修改工程下app/built.gradle文件中的dependence为implementation
+	  具体原因, 详见Android Stutio的六种编译方式
+       5) 包名的修改
+	  1) 修改工程下app/src/main/Androidmanifest.xml中的manifest包名为your包名
+	  2) 修改工程下app/scr/main/assets/SharSDK.xml中的微信认证资质
+	  3) 修改工程下app/src/main/java/cn/share/demo下的所有文件的包名前缀替换为your包名 -- 不需要修改目录名字
+       6) 认证资质的修改
+	  修改工程下app/src/main/Androidmanifest.xml中application字段中的Mob-AppKey和Mob-AppSecret为自己的	  
+       7) rebuilt-project 完成
+	  其余的东西无需改动；
+	  生成的aar包在工程下app/build/outputs/aar/app-debug.aar；
+	  生成的jar包在工程下app/build/intermidiates/bundles/debug/classes.jar
+    3. 问: 自己的U3D工程如何与官方demo结合编译?
+       答: 自己的U3D工程编译有以下几个注意点
+       1) shareSDK插件的导入
+	  1) 双击官方U3D工程中的ShareSDKForU3D.unitypackage (其实际就是将官方U3D工程下的Assets/Plugins导入到自己的U3D下)
+	     不要导入demo.cs和ShareSDK-Unity.unity以及Plugins/Android/ShareSDK/DemoCallback.jar
+	  2) 导入的时候需要注意路径问题, 比如正常的是Pligins/Android/ShareSDK/xml | libs | res, 千万不能写作Plugins/Android/xml
+	     否则, 会导致自己U3D工程打包后没有图像...因为路径错了
+	  3) 建议先删除自己的Plugins目录, 然后执行动作1)， 然后再将自己差异化的插件导入(注: 将android studio工程中lib下的jar包全部导入)
+	  4) 将Android工程生成的classes.jar改名为com.quyou.tielinmajang.jar并copy到自己U3D工程下的Plugins/Android/ShareSDK/libs/
+	  5) 将Android工程下AndroidManifest.xmlcopy到自己U3D工程下的Plugins/Android/ShareSDK/
+       2) 修改资质认证
+	  Plugins/ShareSDK/ConstDefine.h 文件中
+	  1) 官方的资质认证
+	     1) Plugins/ShareSDK/ShareSDK.cs 有1处。 位置在成员变量处
+	     2) Plugins/ShareSDK/ShareSDKConfig.cs 有1处。 位置在Config函数中
+	  2) 微信登录的资质认证
+	     1) Plugins/ShareSDK/ShareSDKDevInfo.cs 有1处。 位置在微信登录的函数中
+       3) 选择使用平台
+	  修改 Plugins/ShareSDK/ShareSDKDevInfo.cs 的成员变量。 不需要的平台直接注释相应的成员变量即可
+       4) 调用ShareSDK的脚本文件
+	  1) 官方的demo写的比较乱, 不推荐
+	  2) 高手可以自己写
+	  3) 可以直接使用之前的人写的 AuthAndShare.cs
+       5) 将ShareSDK.cs和AuthAndShare.cs挂在控件上。 U3D基本功, 不详述, 只想吐槽
+       6) 选择keyStore 编译。 完成
+	  keystroe只影响签名
+	  使用包名A,生成的apk其签名 应该与在微信开放平台上的包名A的签名一致
+
+    4. 问题解答
+       1) 问: U3D打包的时候出现 can't convert class to index
+	  答: jar包问题, 排查jar包的依赖型是否都存在， 执行问题3中的1)中的3)
+
+*** 大坑
+    1. 分享的content中 image url必须存在， 无论本地还是远端
+       否则, 微信分享会调用失败
+    2. shareSDK的脚本中的 byPass Approve 必须去掉勾选
+       不勾选, 分享的webpage可能变为图片(应用信息)
+
+** 魔窗sdk接入
+   :PROPERTIES:
+   :ARCHIVE_TIME: 2017-12-30 Sat 13:16
+   :ARCHIVE_FILE: ~/GTD/inbox.org
+   :ARCHIVE_CATEGORY: inbox
+   :END:
+*** 魔窗简介
+    一键入局
+*** 流程
+   1. 包名修改
+      1) web控制后台
+	 注意此处的包名 应该与微信的包名一致
+      2) 代码的AndroidMainfest.xml 1处修改
+      3) 工程下mlink_demo/src/java/main SplashActivity共1处
+	 MainActivity 与 SecondActivity并没有使用到
+   2. mlink key的修改
+      1) web控制后台 2处修改
+	 1) 假设web后台中的key 为tielingmajiang
+	 2) 则在后台的url中应该写入 tielingmajiang?key1=:key1&key2=:key2
+	    前面的tielingmajiang应该与key一致。?之后的为动态参数
+      2) 跳转页面代码
+	 已舍弃:_在注册函数register()中的key应该与web控制后台中的一致  1处修改_
+	 最新版:不需要在 register()中修改, 只要修改 MlinkRouter即可
+   3. 动态参数的修改
+      1) web后台的配置  1处
+	 1) URL中需要配置 为 XXX?key1=:key1&key2=:key2
+      2) 跳转界面代码中的解析 1
+** 断线重连
+   表1: socket断开,  socket重新连接后, 需要完成的事情:
+   | socket 服务器 | 需求                                          | 备注                                    |
+   |---------------+-----------------------------------------------+-----------------------------------------|
+   | 游戏服        | 1. ID登录                                     |                                         |
+   |               | 2. 如果在房间中, 进入子游戏场景, 获取房间信息 | 获取房间信息, 只需要完成[100.1]系列消息 |
+   |               | 3. 如果没有在房间中, 不处理                   |                                         |
+   |---------------+-----------------------------------------------+-----------------------------------------|
+   | 登录服        | 1. ID登录                                     |                                         |
+   |---------------+-----------------------------------------------+-----------------------------------------|
+
+
+   表2: 断线重连情形
+   | 断线场景   | 哪个socket断线 | 重连情形   | 应该的处理事情                                                                  | 备注         |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | login场景  | 登录服socket   | 关闭重开   | ID登录                                                                          |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | login场景  |                |            |                                                                                 | 不存在此情形 |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | Hall场景   | 登录服socket   | 关闭重开   | 登录服ID登录                                                                    |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | Hall场景   | 登录服socket   | 后台切前台 | 登录服ID登录成功, 重复进入大厅场景, 需要处理                                    |              |
+   |            |                |            | 登录服ID登录失败, 进入子游戏场景                                                |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | Hall场景   | 游戏服socket   | 关闭重开   | 登录服ID登录成功, 回到Hall初始页面, 不做之前window页面恢复                      |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | Hall场景   | 游戏服socket   | 后台切前台 | 游戏服ID登录                                                                    |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | 子游戏场景 | 登录服scoket   | 关闭重开   | 登录服ID登录成功, 在房间中, 游戏服socket连接,ID登录,进入子游戏场景,请求房间信息 |              |
+   |            |                |            | 登录服ID登录成功, 不在房间, 进入大厅场景                                        |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | 子游戏场景 | 登录服socket   | 后台切前台 | 登录服ID登录失败, 回到登录场景                                                  |              |
+   |            |                |            | 登录服ID登录成功, 在房间中, 不处理                                              |              |
+   |            |                |            | 登录服ID登录成功, 不在房间, 进入大厅场景                                        |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | 子游戏场景 | 游戏服socket   | 关闭重开   | 登录服ID登录成功, 在房间中, 游戏服socket链接,ID登录,进入子游戏场景,请求房间信息 |              |
+   |            |                |            | 登录服ID登录成功, 不在房间, 进入大厅场景                                        |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+   | 子游戏场景 | 游戏服socket   | 后台切前台 | 游戏服ID登录成功, 在房间中, 请求房间信息                                        |              |
+   |            |                |            | 游戏服ID登录成功, 不在房间, 返回大厅                                            |              |
+   |------------+----------------+------------+---------------------------------------------------------------------------------+--------------|
+
+   表3: 业务流程
+   | socket服务器 | 流程                       | 情形                                                    |
+   |--------------+----------------------------+---------------------------------------------------------|
+   | 登录服       | socket连接成功后, 自动登录 | 1. 登录失败, 则返回登录场景                             |
+   |              |                            | 2. 登录成功, 如果在房间中(服务器判断), 则进入子游戏场景 |
+   |              |                            | 3. 登录成功, 如果没在房间(服务器判断), 则进入大厅场景   |
+   |--------------+----------------------------+---------------------------------------------------------|
+   | 游戏服       | socket连接成功后, 自动登录 | 1. 登录失败, 提示错误                                   |
+   |              |                            | 2. 登录成功, 则根据动作来具体判断 处理什么业务          |
+   |--------------+----------------------------+---------------------------------------------------------|
+
+   : 根据表1写表2, 根据表2写表3
+** 打包注意事项
+   unity注意部分
+   1. Assets/Plugins/ShareSDK/ConstDefine.cs 修改 [shareSDK认证, 微信资质认证]
+      : shareSDK中资质认证 必须在unity场景上的sharesdk中修改, 修改ConstDefine.cs中的无效
+   2. Assets/Plugins/Android/AndroidManifest.xml中修改[包名, shareSDK认证, 微信回调包名]
+   3. Code/frame/Scriptes/Define/HotUrl.cs中修改 [hot-url地址]
+   4. Code/frame@hotfix/Windows/WinEnum.cs中修改 GlobalUI中内容
+   5. Unity Build-Setting中替换logo
+   6. Unity Build-Setting中替换包名
+      
+      
+   ios注意部分
+** frame与子游戏热更分离
+   1. frame热更 使用kindid =0
+   2. 子游戏热更路径为kinid
+      
+   : frame 进入子游戏的时候, 会先判断子游戏是否需要热更, 如果需要进行热更, 否则不处理
+** sub 开头的window 其层级为10, canvas, 其他均默认为0
+* client子游戏
+  子游戏需要继承 Iwindow_sub_player 玩家管理类, 并注册UI GWin_Sub_Player
+  子游戏需要继承 Isub_player        玩家信息类
+
+* client BDFramework
+** 框架ui学习
+   ScereenView : IScereenView  --  ScreenViewManager.Inst.MainLayer.BeginNavTo(ScreenViewEnum.Main);
+   -- ui1 : AWindow            -- UIManager.Inst.LoadWindow( WinEnum.Win_Demo1);
+   -- ui2                      -- UIManager.Inst.ShowWindow(WinEnum.Win_Demo1);
+   -- button  根据[TransformPath("Button")] 直接获取
+
+** 脚本学习
+   1. 配置脚本 Config
+      [代码路径], [sqlite路径], [资源路径] 之外, 其他暂时没用
+      | title          | 说明                   | 备注                       |   |
+      |----------------+------------------------+----------------------------+---|
+      | 代码路径       |                        |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | Sqlite路径     |                        |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | 资源路径       | s                      |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | 配置到其他路径 | 资源路径               | 仅StreamAsset下生效        |   |
+      |----------------+------------------------+----------------------------+---|
+      | Code Run Mode  | 运行模式               | Edit不生效                 |   |
+      |----------------+------------------------+----------------------------+---|
+      | 文件服务器     | GameConfig的下载路径   | GameConfig即Config配置文件 |   |
+      |----------------+------------------------+----------------------------+---|
+      | Gate服务器     | 无用                   |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | port           | 无用                   |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | 是否热更       | 无用                   |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | 是否联网       | 无用                   |                            |   |
+      |----------------+------------------------+----------------------------+---|
+      | 本地配置       | GameConfig本地配置路径 |                            |   |
+      |----------------+------------------------+----------------------------+---|
+
+   2. 热更脚本 VersionContorller
+      步骤:
+      1. BDtools -> 资源一键打包 -> 一键导出
+      2. DBtools -> 资源一键打包 -> 热更资源转Hash
+      3. 找到{platform}Hash目录, 放到服务器, 并移除目录中的_Hash
+      4. 记录改地址, 比如 https://sss.com:/StreamAsset
+	 StreamAsset的下一次目录即是{platform}
+      5. 调用热更脚本下载
+	 下载的时候 url 应该指定到StreamAsset目录
+
+** 注意事项
+   1. 主工程不写enum
+   2. 主工程 不调用 热更代码
+   3. 热更工程 不继承主工程
+   4. 跨域继承 写 adotor
+   5. 反射 需要写 绑定
+   6. update() 只能在主工程中调用
+   7. 使用[TransformPath("xx")] 寻找对象的时候,
+      不能使用GameObject, 应该使用具体的类型
+      错误实例:
+      #+BEGIN_EXAMPLE
+       [TransformPath("navigate_panel/btn_main")]
+       private GameObject btn_main;  //主页
+      #+END_EXAMPLE
+
+      正确实例
+      #+BEGIN_EXAMPLE
+       [TransformPath("navigate_panel/btn_main")]
+       private UIButton btn_main;  //主页
+      #+END_EXAMPLE
+   8. sub window 不会调用Init 函数
+      直接在构造函数中处理即可
+   9. frame根据SubEnum加载子游戏, 加载成功后, 子游戏自动生成agenda向GameApp.GameManager注册
+   10. 子游戏继承PokerGameAgent的对象名字必须为GameEngine
+
+** 代码优化
+   1. 音频资源加载之后, 切换SceneView时候, 如何卸载不需要的音频资源
+
+** 未热更部分
+   1. 音频管理类
+      : MyListener继承了UIEventListener
+      : 而MyListener中调用了音频管理类
+      : 以后放到 热更代码中
+
+
+* web
+  | 模块     | 功能                     | 详细说明                                                          | 备注                        |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+  | 玩家管理 | 所有玩家信息[查看]       | 1.查看基础信息(id,名字,fk数量,是否在线,是否机器人,是否管理员)     |                             |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+  |          | 单个玩家信息[查看,管理]  | 1.查看玩家基础信息(id,名字,最后登录日期,fk数量)                   |                             |
+  |          |                          | 2.查看玩家游戏信息([游戏时长,游戏局数,游戏输赢, 游戏消耗]分布图)  | 分布图可能是柱状            |
+  |          |                          | 3.查看玩家俱乐部信息(所属工会的id,名字, 自身职位, 自身分数)       |                             |
+  |          |                          | 4.设置 -- 增加玩家房卡                                            |                             |
+  |          |                          | 5.设置 -- 修改玩家权限(普通玩家, GM, 超级管理员)                  |                             |
+  |          |                          | 6.设置 -- 设置玩家是否禁玩(禁止登录游戏)                          |                             |
+  |          |                          | 7.设置 -- 设置玩家在俱乐部中的分数 (待定, 先不写)                 |                             |
+  |          |                          | 8.设置 -- 设置玩家在俱乐部中的权限(超端, 不超端)                  |                             |
+  |          |                          | 9.查看 -- 查看玩家在俱乐部中超端所赢数据 (待定, 后期做)           |                             |
+  |          |                          | 10.设置 -- 如果是机器人, 则可以修改机器人基础信息(名字,头像,性别) |                             |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+  | 工会管理 | 所有工会信息[查看]       |                                                                   |                             |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+  |          | 单个工会信息[查看, 设置] | 1.设置 -- 修改工会ID                                              |                             |
+  |          |                          | 2.设置 -- 清空工会的返水                                          |                             |
+  |          |                          | 3.设置 -- 清空工会的排行榜                                        |                             |
+  |          |                          | 4.设置 -- 删除工会                                                |                             |
+  |          |                          | 5.设置 -- 俱乐部禁玩(待定)                                        |                             |
+  |          |                          | 6.查看 -- 工会玩家                                                | 玩家的修改,将跳转到玩家管理 |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+  | 统计功能 | 房卡统计[查看]           | 1.谁给谁在什么时候上了多少房卡                                    |                             |
+  |          |                          | 可以根据操作者, 被操作者, 时间来过滤                              |                             |
+  |          |                          | 2.房卡出售分布图                                                  |                             |
+  |----------+--------------------------+-------------------------------------------------------------------+-----------------------------|
+
+  : 缺少  可以控制机器人在谁的名下
+  : 缺少  控制机器人是否可以和真人玩 -- 比较麻烦(暂)
+
+
+
+
+
+* 奇怪问题记录
+** 头文件 宏定义错误  
+   先include GDefine/heads_frame.h 再include FDefine/heads_frame.h 则会报段错误
+
+*** 段错误
+   - 原因
+     : stl的包含顺序
+     : 如果先include动态库中的stl, 程序执行时, 会在动态库的stl中报段错误
+     : 正确顺序是, 先include程序自身的stl, 再include动态库的头文件
+   - 总结
+     : 这个问题恶心了2天
+     : 血泪的教训, 以后一定要先include程序自身的stl
+
+** 程序运行时, 报错到malloc.c
+   : 已解决
+   程序运行时, 在构造新的std::string时候, 程序报错
+   
+   原因:
+   1. c++变量未初始化, 导致里面的值是乱的
+   2. 内存问题
+   
+* unity快捷键
+  scene view中:
+  1. 2个手指按压  2D移动;  3D旋转
+  2. 2个手指滑动  缩放
+  3. alt+f 模拟game视图
+  4. ctrl 显示尺寸大小?
+  5. 点击hierarcht中的物体, 按F 可以使视图居中在该物体
+     移动的物体 按 shitf+F可以锁定
+
+     
+  hierarchy中:
+  1. alt + 点击可以切换所有子child(递归) 的显示与隐藏
+
+
+  有用的知识:
+  unity会完全忽略以 ~ 结尾的文件或目录
+
+  
+

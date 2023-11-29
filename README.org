@@ -1,0 +1,60 @@
+#+OPTIONS: \n:t
+#+OPTIONS: ^:nil
+
+* 简介
+  休闲游戏模板, 包含服务器, 客户端, 数据库和监控系统.
+  
+  服务器运行在docker容器,支持docker-compose与k8s两种安装方式. 使用C++开发.
+  
+  客户端使用unity平台, 使用C#开发.
+  
+  数据库使用redis, mssql.
+  
+  监控系统采用prometheus + grafana.
+
+* 安装
+  1. 下载开发环境. 包含了数据库, 游戏运行环境, redis等
+     #+begin_src shell
+       git clone git@github.com:qydocker/docker-compose.git && cd docker-compose
+       ./build.sh dev
+     #+end_src
+  2. *下载监控 (可选)
+     #+begin_src shell
+       git clone git@github.com:qydocker/docker-compose.git && cd docker-compose
+       ./build monitor
+     #+end_src
+  3. 下载执行文件
+     #+begin_src shell
+       git clone --branch 1.0.0 git@github.com:qygame/svr-publish.git && cd svr-publish
+       ./server.sh start
+     #+end_src
+
+* 游戏功能
+  1. [X] 登陆模块 - 重复登陆，断线重连. 登陆方式支持: 账号密码，游客，微信等
+  2. [X] 房间列表显示模块
+     - [X] 房卡场 创建界面
+     - [X] 金币场 列表展示
+  3. [X] 房间创建流程
+  4. [X] 子游戏模块
+  5. [X] 房间结束后， 信息统计
+     - [X] 大局战绩
+     - [X] 小局战绩
+     - [X] 录像回放
+     - [X] 财富修改记录
+  6. [X] 任务模块
+  7. [X] 排行榜
+  8. [X] 比赛场
+  9. [ ] 活动模块
+  10. [ ] 工会
+
+* 源码仓库
+  [[file:repository.org][详细介绍]]
+    
+* 源码设计文档
+  [[file:qygame.org][服务器架构介绍]]
+  
+  [[file:server.org][服务器源码介绍]]
+  
+  [[file:client.org][客户端介绍]]
+
+

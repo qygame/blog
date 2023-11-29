@@ -1,0 +1,138 @@
+#+OPTIONS: ^:nil
+#+OPTIONS: \n:t
+
+* 服务器架构
+** logic view
+   #+BEGIN_SRC plantuml :file qygame/server_logic.png
+     @startuml
+     client -> gate : test
+     @enduml
+   #+END_SRC
+
+   #+RESULTS:
+   [[file:server_view/test.png]]
+** implementation view
+** process view
+   #+begin_src plantuml :file qygame/server_process.png :exports results
+
+   #+end_src
+** deployment view
+   #+begin_src plantuml :file qygame/server_deployment.png :exports results
+     @startuml
+     title deployment view (非k8s部署)
+     skinparam nodesep 10
+
+     together {
+         actor client
+         actor 运维 as ops
+
+         client --[hidden]-> ops
+     }
+
+     together{
+         cloud gate_server{
+             node gate
+             node cadvisor_gate
+         }
+         cloud hot_server {
+             node hot
+             node cadvisor_hot
+         }
+
+         cloud monitor_server{
+             node node_exporter
+             node prometheus
+             node grafana
+         }
+
+         'gate_server放在hot_server之上
+         gate_server --[hidden]> hot_server
+         hot_server --[hidden]> monitor_server
+     }
+
+     cloud server {
+         frame server_list{
+             node center
+             node login
+             node game
+             node room
+             node match
+             node club
+             node rank
+             node task
+             node chat
+             node db
+             node "..."
+         }
+
+         frame data {
+             database database
+             node redis
+         }
+
+         node cadvisor_server
+
+         cadvisor_server -[hidden]u-> data
+     }
+
+     client->gate : internet
+     client->hot : internet
+     gate->center :LAN
+     server_list->redis
+     db-->database : test
+
+
+     ops->grafana : internet
+     note "<size 18>also receive all cadvisor data</size>" as N1
+     N1 -u-> prometheus
+     node_exporter->prometheus
+     prometheus->grafana
+
+     @enduml
+   #+end_src
+
+   #+RESULTS:
+   [[file:server_view/server_deployment.png]]
+
+
+   : TODO 后期补充k8s部署下的 deployment view
+** use case view
+
+* 服务器说明
+  | 服务器 | 说明                  | 有状态 | 状态量                        | 业务多线程 | 业务多线程原因   | 备注                           |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | center | 路由                  | n      |                               | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | db     | 数据库代理            | n      |                               | y          | database操作耗时 |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | gate   | 网关                  | y      | map[gid, uid]                 | n          | 无业务逻辑       |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | logon  | 登录                  | n      |                               | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | lobby  | 大厅                  | n      |                               | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | game   | 查询, 创建, 加入 房间 | n      |                               | n          |                  | 加载了房卡场与金币场的配置文件 |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | match  | 比赛场服务器          | y      | match自身数据stage_index等    | n          |                  |                                |
+  |        |                       |        | match_manager有map<int,match> |            |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | room   | 游戏房间的具体处理    | y      | 房间数据                      | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | rank   | 排行榜                | y      | rank_manager有map<int,rank>   | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | redis  | 维护redis数据         | n      |                               | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | task   | 任务                  | y      | task_manager有map<int,task>   | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | chat   | 聊天服务器            | n      |                               | n          |                  | ready to write                 |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | club   | 俱乐部服务器          | n      |                               | n          |                  | ready to write                 |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+  | client | 模拟client测试        | y      | ugmanager有map<gid,uid>       | n          |                  |                                |
+  |--------+-----------------------+--------+-------------------------------+------------+------------------+--------------------------------|
+
+  : 什么时候使用业务多线程
+  : 当业务逻辑的处理时间耗时较久的时候, 使用业务多线程
+
+  : 业务多线程优点 是加快了速度
+  : 业务多线程缺点 编码复杂(增加了出错概率)
