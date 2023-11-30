@@ -3,7 +3,7 @@
 
 * 服务器架构
 ** logic view
-   #+BEGIN_SRC plantuml :file qygame/server_logic.png
+   #+BEGIN_SRC plantuml :file server_view/server_logic.png
      @startuml
      client -> gate : test
      @enduml
@@ -13,11 +13,11 @@
    [[file:server_view/test.png]]
 ** implementation view
 ** process view
-   #+begin_src plantuml :file qygame/server_process.png :exports results
+   #+begin_src plantuml :file server_view/server_process.png :exports results
 
    #+end_src
 ** deployment view
-   #+begin_src plantuml :file qygame/server_deployment.png :exports results
+   #+begin_src plantuml :file server_view/server_deployment.png :exports results
      @startuml
      title deployment view (非k8s部署)
      skinparam nodesep 10

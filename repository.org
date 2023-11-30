@@ -1,110 +1,130 @@
 #+OPTIONS: \n:t
 #+OPTIONS: ^:nil
 
-* 运行环境
-  使用docker管理进程的运行环境.
+* 构建流程
+  qydocker与qygame协同工作, 构建docker images.
+  具体流程如下图:
+  #+begin_src plantuml :exports results :file repository/1.png
+    @startuml
+    /'
+    line direct:  -le|ri|up|do->
+    line style :  #line:color;line.[bold|dashed|dotted];text:color
+    '/
+
+    'left to right direction
+
+    'skinparam linetype polyline
+    'skinparam linetype ortho
+    skinparam nodesep 10
+
+    title docker image 构建流程
+
+    actor 开发 as dev
+
+    together{
+        frame qydocker{
+            card build_image_dev
+            card build[
+            build_publish
+            ----
+            build_image
+            ]
+            card c_ops[
+            docker_compose
+            ----
+            k8s
+            ]
+        }
+
+        frame qygame{
+            card svr_code[
+                svr_kernel
+                ----
+                svr_frame
+                ----
+                svr_subgames
+            ]
+            card svr_publish    
+        }
+
+        qygame -up[hidden]- qydocker
+    }
+
+    cloud dockerhub_image{
+        card qy_dev
+        card qy_server[
+            qy_gate
+            ----
+            qy_room
+            ----
+            qy_game
+            ----
+            "..."
+        ]
+    }
+
+    'layout
+    dev -ri[hidden]- qygame
+    dockerhub_image -le[hidden]- qygame
+
+
+    dev->build_image_dev #line:blue;text:blue : edit
+    build_image_dev->qy_dev #line:blue;text:blue : build
+
+    dev->svr_code  #line:red;text:red : edit
+    svr_code->svr_publish #line:red;text:red : push by build_publish
+    svr_publish->qy_server  #line:red;text:red : build by build_image
+
+
+    note top of c_ops : manager docker images
+    note top of build : use image qy_dev
+    @enduml
+
+  #+end_src
+
+  #+RESULTS:
+  [[file:repository/1.png]]
+
+* qydocker
+  管理docker image. 负责image构建与运行.
   
   托管在[[https://github.com/qydocker][qydocker organization]]
   
-  | 仓库名                       | 作用                                         |
-  |------------------------------+----------------------------------------------|
-  | [[https://github.com/qydocker/build_publish][qydocker/build_publish]]       | 编译qygame仓库, 结果托管在[[https://github.com/qygame/svr-publish][qygame/svr-publish]] |
-  |------------------------------+----------------------------------------------|
-  | [[https://github.com/qydocker/build_image_dev][qydocker/build_image_dev]]     | 构建qygame程序运行的docker镜像               |
-  |------------------------------+----------------------------------------------|
-  | [[https://github.com/qydocker/docker-compose][qydocker/docker-compose]]      | docker管理的docker-compose版本               |
-  |------------------------------+----------------------------------------------|
-  | [[https://github.com/qydocker/k8s][qydocker/k8s]]                 | docker管理的k8s版本                          |
-  |------------------------------+----------------------------------------------|
-  | [[https://github.com/qydocker/mirror_google_image][qydocker/mirror_google_image]] | google docker镜像映射到dockerhub             |
-  |                              | google国内访问太慢                           |
-  |------------------------------+----------------------------------------------|
+  | 仓库名                       | 作用                                           |
+  |------------------------------+------------------------------------------------|
+  | [[https://github.com/qydocker/build_image_dev][qydocker/build_image_dev]]     | 编译qygame, 结果托管在[[https://github.com/qygame/svr-publish][qygame/svr-publish]]       |
+  |------------------------------+------------------------------------------------|
+  | [[https://github.com/qydocker/build_publish][qydocker/build_publish]]       | 构建qygame base image                          |
+  |------------------------------+------------------------------------------------|
+  | qydocker/build_image         | 构建qygame images                              |
+  |------------------------------+------------------------------------------------|
+  | [[https://github.com/qydocker/docker-compose][qydocker/docker-compose]]      | 使用docker-compose管理qygame images            |
+  |------------------------------+------------------------------------------------|
+  | [[https://github.com/qydocker/k8s][qydocker/k8s]]                 | 使用k8s管理qygame images                       |
+  |------------------------------+------------------------------------------------|
+  | [[https://github.com/qydocker/mirror_google_image][qydocker/mirror_google_image]] | google docker镜像映射到dockerhub, 加快访问速度 |
+  |------------------------------+------------------------------------------------|
 
-** build_publish
-   *目标*
-   编译qygame仓库的代码(kernel, frame, 子游戏), 编译结果放在qygame/svr-publish
-
-   *流程*
-   以svr-frame举例
-   1. qygame/svr-frame push tag时, 触发build_publish的action.yml
-   2. action.yml调用docker
-   3. Dockerfile中下载clay2019/qy_dev:latest 并触发docker.sh
-   4. docker.sh动作
-      - 执行编译动作
-      - push 编译结果到 qygame/svr-publish的svr-frame branch
-
-** build_image_dev
-   *目标*
-   构建docker image来管理qygame的运行环境. image托管在[[https://hub.docker.com/repository/docker/clay2019/qy_dev/general][dockerhub clay2019/qy_dev]]
-
-   *流程*
-   1. 添加tag, 触发.github/workflow/main.yml
-   2. main.yml中调用docker
-   3. Dockerfile中控制了程序运行环境 (第三方库及其配置)
-      同时Dockerfile会启动env.sh, 配置docker image的环境配置
-   4. main.yml把docker image push到dockerhub/clay2019/qy_dev
-
-*** 已接入的第三方
-    | 名字                 | git地址 | 作用                    | 说明        | 备注 |
-    |----------------------+---------+-------------------------+-------------+------|
-    | protobuf             |         | 协议格式                |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | glog                 |         | 日志                    |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | odbc                 |         | 数据库驱动              |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | mssql drive for odbc |         |                         |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | hiredis              |         | redis api for c         |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | redis-plus-plus      |         | redis api for c++       | 依赖hiredis |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | qynet                |         | 网络库                  |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-    | lsp server:clangd    |         | lsp server, IDE语法分析 |             |      |
-    |----------------------+---------+-------------------------+-------------+------|
-
-** docker-compose
-   *目标*
-   单机上的docker容器部署,
-   支持dev(开发), monitor(监控)部署
-
-   *流程*
-   以创建开发环境为例
-   1. ./build.sh dev 会调用到docker-compose的配置文件build_dev.yml
-   2. build_dev.yml中配置了各种容器信息以及容器对应的Dockerfile
-   3. Dockerfile中传递了image, tag等参数
-** k8s
-   *目标*
-   docker多机器编排工具
-
-   *流程*
-   1. k8s_set_env.sh 检测安装环境
-   2. k8s_install.sh 下载并安装k8s需要的文件
-   3. k8s_build.sh   创建k8s集群
-   4. ingress_nginx_build.sh   安装对外接口
-   5. kube_prometheus_build.sh 安装k8s监控
-
-* 游戏源码管理
-  项目的代码管理 主要有server端代码, client代码,  protocol协议, database.
+* qygame
+  管理游戏源码, 主要有server端代码, client代码,  protocol协议, database.
 
   托管在[[https://github.com/qygame][qygame organization]]
    
-  | 仓库名             | 作用                        | 备注           |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/handy][qygame/handy]]       | 网络库                      | 魔改handy      |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/svr-kernel][qygame/svr-kernel]]  | 业务与基础库的适配层        |                |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/svr-frame][qygame/svr-frame]]   | 业务层                      | 依赖svr-kernel |
-  |--------------------+-----------------------------+----------------|
-  | qygame/svr-$kindid | 子游戏                      | 依赖svr-frame  |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/protocol][qygame/protocol]]    | client与server消息协议      |                |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/client][qygame/client]]      | client                      |                |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/database][qygame/database]]    | 数据库                      |                |
-  |--------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/svr-publish][qygame/svr-publish]] | 以branch形式存放svr编译结果 |                |
-  |--------------------+-----------------------------+----------------|
+  | 仓库名              | 作用                        | 备注           |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/handy][qygame/handy]]        | 网络库                      | 魔改handy      |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/svr-kernel][qygame/svr-kernel]]   | 业务与基础库的适配层        |                |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/svr-frame][qygame/svr-frame]]    | 业务层                      | 依赖svr-kernel |
+  |---------------------+-----------------------------+----------------|
+  | qygame/svr-subgames | 子游戏                      | 依赖svr-frame  |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/protocol][qygame/protocol]]     | client与server消息协议      |                |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/client][qygame/client]]       | client                      |                |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/database][qygame/database]]     | 数据库                      |                |
+  |---------------------+-----------------------------+----------------|
+  | [[https://github.com/qygame/svr-publish][qygame/svr-publish]]  | 以branch形式存放svr编译结果 |                |
+  |---------------------+-----------------------------+----------------|

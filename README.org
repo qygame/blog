@@ -51,7 +51,7 @@
   [[file:repository.org][详细介绍]]
     
 * 源码设计文档
-  [[file:qygame.org][服务器架构介绍]]
+  [[file:server_view.org][服务器架构介绍]]
   
   [[file:server.org][服务器源码介绍]]
   
