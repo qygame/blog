@@ -678,8 +678,6 @@ enum UserStatusH
 
 * TODO server--chat
 * TODO server--club
-* server--client
-  模拟client, 对整个svr进行数据测试
 * server--子游戏
   1. 子游戏处理范围
      游戏开始 -- 大局结束
