@@ -1,7 +1,7 @@
 #+OPTIONS: ^:nil
 #+OPTIONS: \n:t
 
-* server--约定俗称
+* 约定俗称
 *** 消息号命名规范
     为了client与server的统一, 消息号统一使用驼峰式命名, exp: SubQueryGoldRooms
     - 第一个字段 归属标志
@@ -61,147 +61,7 @@
     7. [X] 每局游戏结束后 -- 游戏资格检测
        : RoomServer frame处理
        : 数据在RoomRuleCom中, 由GameServer提供, 由CenterServer实际处理
-* server--center
-  center只负责路由转发, 不处理任何具体业务
-** center 路由图
-*** client <-> x
-    #+BEGIN_SRC plantuml
-title center route: client<->X
-hide footbox
-participant "Client" as ci << (C,#228b22) >>  order 1
-participant "Gate"   as a  << (S,#ADD1B2) >>  order 2
-participant "Center" as c  << (S,#ADD1B2) >>  order 3
-participant "Logon"  as l  << (S,#ADD1B2) >>  order 4
-participant "Lobby"  as h  << (S,#ADD1B2) >>  order 5
-participant "Game"   as g  << (S,#ADD1B2) >>  order 6
-participant "Room"   as r  << (S,#ADD1B2) >>  order 7
 
-
-ci->a : request
-a ->c : route with gid
-
-alt  MainCMD::Logon
-c ->l : route with (gid+gatesvr_id)
-note left: find any logonsvr in svrmgr
-note right: if login sucess, update uggr
-l ->c : response (gid+gatesvr_id)
-note left: find gatesvr by gatesvr_id
-c ->a : route with gid
-a ->ci: route
-
-else MainCMD::Lobby
-c ->h : route with uid
-note left
-find uid in uggr by gid,gatesvr_id
-find any lobbysvr in svrmgr
-end note
-h ->c : response with uid
-c ->a : route with gid
-note right
-find gid,gatesvr_id in uggr by uid
-find gatesvr in svrmgr by gatesvr_id
-end note
-a ->ci: route
-
-else MainCMD::Game
-c ->g : route with uid
-note left
-find uid in uggr by gid,gatesvr_id
-find any gamesvr in svrmgr
-end note
-g ->c : response with uid
-c ->a : route with gid
-note right
-find gid,gatesvr_id in uggr by uid
-find gatesvr in svrmgr by gatesvr_id
-end note
-a ->ci: route
-
-else MainCMD::Room, MainCMD::SubRoom
-c ->r : route with user
-note left
-find uid in uggr by gid,gatesvr_id
-find roomsvr_fd in uggr by uid
-find roomsvr in svrmgr by roomsvr_fd
-end note
-r ->c : response with user
-c ->a : route with gid
-note right
-find gid,gatesvr_id in uggr by uid
-find gatesvr in svrmgr by gatesvr_id
-end note
-a ->ci: route
-
-else invalid-msg
-c -> c
-note left: do nothing
-end
-    #+END_SRC
-
-    #+RESULTS:
-    [[file:~/1.png]]
-
-*** x <-> x
-    #+BEGIN_SRC plantuml :file ~/2.png
-title center route: X<->X
-hide footbox
-participant "X"      as x  << (S,#ADD1B2) >>  order 1
-participant "Center" as c  << (S,#ADD1B2) >>  order 2
-participant "Rank"   as k  << (S,#ADD1B2) >>  order 3
-participant "Room"   as m  << (S,#ADD1B2) >>  order 4
-
-alt CMDCB::RANK
-  x->c: request with requestid
-  note left: record map_logon<requestid, cb_f>
-  c->k: route with requestid, xsvrid
-  note left: find ranksvr in svrmgr
-  k->c: response with requestid, xsvrid
-  c->x: route with requestid
-  note right: find x in svrmgr by svrid
-  x->x: cb_f
-  note left: delete map_logon[requestid]
-
-else MainCB::ROOM
-  x->c: request with requestid
-  note left: record map_room<requestid, cb_f>
-  c->m: route with requestid,xsvrid
-  note left: find roomsvr in svrmgr
-  m->c: response with requestid,fd
-  c->x: route with requestid
-  note right: find x in svrmgr by svrid
-  x->x: cb_f
-  note left: delete map_room[requestid]
-
-end
-    #+END_SRC
-
-    #+RESULTS:
-    [[file:~/2.png]]
-
-** 玩家在哪个roomSvr上
-   *查找方式*
-   1. 根据redis.uggr中的r来确认roomserver id
-   2. 先查找redis.player中的tableid,
-      再查找redis.table_using中对应的serverid
-
-
-   *两种方式差异*
-   方式1多用于消息转发
-   方式2多用于确认玩家是否在这个桌子(redis.player.tableid)上, 防止锁桌
-
-* server--db
-  通过MySQL Connector/C++ 连接mysql
-
-** 对外接口
-   - void init()
-     创建work线程数量的db
-   - shared_ptr<db> get_db()
-     通过shared_ptr自带的计数use_count来确认db是否可用
-     mysql官方资料显示, mysqlx::Session非多线程安全.
-   
-** 参考资料
-   [[https://dev.mysql.com/doc/x-devapi-userguide/en/collections-as-relational-tables.html][官方用例]]
-   [[https://dev.mysql.com/doc/dev/connector-cpp/latest/group__devapi.html][API接口]]
 
 * server-gate
 ** logon
@@ -229,125 +89,181 @@ end
     *断线处理*
     1. gateSvr更新player的roomsvrid信息
     2. 通知client
-** lobby
-   这个模块当前没有业务.
-   原意是大厅的一些业务可以放在此处处理
 ** game
-   房间查询
-   房卡场 -- 查询房间配置
-   金币场 -- 查询金币场信息
+   房间信息查询
+   数据来源于roomSvr. roomSvr连接成功之后, 会主动推送
 
-   数据来源于roomSvr
+*** 数据格式
+    房卡场 -- 查询房间配置:
+    file: cfg_fk.hh
+    data: map<kindid, rule_arry>
+
+    金币场 -- 查询金币场信息
+    file: cfg_gold.hh
+    data: map<kindid, vector<gold_msg>>
+    
+    roomSvr信息
+    file: server_manager
+    data:
+    map<session, vec<kind+level>>
+    map<vec<kind+level>, session>
+    
+    保留roomSvr的意义:
+    如果roomSvr与gateSvr断开连接了, 那么就可以实时的更新3个data数据.
+    保证client那边看到的永远是可用的服务器
    
+** center
+   路由clien <->roomSvr
+   - client -> gate -> roomsvr
+     依据<player, roomsvrid> <x_session, roomsvrid>路由
+     不使用redis的room_$uid是因为redis承载量不够
+   - roomsvr -> gate -> client
+     依据<player, client_session>路由
    
-* server--game
-  房间配置查询 && 创建房间
-  加载所有子游戏的fk和gold配置
+   <player, roomsvrid> 在player_manager中维护
+   1. 玩家登陆成功时候, 根据redis中room_$uid来确认
+   2. 玩家在roomSvr中加入或退出的时候, roomSvr也会主动推送给gateSvr.
+
+   <x_session, roomsvrid> 在server_manager中维护
+   
+*** 对外接口
+    - SetRoomID(uid, roomsvrid)
+          
+** TODO server--match
+*** 设计理念
+    matchSvr负责维护 {uid, score} 排行,
+    具体的数据是roomSvr通知的matchSvr
+
+    match没有必要把同排行的人放到一个roomSvr, 因此不需要指定roomSvr
+    
+*** 组织架构
+    #+BEGIN_EXAMPLE
+      kind1  --  match-type 1  -- match 1 -- {对应一系列桌子}
+                               -- ....
+                               -- match N
+             --  ....
+             --  match-type N
+      ....
+      kind N
+    #+END_EXAMPLE
+
+*** 流程
+    1. 玩家申请加入某个比赛场match_type, 如果没有空的match, 则创建一个match, 放入玩家
+       设置其tableid为MATCH_TABLE, 防止进入其他桌子
+       如果玩家取消比赛, tableid重置为INVALID_TABLE
+       玩家掉线的时候, 如果还在比赛排队状态(tableid为MATCH_TABLE), 则按取消比赛处理
+    2. 当match满足触发条件之后, 开始比赛
+       matchSvr把玩家分组, 并通知roomSvr创建桌子
+    3. roomSvr进行游戏, 当table大局结束的时候, 把数据(score)返回给matchSvr
+    4. matchSvr进行排序, 重新分组, 继续通知roomSvr开始游戏
+    5. 循环直至比赛结束为止
+*** 依赖关系
+    依赖GameSvr, 需要GameSvr提供的GetRoomRule()接口
+*** 缺陷
+    有状态的, 需要后期改为无状态服务器
+*** 配置文件
+    配置文件放在subgames/kinid/kindid.match中
+
+** TODO server--rank
+*** 对外接口
+    - PushRank(ranktype, uid, score)
+*** 配置文件
+    *配置文件放在database rank表*
+    | id   | rank_name | rank_desc | type           | sortid | award | valid    |
+    | 自增 | 名字      | 描述      | 类型(唯一标志) | 优先级 | 奖励  | 是否开启 |
+
+*** 定时功能的设计
+    自定义定时操作
+    缺点非常明显, 如果Svr挂了, 那么可能会导致数据错乱
+    所以需要额外考虑svr挂掉的情况
+
+** server--task
+*** 对外接口
+    - PushTask(task_type, uid, score)
+*** 流程图
+     #+BEGIN_EXAMPLE
+      +--------+
+      | start  |
+      +--------+
+          |
+          |
+          v
+      +--------+  否
+      | 触发   |------------+
+      +--------+            |
+        是|                 |
+          |                 |
+          v                 |
+      +--------+  否        |
+      |  完成  | -----+     |
+      +--------+      |     |
+          |           |     |
+       是 |           |     |
+          v           |     |
+      +--------+      |     |
+      | updata | <----+     |
+      +--------+            |
+          |                 |
+      +---v----+            |
+      | end    | <----------+
+      +--------+
+     #+END_EXAMPLE
+     1. 触发条件判断
+        - 时间start - end范围
+        - 特定kind, 特定room_level下的任务.
+          比如完成斗地主高级场一次
+        - 用户身份的限定
+          比如vip才可完成的任务
+     2. 完成条件的判断
+        1) 需要先根据周期重置来重置任务完成状况
+        2) 任务完成状况与task配置中的任务step_all比较, 判断是否完成
+     3. update
+        更新任务完成状况
+*** 配置文件 && 中间状态
+    *配置文件放到database task表*
+    | 名称 | 描述 | 类型 | 优先级   | 开始时间   | 结束时间 | 重置周期     | 其他触发限制 | 总步数   | 奖励配置 |
+    | name | desc | type | priority | start_time | end_time | reset_period | on_xml       | step_all | award    |
+
+    type解释,
+    斗地主初级场1次, 斗地主初级场2次, 斗地主初级场3次
+    那么他们的type可以一致, 并设置priority分别为1,2,3
+    这样就可以认为这三个任务是阶段性任务. 先完成斗地主初级场1次后, 才会显示斗地主初级场2次;
+    完成斗地主初级场2次后,才会显示斗地主初级场3次. 形成一个阶段
+
+    所以type相同, 认为是同一种类型任务(触发流程, 完成流程都一致), 而priority可以区分其阶段.
+
+
+    *中间状态放到redis task_status_$uid_$taskid表*
+    | uid | 任务id | 当前步数     | 任务完成时间 | 任务状态 |
+    | uid | taskid | step_current | time         | status   |
+
+    time应该是任务完成的时间. 昨天完成的时间, 到了今天也会重置
+    status 0 未完成, 1完成未领奖, 2完成已领奖
+*** 任务类的设计
+     1. Task
+        - tagTask 任务配置的数据结构
+        - 触发逻辑判断 task::bOn(...) 入参可能较多
+        - 完成逻辑判断 task::bComplete(tagTaskStatus)
+     2. TaskManager
+        - map<taskid, Task>
+        - 更新逻辑 TaskManager::updata()
+        - 获取不同mtype(或sub_type)的任务
+        - 增加, 删除任务
+          
+* server--db
+  通过MySQL Connector/C++ 连接mysql
+
 ** 对外接口
-   - GetRoomRule 根据传递的规则选择, 获取房间规则
-** 配置文件
-   配置文件放在
-   subgames/kindid/kindid.fk
-   subgames/kindid/kindid.gold
-** 房间规则配置
-*** 房间规则分析
-    *房间规则由来*
-    对于每一个具体的游戏来讲, 游戏本身是规则下的流程
-    这里的规则分为两大类
-    一类是游戏自身的规则, 比如斗地主需要一副牌, 有三带一等各种牌型.
-    这种规则本身变化不大, 影响的是游戏自身的流程.
-    还有一类规则是影响游戏逻辑之外的, 比如3小局, 4小局. 比如这是房卡场的, 金币场的等等
+   - void init()
+     创建work线程数量的db
+   - shared_ptr<db> get_db()
+     通过shared_ptr自带的计数use_count来确认db是否可用
+     mysql官方资料显示, mysqlx::Session非多线程安全.
+   
+** 参考资料
+   [[https://dev.mysql.com/doc/x-devapi-userguide/en/collections-as-relational-tables.html][官方用例]]
+   [[https://dev.mysql.com/doc/dev/connector-cpp/latest/group__devapi.html][API接口]]
 
-    于是我们把所有游戏共用的规则(主要是第二类规则), 提取出来放到tagRoomRuleCom
-    而对于每个子游戏不同的游戏规则, 我们只需要提供map<key, choose_index>给子游戏即可
-
-    房间规则不区分游戏玩法.
-    房卡场, 金币场, 比赛场, 俱乐部玩法的房间规则使用同一个结构体tagRoomRule
-    通用房间规则 是指抽象出来供frame使用的, 使用统一结构体tagRoomRuleCom
-    子游戏规则   是每个子游戏自身的规则, 在frame层以map<key, choose_index>的形式传递给子游戏, 由子游戏自己解析
-
-
-    *房间规则继续分析*
-    无论对于tagRoomRuleCom 还是map<key, choose_index> 都可以认为是key, value的键值对
-    所以我们配置文件, 可以采取最基本的key, value形式.
-    但是考虑到房卡场, 金币场等具体玩法, 我们期待的金币场也可以配置自身的游戏规则.
-    比如初级场可以配置为3小局, 底分2; 中级场可以配置为2小局, 底分5;
-    因此可以再进一步抽象为
-    1. 先提供一个可供选择的规则配置
-    2. 需要什么样的规则, 只要提供对应的choose, 就可以生成具体的tagRoomRule
-
-*** 房间规则配置
-    *目标*
-    1. 金币场, 比赛场, 俱乐部模式 更好的配置游戏规则
-    2. 对于房卡场, 服务器控制client的房间规则显示
-       client开发的时候 不需要做任何处理
-
-
-    *client使用流程*
-    1. client申请创建房间
-    2. server判断是否符合创建条件,  发送房间规则配置 rule_arry(在STR_Common.proto中)
-       其中css控制client显示的样式
-       rule表示一条规则
-       #+BEGIN_EXAMPLE sh 配置举例
-       css
-       1
-       2
-       特殊规则 3, 4, 5
-
-       rule_1  人数
-       rule_2  局数
-       rule_3  炸弹
-       rule_4  鬼子
-       rule_5  天王九
-       #+END_EXAMPLE
-       #+BEGIN_EXAMPLE sh client显示的样式
-       人    数   "2" "3" "4"
-       局    数   "2" "3" "4"
-       特殊规则   炸弹o  鬼子o 天王九o
-       #+END_EXAMPLE
-    3. client返回 选择结果 repeated int32
-       比如: 上面选择了 2人 4局, 则返回
-       0
-       2
-       每个返回字段为byte, 返回的value index
-    4. server收到后, 构造房间规则tagRoomRule
-
-
-    *其他游戏模式使用流程*
-    对于金币场,比赛场等使用更加简单, 直接提供choose_values即可
-
-* server--match
-** 设计理念
-   matchSvr负责维护 {uid, score} 排行,
-   具体的数据是roomSvr通知的matchSvr
-   : match没有必要把同排行的人放到一个roomSvr, 因此不需要指定roomSvr
-** 组织架构
-   #+BEGIN_EXAMPLE
-     kind1  --  match-type 1  -- match 1 -- {对应一系列桌子}
-                              -- ....
-                              -- match N
-            --  ....
-            --  match-type N
-     ....
-     kind N
-   #+END_EXAMPLE
-
-** 流程
-   1. 玩家申请加入某个比赛场match_type, 如果没有空的match, 则创建一个match, 放入玩家
-      设置其tableid为MATCH_TABLE, 防止进入其他桌子
-      如果玩家取消比赛, tableid重置为INVALID_TABLE
-      玩家掉线的时候, 如果还在比赛排队状态(tableid为MATCH_TABLE), 则按取消比赛处理
-   2. 当match满足触发条件之后, 开始比赛
-      matchSvr把玩家分组, 并通知roomSvr创建桌子
-   3. roomSvr进行游戏, 当table大局结束的时候, 把数据(score)返回给matchSvr
-   4. matchSvr进行排序, 重新分组, 继续通知roomSvr开始游戏
-   5. 循环直至比赛结束为止
-** 依赖关系
-   依赖GameSvr, 需要GameSvr提供的GetRoomRule()接口
-** 缺陷
-   有状态的, 需要后期改为无状态服务器
-** 配置文件
-   配置文件放在subgames/kinid/kindid.match中
 
 * server--room
 ** 对外接口
@@ -470,98 +386,81 @@ enum UserStatusH
    table 由redis启动的时候预先生成100000-999999
    table_using使用zset记录tableid, 创建time. 后面删除的时候, 根据time来有选择的删除,
    比如删除5分钟之前的桌子, 提高效率.
+   
+** 房间配置加载
+   加载子游戏的fk, gold, match信息
+*** 配置文件
+    配置文件放在
+    kindid/cfg/kindid.fk
+    kindid/cfg/kindid.gold
+    kindid/cfg/kindid.match
+*** 房间规则配置
+**** 房间规则分析
+     *房间规则由来*
+     对于每一个具体的游戏来讲, 游戏本身是规则下的流程
+     这里的规则分为两大类
+     一类是游戏自身的规则, 比如斗地主需要一副牌, 有三带一等各种牌型.
+     这种规则本身变化不大, 影响的是游戏自身的流程.
+     还有一类规则是影响游戏逻辑之外的, 比如3小局, 4小局. 比如这是房卡场的, 金币场的等等
 
-* server--rank
-** 配置文件
-   *配置文件放在database rank表*
-   | id   | rank_name | rank_desc | type           | sortid | award | valid    |
-   | 自增 | 名字      | 描述      | 类型(唯一标志) | 优先级 | 奖励  | 是否开启 |
+     于是我们把所有游戏共用的规则(主要是第二类规则), 提取出来放到tagRoomRuleCom
+     而对于每个子游戏不同的游戏规则, 我们只需要提供map<key, choose_index>给子游戏即可
 
-   读取rank
-   load_rank
-** 定时功能的设计
-   自定义定时操作
-   缺点非常明显, 如果Svr挂了, 那么可能会导致数据错乱
-   所以需要额外考虑svr挂掉的情况
-* server--redis
-  redis 控制服务
-  1. 初始化redis
-  2. redis中机器人对回收等
-* server--task
-** 对外接口
-   - PushTask(task_type, uid, score)
-** 流程图
-    #+BEGIN_EXAMPLE
-     +--------+
-     | start  |
-     +--------+
-         |
-         |
-         v
-     +--------+  否
-     | 触发   |------------+
-     +--------+            |
-       是|                 |
-         |                 |
-         v                 |
-     +--------+  否        |
-     |  完成  | -----+     |
-     +--------+      |     |
-         |           |     |
-      是 |           |     |
-         v           |     |
-     +--------+      |     |
-     | updata | <----+     |
-     +--------+            |
-         |                 |
-     +---v----+            |
-     | end    | <----------+
-     +--------+
-    #+END_EXAMPLE
-    1. 触发条件判断
-       - 时间start - end范围
-       - 特定kind, 特定room_level下的任务.
-         比如完成斗地主高级场一次
-       - 用户身份的限定
-         比如vip才可完成的任务
-    2. 完成条件的判断
-       1) 需要先根据周期重置来重置任务完成状况
-       2) 任务完成状况与task配置中的任务step_all比较, 判断是否完成
-    3. update
-       更新任务完成状况
-** 配置文件 && 中间状态
-   *配置文件放到database task表*
-   | 名称 | 描述 | 类型 | 优先级   | 开始时间   | 结束时间 | 重置周期     | 其他触发限制 | 总步数   | 奖励配置 |
-   | name | desc | type | priority | start_time | end_time | reset_period | on_xml       | step_all | award    |
-
-   type解释,
-   斗地主初级场1次, 斗地主初级场2次, 斗地主初级场3次
-   那么他们的type可以一致, 并设置priority分别为1,2,3
-   这样就可以认为这三个任务是阶段性任务. 先完成斗地主初级场1次后, 才会显示斗地主初级场2次;
-   完成斗地主初级场2次后,才会显示斗地主初级场3次. 形成一个阶段
-
-   所以type相同, 认为是同一种类型任务(触发流程, 完成流程都一致), 而priority可以区分其阶段.
+     房间规则不区分游戏玩法.
+     房卡场, 金币场, 比赛场, 俱乐部玩法的房间规则使用同一个结构体tagRoomRule
+     通用房间规则 是指抽象出来供frame使用的, 使用统一结构体tagRoomRuleCom
+     子游戏规则   是每个子游戏自身的规则, 在frame层以map<key, choose_index>的形式传递给子游戏, 由子游戏自己解析
 
 
-   *中间状态放到redis task_status_$uid_$taskid表*
-   | uid | 任务id | 当前步数     | 任务完成时间 | 任务状态 |
-   | uid | taskid | step_current | time         | status   |
+     *房间规则继续分析*
+     无论对于tagRoomRuleCom 还是map<key, choose_index> 都可以认为是key, value的键值对
+     所以我们配置文件, 可以采取最基本的key, value形式.
+     但是考虑到房卡场, 金币场等具体玩法, 我们期待的金币场也可以配置自身的游戏规则.
+     比如初级场可以配置为3小局, 底分2; 中级场可以配置为2小局, 底分5;
+     因此可以再进一步抽象为
+     1. 先提供一个可供选择的规则配置
+     2. 需要什么样的规则, 只要提供对应的choose, 就可以生成具体的tagRoomRule
 
-   time应该是任务完成的时间. 昨天完成的时间, 到了今天也会重置
-   status 0 未完成, 1完成未领奖, 2完成已领奖
-** 任务类的设计
-    1. Task
-       - tagTask 任务配置的数据结构
-       - 触发逻辑判断 task::bOn(...) 入参可能较多
-       - 完成逻辑判断 task::bComplete(tagTaskStatus)
-    2. TaskManager
-       - map<taskid, Task>
-       - 更新逻辑 TaskManager::updata()
-       - 获取不同mtype(或sub_type)的任务
-       - 增加, 删除任务
+**** 房间规则配置
+     *目标*
+     1. 金币场, 比赛场, 俱乐部模式 更好的配置游戏规则
+     2. 对于房卡场, 服务器控制client的房间规则显示
+        client开发的时候 不需要做任何处理
 
-* TODO server--chat
-* TODO server--club
+
+     *client使用流程*
+     1. client申请创建房间
+     2. server判断是否符合创建条件,  发送房间规则配置 rule_arry(在STR_Game.proto中)
+        其中css控制client显示的样式
+        rule表示一条规则
+        #+BEGIN_EXAMPLE sh 配置举例
+        css
+        1
+        2
+        特殊规则 3, 4, 5
+
+        rule_1  人数
+        rule_2  局数
+        rule_3  炸弹
+        rule_4  鬼子
+        rule_5  天王九
+        #+END_EXAMPLE
+        #+BEGIN_EXAMPLE sh client显示的样式
+        人    数   "2" "3" "4"
+        局    数   "2" "3" "4"
+        特殊规则   炸弹o  鬼子o 天王九o
+        #+END_EXAMPLE
+     3. client返回 选择结果 repeated int32
+        比如: 上面选择了 2人 4局, 则返回
+        0
+        2
+        每个返回字段为byte, 返回的value index
+     4. server收到后, 构造房间规则tagRoomRule
+
+
+     *其他游戏模式使用流程*
+     对于金币场,比赛场等使用更加简单, 直接提供choose_values即可
+
 * server--子游戏
   1. 子游戏处理范围
      游戏开始 -- 大局结束
@@ -629,3 +528,10 @@ enum UserStatusH
    |--------------+------------------+----------------------|
    | 玩家信息锁   | lock_player_$uid |                      |
    |--------------+------------------+----------------------|
+
+
+* TODO server--redis
+  redis 控制服务
+  1. 初始化redis
+  2. redis中机器人对回收等
+   
