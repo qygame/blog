@@ -92,9 +92,9 @@
   
   | 仓库名                       | 作用                                           |
   |------------------------------+------------------------------------------------|
-  | [[https://github.com/qydocker/build_image_dev][qydocker/build_image_dev]]     | 编译qygame, 结果托管在[[https://github.com/qygame/svr-publish][qygame/svr-publish]]       |
+  | [[https://github.com/qydocker/build_image_dev][qydocker/build_image_dev]]     | 构建qygame base image                          |
   |------------------------------+------------------------------------------------|
-  | [[https://github.com/qydocker/build_publish][qydocker/build_publish]]       | 构建qygame base image                          |
+  | [[https://github.com/qydocker/build_publish][qydocker/build_publish]]       | 编译qygame, 结果托管在[[https://github.com/qygame/svr-publish][qygame/svr-publish]]       |
   |------------------------------+------------------------------------------------|
   | qydocker/build_image         | 构建qygame images                              |
   |------------------------------+------------------------------------------------|
@@ -111,8 +111,6 @@
   托管在[[https://github.com/qygame][qygame organization]]
    
   | 仓库名              | 作用                        | 备注           |
-  |---------------------+-----------------------------+----------------|
-  | [[https://github.com/qygame/handy][qygame/handy]]        | 网络库                      | 魔改handy      |
   |---------------------+-----------------------------+----------------|
   | [[https://github.com/qygame/svr-kernel][qygame/svr-kernel]]   | 业务与基础库的适配层        |                |
   |---------------------+-----------------------------+----------------|

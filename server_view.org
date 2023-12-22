@@ -8,9 +8,7 @@
      client -> gate : test
      @enduml
    #+END_SRC
-
-   #+RESULTS:
-   [[file:server_view/test.png]]
+   
 ** implementation view
 ** process view
    #+begin_src plantuml :file server_view/server_process.png :exports results
