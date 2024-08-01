@@ -1,0 +1,23 @@
+#+title: unity技巧
+#+date: 2024-08-01 17:13:37
+#+hugo_section: docs
+#+hugo_bundle: client/unity
+#+export_file_name: index
+#+hugo_weight: 100
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+
+* scene view 中
+1. 2个手指按压  2D移动;  3D旋转
+2. 2个手指滑动  缩放
+3. alt+f 模拟game视图
+4. ctrl 显示尺寸大小?
+5. 点击hierarcht中的物体, 按F 可以使视图居中在该物体
+   移动的物体 按 shitf+F可以锁定
+
+* hierarchy 中
+1. alt + 点击可以切换所有子child(递归) 的显示与隐藏
+
+* 其他
+unity会完全忽略以 ~ 结尾的文件或目录

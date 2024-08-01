@@ -1,0 +1,76 @@
+#+title: 苹果打包流程
+#+date: 2024-08-01 17:17:23
+#+hugo_section: docs
+#+hugo_bundle: client/build_apple
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+
+* 环境
+  | 工具    | 版本        | 备注 |
+  |---------+-------------+------|
+  | unity3d | 2018.4.11c1 |      |
+  |---------+-------------+------|
+  | xcode   | 11.3        |      |
+  |---------+-------------+------|
+  | 标ios   |             |      |
+  |---------+-------------+------|
+
+* 打包流程
+  1. Unity工程 File→Build Setting平台切换至IOS
+     Run in Xcode as 选择Release
+     Player Seetings -> Splash Image -> Splash Screen -> Show Splash Screen去掉勾选(需要破解u3d)
+
+  2. 点击player setting，选择other setting（其他的设置可以保持默认，splash image 加载背景如果需要的话自行替换）
+     Target SDK选择Device SDK（真机），我这里只是通过编译，模拟器的坑还没去踩
+
+  3. 打开Xcode，选择右下角的Open another Project，选择我们用Unity发布出来的Xcode工程并打开，或者双击打包好的工程的.xcodeproj文件，如果工程中没有SDK则需要手动添加最新SDK（操作：鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add），如果有则不需要添加
+
+  4. 选择team
+     TARGETS→Unity-iPhone→Signing & Capabilities→选择Team（使用已有ID登录）
+
+  5. 修改Enable Bitcode
+     TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
+
+  6. 直接点击上方菜单栏Product → Build生成项目，successed
+
+* 常见问题
+  1. library not found for -lstdc.6.0.9
+     TARGETS->Unity-iPhone->Build Phases->Link Binary with Libraries->最底下+号->添加libstdc++.6.0.9.tbd
+
+  2. _res9getservers
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libresolv.tbd文件
+
+  3. inflateEnd,referenced from "inflateInit"
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libz.tbd文件
+
+  4. sqlite
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加libsqlite3.0.tbd文件
+
+  5. OBJCCLASS_$SKPaymentQueue"
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加StoreKit.framework
+
+  6. OBJCCLASS_$WKWebView:
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加WebKit.framework
+
+  7. _kUTTagClassFilenameExtension:
+     TARGETS→Unity-iPhone→Build Phases→Link Binary with Libraries→最底下+号→添加MobileCoreServices.framework
+
+  8. Xcode编译出现OBJCCLASS_$XX问题的解决方案
+     TARGETS→Unity-iPhone→Build setting→Linking→Other Linker Flags→将此属性修改成-allload 和 -Objc
+
+  9. library not found for-liPhone-lib-Xcode整合Unity项目报错
+     进入Targets→Build Settings→Search Paths->Library search paths中，把“$（SRCROOT）/Libraries”的双引号去掉，即改为$(SRCROOT)/Libraries就行了
+
+
+* 苹果发包说明
+  个人 && 企业
+  Ad-hoc 需要在开发者平台中添加目标设备的uuid, 重新打包, 提交到托管平台(比如蒲公英)分发
+
+  如果想别人可以使用
+  1. 上架苹果商店
+  2. 通过企业签名 -- 一般多为代签
+  3. 通过Test Flight  -- 还未测试
+  4. 把别人的uuid添加进开发者平台中 -- 测试还可以, 正式发布不行
