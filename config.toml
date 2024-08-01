@@ -1,4 +1,4 @@
-baseURL = "https://qygame.github.io"
+baseURL = "https://qygame.github.io/blog"
 title = "QYGame"
 
 [markup.goldmark.renderer]
