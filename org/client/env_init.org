@@ -22,7 +22,15 @@
   1. [X] BDFrameWork package
      - 导入Asset资源到工程
      - 导入Odin插件
+     - BDFramework工具箱/框架配置 (各种打包设置)
   2. [ ] HyCLR
      菜单栏 HyCLR -- install
-     安装完之后, 需要重启unity去生成HyCLR Setting
+     *安装完之后, 需要重启unity去生成HyCLR Setting
   3. [X] ShareSDK
+  4. [ ] generate sln
+     : BDFramework build hotfix.dll需要
+     Preferences/External Tools/Regenerate project files
+     需要勾选Embedded packages, Local packages, Registry packages
+
+* 注意事项
+  1. 第一次构建的时候, il2cpp需要编译整个工程(?), 因此速度会很慢很慢(差不多30多分钟)
