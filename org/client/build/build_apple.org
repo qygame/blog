@@ -8,34 +8,31 @@
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
 
-
 * 环境
   | 工具    | 版本        | 备注 |
   |---------+-------------+------|
-  | unity3d | 2018.4.11c1 |      |
+  | unity   | 2019.4.40f1 |      |
   |---------+-------------+------|
   | xcode   | 11.3        |      |
   |---------+-------------+------|
-  | 标ios   |             |      |
-  |---------+-------------+------|
 
 * 打包流程
-  1. Unity工程 File→Build Setting平台切换至IOS
-     Run in Xcode as 选择Release
-     Player Seetings -> Splash Image -> Splash Screen -> Show Splash Screen去掉勾选(需要破解u3d)
-
-  2. 点击player setting，选择other setting（其他的设置可以保持默认，splash image 加载背景如果需要的话自行替换）
-     Target SDK选择Device SDK（真机），我这里只是通过编译，模拟器的坑还没去踩
-
-  3. 打开Xcode，选择右下角的Open another Project，选择我们用Unity发布出来的Xcode工程并打开，或者双击打包好的工程的.xcodeproj文件，如果工程中没有SDK则需要手动添加最新SDK（操作：鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add），如果有则不需要添加
-
-  4. 选择team
+  1. unity切换到ios平台
+     - File→Build Setting→Run in Xcode as 选择Release
+  2. unity build setting
+     - Player Seetings→Splash Image→Splash Screen→Show Splash Screen去掉勾选(需要破解unity)
+     - Player Settings→Other Setting→Target SDK选择Device SDK (真机)
+  3. unity build
+  4. xcode打开unity的build输出目录
+     - Xcode选择右下角的Open another Project, 选择Unity发布出来的Xcode工程
+       或者双击打包好的工程的.xcodeproj文件
+     - 如果工程中没有SDK则需要手动添加最新SDK. 操作：
+       鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add
+  5. 选择team
      TARGETS→Unity-iPhone→Signing & Capabilities→选择Team（使用已有ID登录）
-
-  5. 修改Enable Bitcode
+  6. 修改Enable Bitcode
      TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
-
-  6. 直接点击上方菜单栏Product → Build生成项目，successed
+  7. 直接点击上方菜单栏Product → Build生成项目，successed
 
 * 常见问题
   1. library not found for -lstdc.6.0.9

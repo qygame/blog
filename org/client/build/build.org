@@ -1,4 +1,4 @@
-#+title: 注意事项
+#+title: unity打包注意事项
 #+date: 2024-08-01 17:53:09
 #+hugo_section: docs
 #+hugo_bundle: client/build/build
@@ -7,11 +7,15 @@
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
-
-* unity注意部分
+* unity打包ios 注意事项
   1. 修改ShareSDK社交平台列表
-     Assets/Plugins/ShareSDK/ShareSDKDevInfo.cs修改 =ShareSDK认证= 与 =微信资质认证=
+     - Assets/Plugins/ShareSDK/ShareSDK.cs修改 =ShareSDK认证=
+     - Assets/Plugins/ShareSDK/ShareSDKDevInfo.cs修改 =微信资质认证=
      : 修改后, 需要在unity场景中Reset一下ShareSDK.CS脚本
-  2. Assets/Plugins/Android/AndroidManifest.xml中修改 =包名=, =ShareSDK认证=, =微信回调包名=
   3. Unity Build-Setting中 =替换logo=
   4. Unity Build-Setting中 =替换包名=
+
+* unit打包android注意事项
+  1. Assets/Plugins/Android/AndroidManifest.xml中修改 =包名=, =ShareSDK认证=, =微信回调包名=
+  2. Unity Build-Setting中 =替换logo=
+  3. Unity Build-Setting中 =替换包名=
