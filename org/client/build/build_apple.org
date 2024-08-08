@@ -29,12 +29,40 @@
      - 如果工程中没有SDK则需要手动添加最新SDK. 操作：
        鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add
   5. 选择team
-     TARGETS→Unity-iPhone→Signing & Capabilities→选择Team（使用已有ID登录）
+     - Preference→Account→登陆AppleID
+     - 点击project→TARGETS→Unity-iPhone→Signing & Capabilities→勾选Automatically manage signing
+     - 点击project→TARGETS→Unity-iPhone→Signing & Capabilities→选择Team
   6. 修改Enable Bitcode
-     TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
+     - TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
   7. 直接点击上方菜单栏Product → Build生成项目，successed
 
-* 常见问题
+* xcode真机调试流程
+  1. unity切换到ios平台
+     - File→Build Setting→Run in Xcode as 选择Release
+  2. unity build setting
+     - Player Seetings→Splash Image→Splash Screen→Show Splash Screen去掉勾选(需要破解unity)
+     - Player Settings→Other Setting→Target SDK选择Device SDK (真机)
+  3. unity build
+  4. xcode打开unity的build输出目录
+     - Xcode选择右下角的Open another Project, 选择Unity发布出来的Xcode工程
+       或者双击打包好的工程的.xcodeproj文件
+     - 如果工程中没有SDK则需要手动添加最新SDK. 操作：
+       鼠标右键文件夹Unity-iPhone→Add Files to "Unity-iPhone"…​→选中SDK→Add
+  5. 选择team
+     - Preference→Account→登陆AppleID
+     - 点击project→TARGETS→Unity-iPhone→Signing & Capabilities→勾选Automatically manage signing
+     - 点击project→TARGETS→Unity-iPhone→Signing & Capabilities→选择Team
+  6. 修改Enable Bitcode
+     - TARGETS→Unity-iPhone→Build Settings->build options->Enable Bitcode修改为No
+  7. 修改Build Settings
+     - Sign→code signing Entitlements为空
+     - Sign→Code signing Identity选择iOS Developer
+     - Sign→Provisioning Profile选择Automatic
+  8. 修改Bundle Identifier
+     - General→Bundle Identifier确保改值未被其他账户使用过
+  9. 直接点击上方菜单栏Product → Build生成项目，successed
+
+* 常见编译错误
   1. library not found for -lstdc.6.0.9
      TARGETS->Unity-iPhone->Build Phases->Link Binary with Libraries->最底下+号->添加libstdc++.6.0.9.tbd
 
@@ -61,7 +89,6 @@
 
   9. library not found for-liPhone-lib-Xcode整合Unity项目报错
      进入Targets→Build Settings→Search Paths->Library search paths中，把“$（SRCROOT）/Libraries”的双引号去掉，即改为$(SRCROOT)/Libraries就行了
-
 
 * 苹果发包说明
   个人 && 企业
