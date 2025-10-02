@@ -17,7 +17,7 @@
 * 消息号命名规范
   #+begin_columns
   - *消息号*
-     ~驼峰式命名~ -> kSubQueryGoldRooms
+    =驼峰式命名=  -> kSubQueryGoldRooms
   - *结构体*
     消息号去掉k -> SubQueryGoldRooms
   - *函数*
