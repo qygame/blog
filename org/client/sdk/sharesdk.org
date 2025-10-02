@@ -1,0 +1,90 @@
+#+title: ShareSDK
+#+date: 2024-08-01 17:54:05
+#+hugo_section: docs
+#+hugo_bundle: client/sdk/sharesdk
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+
+* shareSDK指导文档
+** 基本说明
+   shareSDK是第三方插件(如果把微信,QQ等比作第一方), 其集成了很多平台, 可以实现快速接入
+
+** 操作步骤
+   1. 在官网下载对应的SDK包
+      包里面有Android工程 和 U3D(如果sdk是针对u3d)工程
+   2. 编译Android工程, 为自己的U3D工程添加插件
+      Android工程的编译目标是U3D的插件
+   3. 在自己的U3D工程中 导入并修改官方的u3d Demo
+   4. 完成
+
+** F&Q
+   1. 问: 官方的android工程打不开?
+      答: 根据不同的IDE, 有不同注意事项
+      1) Eclisp IDE的时候, compiler和jdk版本要匹配
+      2) Android stutio, 需要将工程import import
+         官方的android工程是Eclisp的, 需要转换
+   2. 问: Android Stutio如何编译官方的android工程?
+      答: Android Stutio编译的时候需要有以下几个注意点
+      1) 编译器gradlew版本
+      1) 修改工程下gradle/wrapper/gradle-wrapper.properties文件中的distributionUrl版本为4.1
+      2) 修改工程下build.gradle文件中的classpath版本为4.1 -- 只影响gradlew指令, 不修改也可以
+         2) app文件的taget从app改为android module
+      1) 修改工程下app/built.gradle文件中的plugin为apply plugin: 'com.android.library'
+      2) 删除工程下app/built.gradle文件中的applicationId -- 仅当application才有
+         3) app文件的taget sdk版本修改
+      1) 修改工程下app/built.gradle文件中的compileSdkVersion和targetSdkVersion为21 (与安装的sdk版本匹配)
+      2) 修改工程下app/src/main/AndroidManifest.xml中的targetSdkVersion为21
+      3) 以上的sdk版本 应当与u3d编译时的选项一致
+         4) app文件依赖性修改
+	  修改工程下app/built.gradle文件中的dependence为implementation
+	  具体原因, 详见Android Stutio的六种编译方式
+      5) 包名的修改
+      1) 修改工程下app/src/main/Androidmanifest.xml中的manifest包名为your包名
+      2) 修改工程下app/scr/main/assets/SharSDK.xml中的微信认证资质
+      3) 修改工程下app/src/main/java/cn/share/demo下的所有文件的包名前缀替换为your包名 -- 不需要修改目录名字
+         6) 认证资质的修改
+	  修改工程下app/src/main/Androidmanifest.xml中application字段中的Mob-AppKey和Mob-AppSecret为自己的
+      7) rebuilt-project 完成
+	  其余的东西无需改动；
+	  生成的aar包在工程下app/build/outputs/aar/app-debug.aar；
+	  生成的jar包在工程下app/build/intermidiates/bundles/debug/classes.jar
+   3. 问: 自己的U3D工程如何与官方demo结合编译?
+      答: 自己的U3D工程编译有以下几个注意点
+      1) shareSDK插件的导入
+      1) 双击官方U3D工程中的ShareSDKForU3D.unitypackage (其实际就是将官方U3D工程下的Assets/Plugins导入到自己的U3D下)
+         不要导入demo.cs和ShareSDK-Unity.unity以及Plugins/Android/ShareSDK/DemoCallback.jar
+      2) 导入的时候需要注意路径问题, 比如正常的是Pligins/Android/ShareSDK/xml | libs | res, 千万不能写作Plugins/Android/xml
+         否则, 会导致自己U3D工程打包后没有图像...因为路径错了
+      3) 建议先删除自己的Plugins目录, 然后执行动作1)， 然后再将自己差异化的插件导入(注: 将android studio工程中lib下的jar包全部导入)
+      4) 将Android工程生成的classes.jar改名为com.quyou.tielinmajang.jar并copy到自己U3D工程下的Plugins/Android/ShareSDK/libs/
+      5) 将Android工程下AndroidManifest.xmlcopy到自己U3D工程下的Plugins/Android/ShareSDK/
+         2) 修改资质认证
+	  Plugins/ShareSDK/ConstDefine.h 文件中
+      1) 官方的资质认证
+         1) Plugins/ShareSDK/ShareSDK.cs 有1处。 位置在成员变量处
+         2) Plugins/ShareSDK/ShareSDKConfig.cs 有1处。 位置在Config函数中
+      2) 微信登录的资质认证
+         1) Plugins/ShareSDK/ShareSDKDevInfo.cs 有1处。 位置在微信登录的函数中
+         3) 选择使用平台
+	  修改 Plugins/ShareSDK/ShareSDKDevInfo.cs 的成员变量。 不需要的平台直接注释相应的成员变量即可
+      4) 调用ShareSDK的脚本文件
+      1) 官方的demo写的比较乱, 不推荐
+      2) 高手可以自己写
+      3) 可以直接使用之前的人写的 AuthAndShare.cs
+         5) 将ShareSDK.cs和AuthAndShare.cs挂在控件上。 U3D基本功, 不详述, 只想吐槽
+         6) 选择keyStore 编译。 完成
+	  keystroe只影响签名
+	  使用包名A,生成的apk其签名 应该与在微信开放平台上的包名A的签名一致
+
+   4. 问题解答
+      1) 问: U3D打包的时候出现 can't convert class to index
+	  答: jar包问题, 排查jar包的依赖型是否都存在， 执行问题3中的1)中的3)
+
+** 大坑
+   1. 分享的content中 image url必须存在， 无论本地还是远端
+      否则, 微信分享会调用失败
+   2. shareSDK的脚本中的 byPass Approve 必须去掉勾选
+      不勾选, 分享的webpage可能变为图片(应用信息)
