@@ -1,1 +1,25 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>unity, android, ios基础 on QYGame</title><link>https://qygame.github.io/blog/docs/client/base/</link><description>Recent content in unity, android, ios基础 on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 08 Aug 2024 07:31:48 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/client/base/index.xml" rel="self" type="application/rss+xml"/><item><title>unity</title><link>https://qygame.github.io/blog/docs/client/base/unity/</link><pubDate>Thu, 01 Aug 2024 17:52:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/base/unity/</guid><description> scene view 中 # 2个手指按压 2D移动; 3D旋转 2个手指滑动 缩放 alt+f 模拟game视图 ctrl 显示尺寸大小? 点击hierarcht中的物体, 按F 可以使视图居中在该物体 移动的物体 按 shitf+F可以锁定 hierarchy 中 # alt + 点击可以切换所有子child(递归) 的显示与隐藏 其他 # unity会完全忽略以 ~ 结尾的文件或目录</description></item><item><title>Android</title><link>https://qygame.github.io/blog/docs/client/base/android/</link><pubDate>Thu, 01 Aug 2024 17:52:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/base/android/</guid><description> Java的一些基础 # Activity # Activity是 java中类的实例化 activity存在于一些堆栈中, 似于线程的操作 Activity必须在mainfest.xml中进行注册，才可以启动 oncreate &amp;ndash; onstart &amp;ndash; onresume &amp;ndash; stop activity有显示启动和隐式启动 AndroidMainFest.xml # 类似于activity管理器的配置文件 决定了哪个activity先启动， 决定了哪些activity可以启动 inter-filter决定了activity是否是main activity，也决定了activity在什么情形下可以隐式启动</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>unity, android, ios基础 on QYGame</title><link>https://qygame.github.io/blog/docs/client/base/</link><description>Recent content in unity, android, ios基础 on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 02 Oct 2025 10:50:26 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/client/base/index.xml" rel="self" type="application/rss+xml"/><item><title>unity</title><link>https://qygame.github.io/blog/docs/client/base/unity/</link><pubDate>Thu, 01 Aug 2024 17:52:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/base/unity/</guid><description>&lt;h2 id="scene-view-中"&gt;scene view 中&lt;a class="anchor" href="#scene-view-%e4%b8%ad"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;2个手指按压 2D移动; 3D旋转 &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;2个手指滑动 缩放 &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;alt+f 模拟game视图 &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;ctrl 显示尺寸大小? &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;点击hierarcht中的物体, 按F 可以使视图居中在该物体 &lt;br/&gt;
+移动的物体 按 shitf+F可以锁定 &lt;br/&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="hierarchy-中"&gt;hierarchy 中&lt;a class="anchor" href="#hierarchy-%e4%b8%ad"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;alt + 点击可以切换所有子child(递归) 的显示与隐藏 &lt;br/&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id="其他"&gt;其他&lt;a class="anchor" href="#%e5%85%b6%e4%bb%96"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;unity会完全忽略以 ~ 结尾的文件或目录 &lt;br/&gt;&lt;/p&gt;</description></item><item><title>Android</title><link>https://qygame.github.io/blog/docs/client/base/android/</link><pubDate>Thu, 01 Aug 2024 17:52:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/base/android/</guid><description>&lt;h2 id="java的一些基础"&gt;Java的一些基础&lt;a class="anchor" href="#java%e7%9a%84%e4%b8%80%e4%ba%9b%e5%9f%ba%e7%a1%80"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id="activity"&gt;Activity&lt;a class="anchor" href="#activity"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Activity是 java中类的实例化 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;activity存在于一些堆栈中, 似于线程的操作 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;Activity必须在mainfest.xml中进行注册，才可以启动 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;oncreate &amp;ndash; onstart &amp;ndash; onresume &amp;ndash; stop &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;activity有显示启动和隐式启动 &lt;br/&gt;&lt;/p&gt;
+&lt;h3 id="androidmainfest-dot-xml"&gt;AndroidMainFest.xml&lt;a class="anchor" href="#androidmainfest-dot-xml"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;类似于activity管理器的配置文件 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;决定了哪个activity先启动， 决定了哪些activity可以启动 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;inter-filter决定了activity是否是main activity，也决定了activity在什么情形下可以隐式启动 &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
