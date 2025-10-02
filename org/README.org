@@ -3,13 +3,13 @@
 
 * 简介
   休闲游戏模板, 包含服务器, 客户端, 数据库和监控系统.
-  
+
   服务器运行在docker容器,支持docker-compose与k8s两种安装方式. 使用C++开发.
-  
+
   客户端使用unity平台, 使用C#开发.
-  
+
   数据库使用redis, mysql.
-  
+
   监控系统采用prometheus + grafana.
 
 * 安装
@@ -49,12 +49,10 @@
 
 * 源码仓库
   [[file:repository.org][详细介绍]]
-    
+
 * 源码设计文档
   [[file:server_view.org][服务器架构介绍]]
-  
+
   [[file:server.org][服务器源码介绍]]
-  
+
   [[file:client.org][客户端介绍]]
-
-

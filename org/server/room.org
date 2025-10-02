@@ -1,0 +1,210 @@
+#+title: room
+#+date: 2025-10-02 18:06:06
+#+hugo_section: docs
+#+hugo_bundle: server/room
+#+export_file_name: index
+#+hugo_weight: 14
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+room server
+
+#+hugo: more
+
+* server--room
+** 对外接口
+   - GetTable       获取table状态信息
+   - GetTableUser   获取玩家是否在桌子上
+   - EnterTable(uid, tableid)               进入桌子
+   - EnterTable(uid, tagRoomrule)           进入桌子
+   - EnterTable(vector<uid>, tagRoomrule)   进入桌子
+** table设计思路
+   roomSvr中的table是最基本的table, 不考虑金币场, 比赛场, 俱乐部
+   只处理游戏逻辑
+
+   也就是说, 这里Table不区分房卡场, 金币场等
+   对自身影响范围:
+   1. [X] 门票的问题
+      门票无需特意处理, 因为在创建房间之前, 门票就已经算清楚了
+   2. [X] 算分的问题
+      只是把结果放出来, 至于具体如何处理, table可以不需要关心
+
+** 战绩 && 录像回放
+*** 查询
+    数据存放在database中
+    player_score 战绩-玩家信息
+    table_record 战绩-桌子信息
+    table_video  录像回放
+
+    模拟运行:
+    1. 查看大局战绩
+       : player_score与table_record联查, onlyid为连接标志
+       : 根据player_score.userid 与 table_record.clubid 找出top 100的onlyid
+       : 根据onlyid和curcount=0 在player_score中查找所有符合条件的数据
+       : 最后联查player, 联查标记为userid
+    2. 查看小局战绩
+       : 根据onlyid 在player_score查找即可
+       : 最后联查player, 联查标志位userid
+    3. 查看录像回放
+       : 根据onlyid, curcount 在table_video中查找即可
+
+*** 录像回放 写入
+    1. RoomServer frmae中处理, 子游戏不需要考虑
+    2. frame的SendTable()函数中, 调用录像类记录
+    3. 在小局结束的时候, 调用录像类获取数据
+       : 这里的数据是proto序列化为string后, 又转为了raw-string, 方便写入数据库
+    4. 数据库读取出raw-string, 转为string, 再转为录像数据table_video结构体
+    5. 子游戏只需要解析table_video即可
+
+** 小局结束 数据处理
+   1. [X] 玩家 门票
+   2. [X] 玩家 财富变更
+   3. [X] 玩家 具体输赢情况
+   4. [X] 玩家 任务系统
+   5. [X] 桌子 战绩
+   6. [X] 桌子 回放
+
+
+   财富变更表 -- 比较独立的表格 player_log_treasure
+   | 玩家id | 财富类型 | 财富数量 | 备注说明 | 插入时间 |
+   |--------+----------+----------+----------+----------|
+
+   玩家输赢情况表 player_score
+   | 玩家id | 当前桌子局数 | 椅子位置 | 分数 | 大赢家标志 | 唯一标志 | 插入时间 |
+   |--------+--------------+----------+------+------------+----------+----------|
+
+   战绩表 table_record
+   | 桌子ID | 桌子类型(房卡, 金币) | 总局数 | 桌子玩家数 | KindID | clubid | 子游戏信息 | 唯一标志 | 插入时间 |
+   |--------+----------------------+--------+------------+--------+--------+------------+----------+----------|
+
+   战绩回放表 table_video
+   | 当前桌子局数 | 回放数据 | 唯一标志 | 插入时间 |
+   |--------------+----------+----------+----------|
+
+   备注说明:
+   1. 玩家财富变更均通过 玩家财富变更记录表 -- 所有财富类型
+   2. 战绩表 只 记录桌子信息, 而不记录 玩家输赢信息
+
+** 玩家动作 坐下|起立|离开|解散|换桌(金币场)
+   玩家加入
+   玩家坐下
+   玩家起立
+   玩家离开
+   金币换桌
+*** 旁观的处理
+    : 是否旁观是由服务器根据桌子状态来判断的
+    玩家加入房间的时候
+    如果房间已经开始&&允许旁观, 则可以设置为旁观状态
+    如果房间没有开始, 则是坐下状态
+
+** 玩家状态
+   状态1 UserStatusL
+   状态2 UserStatusH
+   : 两者非互斥关系, UsetStatusL内部为互斥关系, UserStatusH内部为互斥关系
+   : 掉线之后未必为托管状态, 掉线8s之后, 将由掉线状态变为托管状态; 当掉线回来后, 托管状态自动取消
+
+   #+BEGIN_EXAMPLE c++
+//用户状态 low
+enum UserStatusL
+{
+   FREE_L=0;      //没有状态
+   SIT = 1;       //坐下
+   STANDUP =2;    //站立(旁观)
+   READY= 3;      //准备状态
+   PLAYING=4;     //游戏中
+};
+//用户状态 high 与low不互斥
+enum UserStatusH
+{
+   FREE_H =0;     //正常状态
+   TUOGUAN =1;    //托管
+   OFFLINE=2;     //掉线 -- 掉线8s之后设置为托管状态
+};
+   #+END_EXAMPLE
+
+** 椅子视图
+   唯一视图 真实的椅子位置
+   frame: m_player_list与真实椅子视图 是通过CPlayer来转换的
+   subgame: subgame实现了真实的椅子视图
+   client: client存在C视图 与 真实椅子视图(S视图)的转换
+
+** tableid生成方式
+   table 由redis启动的时候预先生成100000-999999
+   table_using使用zset记录tableid, 创建time. 后面删除的时候, 根据time来有选择的删除,
+   比如删除5分钟之前的桌子, 提高效率.
+
+** 房间配置加载
+   加载子游戏的fk, gold, match信息
+*** 配置文件
+    配置文件放在
+    kindid/cfg/kindid.fk
+    kindid/cfg/kindid.gold
+    kindid/cfg/kindid.match
+*** 房间规则配置
+**** 房间规则分析
+     *房间规则由来*
+     对于每一个具体的游戏来讲, 游戏本身是规则下的流程
+     这里的规则分为两大类
+     一类是游戏自身的规则, 比如斗地主需要一副牌, 有三带一等各种牌型.
+     这种规则本身变化不大, 影响的是游戏自身的流程.
+     还有一类规则是影响游戏逻辑之外的, 比如3小局, 4小局. 比如这是房卡场的, 金币场的等等
+
+     于是我们把所有游戏共用的规则(主要是第二类规则), 提取出来放到tagRoomRuleCom
+     而对于每个子游戏不同的游戏规则, 我们只需要提供map<key, choose_index>给子游戏即可
+
+     房间规则不区分游戏玩法.
+     房卡场, 金币场, 比赛场, 俱乐部玩法的房间规则使用同一个结构体tagRoomRule
+     通用房间规则 是指抽象出来供frame使用的, 使用统一结构体tagRoomRuleCom
+     子游戏规则   是每个子游戏自身的规则, 在frame层以map<key, choose_index>的形式传递给子游戏, 由子游戏自己解析
+
+
+     *房间规则继续分析*
+     无论对于tagRoomRuleCom 还是map<key, choose_index> 都可以认为是key, value的键值对
+     所以我们配置文件, 可以采取最基本的key, value形式.
+     但是考虑到房卡场, 金币场等具体玩法, 我们期待的金币场也可以配置自身的游戏规则.
+     比如初级场可以配置为3小局, 底分2; 中级场可以配置为2小局, 底分5;
+     因此可以再进一步抽象为
+     1. 先提供一个可供选择的规则配置
+     2. 需要什么样的规则, 只要提供对应的choose, 就可以生成具体的tagRoomRule
+
+**** 房间规则配置
+     *目标*
+     1. 金币场, 比赛场, 俱乐部模式 更好的配置游戏规则
+     2. 对于房卡场, 服务器控制client的房间规则显示
+        client开发的时候 不需要做任何处理
+
+
+     *client使用流程*
+     1. client申请创建房间
+     2. server判断是否符合创建条件,  发送房间规则配置 rule_arry(在STR_Game.proto中)
+        其中css控制client显示的样式
+        rule表示一条规则
+        #+BEGIN_EXAMPLE sh 配置举例
+        css
+        1
+        2
+        特殊规则 3, 4, 5
+
+        rule_1  人数
+        rule_2  局数
+        rule_3  炸弹
+        rule_4  鬼子
+        rule_5  天王九
+        #+END_EXAMPLE
+        #+BEGIN_EXAMPLE sh client显示的样式
+        人    数   "2" "3" "4"
+        局    数   "2" "3" "4"
+        特殊规则   炸弹o  鬼子o 天王九o
+        #+END_EXAMPLE
+     3. client返回 选择结果 repeated int32
+        比如: 上面选择了 2人 4局, 则返回
+        0
+        2
+        每个返回字段为byte, 返回的value index
+     4. server收到后, 构造房间规则tagRoomRule
+
+
+     *其他游戏模式使用流程*
+     对于金币场,比赛场等使用更加简单, 直接提供choose_values即可

@@ -1,9 +1,10 @@
 #+title: 简介
-#+date: 2024-08-01 17:06:45
+#+date: 2025-10-02 17:59:19
 #+hugo_section: .
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
+#+hugo_front_matter_format: yaml
 #+hugo_custom_front_matter: :bookCollapseSection true
 
-
-游戏呀呀呀
+* 简介
+  QYGame 项目文档

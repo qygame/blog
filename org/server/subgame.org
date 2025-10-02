@@ -1,0 +1,50 @@
+#+title: subgame
+#+date: 2025-10-02 18:07:24
+#+hugo_section: docs
+#+hugo_bundle: server/subgame
+#+export_file_name: index
+#+hugo_weight: 20
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+subgame
+
+#+hugo: more
+
+* server--子游戏
+  1. 子游戏处理范围
+     游戏开始 -- 大局结束
+  2. 子游戏不涉及到玩家的财富
+     只会通知frame增减财富
+     client子游戏玩家财富信息的显示, 实际由frame控制, 而非子游戏
+
+** 组织架构
+   FrameWork -->  TableFrameSink --> GameData
+
+   备注: 1. tableFrameSink只是处理流程, 所有的数据都在GameData中
+   2. CGameCardConfig 是GameData的辅助类.
+
+** 牌类数据描述
+   玩家 使用16位表示
+   高四位 表示 玩家类型的ID  -- 比如 地主, 农民
+   再四位 表示 玩家数量
+   低8位  表示 玩家手牌数量
+
+
+   牌使用16位表示
+   高四位  表示 卡牌点数
+   中四位  表示 卡牌颜色
+   低8位   表示 卡牌类型组 -- groupID, 配置文件挂钩
+
+   1方块; 2梅花; 3红桃; 4黑桃; 5表示特殊牌,  比如大王小王
+   大王小王 花色为5， 值分别为 15 14
+
+** protobuf结构
+   1. 消息号
+   2. 游戏状态 (抢庄, 下注, 发牌 ....) -- 断线重连相关
+   3. 自定义enum, 比如牌型, 定时器等
+   4. 消息号对应的结构体
+   5. 断线重连对应的结构体 -- 与游戏状态一一对应
+   6. 战绩中 显示的子游戏信息
