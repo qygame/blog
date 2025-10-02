@@ -51,13 +51,3 @@
   8. [X] 比赛场
   9. [ ] 活动模块
   10. [ ] 工会
-
-* 源码仓库
-  [[file:repository.org][详细介绍]]
-
-* 源码设计文档
-  [[file:server_view.org][服务器架构介绍]]
-
-  [[file:server.org][服务器源码介绍]]
-
-  [[file:client.org][客户端介绍]]
