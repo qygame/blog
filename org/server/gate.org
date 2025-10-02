@@ -1,5 +1,5 @@
 #+title: gate
-#+date: 2025-10-02 18:04:59
+#+date: 2025-10-01 18:04:59
 #+hugo_section: docs
 #+hugo_bundle: server/gate
 #+export_file_name: index
