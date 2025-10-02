@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>client on QYGame</title><link>https://qygame.github.io/blog/docs/client/</link><description>Recent content in client on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 02 Oct 2025 11:16:13 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/client/index.xml" rel="self" type="application/rss+xml"/><item><title>环境搭建</title><link>https://qygame.github.io/blog/docs/client/env_init/</link><pubDate>Thu, 01 Aug 2024 17:15:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/env_init/</guid><description>&lt;h2 id="环境搭建"&gt;环境搭建&lt;a class="anchor" href="#%e7%8e%af%e5%a2%83%e6%90%ad%e5%bb%ba"&gt;#&lt;/a&gt;&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>client on QYGame</title><link>https://qygame.github.io/blog/docs/client/</link><description>Recent content in client on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 02 Oct 2025 11:17:28 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/client/index.xml" rel="self" type="application/rss+xml"/><item><title>环境搭建</title><link>https://qygame.github.io/blog/docs/client/env_init/</link><pubDate>Thu, 01 Aug 2024 17:15:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/env_init/</guid><description>&lt;h2 id="环境搭建"&gt;环境搭建&lt;a class="anchor" href="#%e7%8e%af%e5%a2%83%e6%90%ad%e5%bb%ba"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;ol&gt;
 &lt;li&gt;unity 2019.4.40f1 &lt;br/&gt;
 &lt;ul&gt;
@@ -37,4 +37,20 @@
 &lt;div class="highlight"&gt;&lt;pre tabindex="0" style="background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"&gt;&lt;code class="language-text" data-lang="text"&gt;&lt;span style="display:flex;"&gt;&lt;span&gt;BDFramework build hotfix.dll需要&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Preferences/External Tools/Regenerate project files &lt;br/&gt;
 需要勾选Embedded packages, Local packages, Registry packages &lt;br/&gt;&lt;/p&gt;</description></item><item><title>子游戏</title><link>https://qygame.github.io/blog/docs/client/subgame/</link><pubDate>Thu, 01 Aug 2024 17:23:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/subgame/</guid><description>&lt;h2 id="client子游戏"&gt;client子游戏&lt;a class="anchor" href="#client%e5%ad%90%e6%b8%b8%e6%88%8f"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;p&gt;子游戏需要继承 Iwindow_sub_player 玩家管理类, 并注册UI GWin_Sub_Player &lt;br/&gt;
-子游戏需要继承 Isub_player 玩家信息类 &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
+子游戏需要继承 Isub_player 玩家信息类 &lt;br/&gt;&lt;/p&gt;</description></item><item><title>client</title><link>https://qygame.github.io/blog/docs/client/client/</link><pubDate>Thu, 02 Oct 2025 19:16:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/client/client/</guid><description>&lt;h2 id="client"&gt;client&lt;a class="anchor" href="#client"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id="脚本目录架构"&gt;脚本目录架构&lt;a class="anchor" href="#%e8%84%9a%e6%9c%ac%e7%9b%ae%e5%bd%95%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Scripts &lt;br/&gt;
+&amp;ndash; /Define 公共定义 &lt;br/&gt;
+&amp;ndash; &amp;ndash; GameRunTimeData.cs 保存了运行时候需要的数据, 比如UserInfo就是其的成员变量 &lt;br/&gt;
+&amp;ndash; &amp;ndash; GlobalConst.cs 保存了游戏中的常量 &lt;br/&gt;
+&amp;ndash; /Model 模块 &lt;br/&gt;
+&amp;ndash; /Net 网络 &lt;br/&gt;
+&amp;ndash; &amp;ndash; /NetLogic 网络具体事务处理 &lt;br/&gt;
+&amp;ndash; &amp;ndash; /NetSocket 网络底层服务 &lt;br/&gt;
+&amp;ndash; /UI &lt;br/&gt;
+&amp;ndash; &amp;ndash; /Surfaces &lt;br/&gt;
+&amp;ndash; &amp;ndash; /Login &lt;br/&gt;
+&amp;ndash; &amp;ndash; &amp;ndash; LoginTransfer.cs ui界面的总控制类， 其底下一般是各种btn的点击函数 &lt;br/&gt;
+&amp;ndash; &amp;ndash; &amp;ndash; BtnClick_Logon_Account.cs 账号登录按钮的 响应函数 &lt;br/&gt;
+&amp;ndash; /Utility 实用脚本， 可以理解为与系统相关的脚本 &lt;br/&gt;
+&amp;ndash; GameApp.cs Compontes目录下所有类的 管理类 &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
