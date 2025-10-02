@@ -47,6 +47,7 @@
   4. matchSvr 取消报名,       设置为INVALID_TABLE
 
 
+
 * 房间流程
   1. [X] 创建房间 -- 门票检测, 房间规则显示
      : RoomServer处理
