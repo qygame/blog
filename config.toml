@@ -5,7 +5,7 @@ title = "QYGame"
 unsafe = true
 
 [markup.highlight]
-codeFences = false
+codeFences = true
 style = 'manni'
 
 [module]
