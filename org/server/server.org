@@ -15,23 +15,30 @@
 
 
 * 消息号命名规范
-  为了client与server的统一, 消息号统一使用驼峰式命名, exp: SubQueryGoldRooms
-  - 第一个字段 归属标志
-    可能的赋值
-    1) Sub  C端向S端查询
-    2) Cmd  S端返回给C端
-    3) L2G  logon->Game
-    4) G2L  game->logon
-   : 只有Lgon, game间的消息号使用 LG字样, 其他全部是Sub, Cmd
-  - 第二个字段 意图  增删改查
-  - 第三个字段 对象  被op对象 -- 可以没有
-  - 第四个字段 消息号含义
+  #+begin_columns
+  - *消息号*
+     ~驼峰式命名~ -> kSubQueryGoldRooms
+  - *结构体*
+    消息号去掉k -> SubQueryGoldRooms
+  - *函数*
+    结构体加On  -> OnSubQueryGoldRooms
+  #+end_columns
 
-  结构体的命名为 消息号前面增加Str
-  函数的命名为 消息号前面增加On
+  #+attr_shortcode: info
+  #+begin_hint
+  消息号 含义
+  1. 第一个字段 k.  表示常量
+  2. 第二个字段 归属标志. 可能的赋值:
+     - Sub  C端向S端查询
+     - Cmd  S端返回给C端
+  3. 第三个字段 意图  增删改查
+  4. 第四个字段 对象  被op对象 -- 可以没有
+  5. 第无个字段 消息号含义
+  #+end_hint
 
+  -----
 
-* 玩家的桌子号
+* TODO 玩家的桌子号 (待删除)
   player.tableid
   含义:
   玩家在哪个桌子上
@@ -45,8 +52,6 @@
   2. roomSvr  table离开,      如果是比赛场,设置为MATCH_TABLE, 否则INVALID_TABLE
   3. matchSvr 报名成功,       设置为MATCH_TABLE
   4. matchSvr 取消报名,       设置为INVALID_TABLE
-
-
 
 * 房间流程
   1. [X] 创建房间 -- 门票检测, 房间规则显示
