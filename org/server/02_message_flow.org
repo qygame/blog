@@ -1,0 +1,59 @@
+#+title: 消息号流向
+#+date: 2025-10-11 01:38:33
+#+hugo_section: docs
+#+hugo_bundle: server/02_message_flow
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* Message Flow
+  #+begin_src mermaid :file result.png
+       flowchart TD
+       Start@{ shape: sm-circ, label: "Small start" }
+       %%  RPC?
+       Start --> |read message| A{RPC Message}
+       A --> |yes| 1[RPC Handler]
+       A --> |no | B["Event OnRead()"]
+
+       %% Internal Message
+       B --> C{Internal Messsage}
+       C --> |yes| 2[Route Message]
+       C --> |no | D[Client Message Handler]
+
+       %% 模块分组
+       subgraph Modules["Modules"]
+           Module_Login[Login Module]
+           Module_Game[Game Module]
+           Module_Other[Other Module]
+       end
+
+       %% 根据 Message Main 分发到不同模块
+       D --> |Main = Login| Module_Login
+       D --> |Main = Game| Module_Game
+       D --> |other| Module_Other
+  #+end_src
+
+  #+RESULTS:
+  [[file:result.png]]
+
+  1. qykernel read Message时, 判断是否RPC Message
+     : 根据message (main, sub)判断的. 在qykernel中定义
+     - 如果是RPC Message, 则在qykernel内部处理
+     - 如果非RPC Message, 则交给Event(传递到上层)处理
+  2. Event::OnRead() 判断是否为 Internal Message
+     : 根据Session中的server_name判断. 内部的server都有对应的name
+     - 如果是Internal Message, 则表明是route给client的
+       因为Server之间都是通过service(RPC Message)沟通,
+       所以internal message只能是route message
+     - 如果是Client Message, 则根据message(main, sub)分给不同的module处理
+  3. Client Message <-> RoomServer
+     RoomServer本质也是module. 只是没有集成在GateServer中.
+     1) 当client message -> GateServer(route) -> RoomServer时候
+        如果是Client刚要进入RoomServer, GateServer根据map<session, ServerType>找到RoomServer, 并route;
+        如果是已经在RoomServer了, GateServer根据map<session, uid>找到Client对应的uid, 再根据
+        map<uid, room_session>找到对应的RoomServer, 并route
+     2) 如果是RoomServer message -> GateServer(route) -> client.
+        这时候的messge中会包含uid信息, GateServer根据UserManager找到UserInfo, 再找到对应的gate_session并转发
