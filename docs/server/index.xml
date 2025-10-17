@@ -1,1 +1,129 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>server on QYGame</title><link>https://qygame.github.io/blog/docs/server/</link><description>Recent content in server on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Thu, 02 Oct 2025 11:40:21 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/server/index.xml" rel="self" type="application/rss+xml"/><item><title>约定俗称</title><link>https://qygame.github.io/blog/docs/server/server/</link><pubDate>Thu, 02 Oct 2025 18:03:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/server/</guid><description>&lt;p&gt;一些约定俗称的 规范 &lt;br/&gt;&lt;/p&gt;</description></item><item><title>redis</title><link>https://qygame.github.io/blog/docs/server/redis/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/redis/</guid><description>&lt;p&gt;redis &lt;br/&gt;&lt;/p&gt;</description></item><item><title>gate</title><link>https://qygame.github.io/blog/docs/server/gate/</link><pubDate>Wed, 01 Oct 2025 18:04:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/gate/</guid><description>&lt;p&gt;gate server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>db</title><link>https://qygame.github.io/blog/docs/server/db/</link><pubDate>Thu, 02 Oct 2025 18:05:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/db/</guid><description>&lt;p&gt;db server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>room</title><link>https://qygame.github.io/blog/docs/server/room/</link><pubDate>Thu, 02 Oct 2025 18:06:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/room/</guid><description>&lt;p&gt;room server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>subgame</title><link>https://qygame.github.io/blog/docs/server/subgame/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/subgame/</guid><description>&lt;p&gt;subgame &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>server on QYGame</title><link>https://qygame.github.io/blog/docs/server/</link><description>Recent content in server on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 17 Oct 2025 22:53:36 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/server/index.xml" rel="self" type="application/rss+xml"/><item><title>服务器架构</title><link>https://qygame.github.io/blog/docs/server/architecture/</link><pubDate>Fri, 10 Oct 2025 15:22:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/architecture/</guid><description>&lt;h2 id="服务器架构"&gt;服务器架构&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class="mermaid"&gt;architecture-beta
+%% client
+service client(internet)[Client]
+
+%% Server
+group servers(server)[Servers]
+service gate(server)[Gate] in servers
+service room(server)[Room] in servers
+gate:R &amp;lt;-- L:room
+
+%% 数据层
+group dbs(database)[Databses]
+service redis(database)[Redis] in dbs
+service postgres(database)[Postgres] in dbs
+redis:R -- L:postgres
+
+%% 指向
+client:R --&amp;gt; L:gate
+
+gate:B --&amp;gt; T:redis{group}&lt;/pre&gt;&lt;h2 id="服务器说明"&gt;服务器说明&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e8%af%b4%e6%98%8e"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;服务器&lt;/th&gt;
+ &lt;th&gt;模块&lt;/th&gt;
+ &lt;th&gt;说明&lt;/th&gt;
+ &lt;th&gt;有状态&lt;/th&gt;
+ &lt;th&gt;备注&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;gate&lt;/td&gt;
+ &lt;td&gt;login&lt;/td&gt;
+ &lt;td&gt;登陆&lt;/td&gt;
+ &lt;td&gt;n&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;lobby&lt;/td&gt;
+ &lt;td&gt;大厅&lt;/td&gt;
+ &lt;td&gt;n&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;game&lt;/td&gt;
+ &lt;td&gt;查询/创建/加入 房间&lt;/td&gt;
+ &lt;td&gt;n&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;match&lt;/td&gt;
+ &lt;td&gt;比赛场&lt;/td&gt;
+ &lt;td&gt;y&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;rank&lt;/td&gt;
+ &lt;td&gt;排行榜&lt;/td&gt;
+ &lt;td&gt;y&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;task&lt;/td&gt;
+ &lt;td&gt;任务&lt;/td&gt;
+ &lt;td&gt;y&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;center&lt;/td&gt;
+ &lt;td&gt;数据转发&lt;/td&gt;
+ &lt;td&gt;n&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;room&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;游戏房间&lt;/td&gt;
+ &lt;td&gt;y&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;redis&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;postgresSQL&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;</description></item><item><title>消息号流向</title><link>https://qygame.github.io/blog/docs/server/02_message_flow/</link><pubDate>Sat, 11 Oct 2025 01:38:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/02_message_flow/</guid><description>&lt;h2 id="message-flow"&gt;Message Flow&lt;a class="anchor" href="#message-flow"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;pre class="mermaid"&gt;flowchart TD
+Start@{ shape: sm-circ, label: &amp;#34;Small start&amp;#34; }
+%% RPC?
+Start --&amp;gt; |read message| A{RPC Message}
+A --&amp;gt; |yes| 1[RPC Handler]
+A --&amp;gt; |no | B[&amp;#34;Event OnRead()&amp;#34;]
+
+%% Internal Message
+B --&amp;gt; C{Internal Messsage}
+C --&amp;gt; |yes| 2[Route Message]
+C --&amp;gt; |no | D[Client Message Handler]
+
+%% 模块分组
+subgraph Modules[&amp;#34;Modules&amp;#34;]
+ Module_Login[Login Module]
+ Module_Game[Game Module]
+ Module_Other[Other Module]
+end
+
+%% 根据 Message Main 分发到不同模块
+D --&amp;gt; |Main = Login| Module_Login
+D --&amp;gt; |Main = Game| Module_Game
+D --&amp;gt; |other| Module_Other&lt;/pre&gt;&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;qykernel read Message时, 判断是否RPC Message &lt;br/&gt;&lt;/p&gt;</description></item><item><title>redis</title><link>https://qygame.github.io/blog/docs/server/redis/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/redis/</guid><description>&lt;p&gt;redis &lt;br/&gt;&lt;/p&gt;</description></item><item><title>gate</title><link>https://qygame.github.io/blog/docs/server/gate/</link><pubDate>Wed, 01 Oct 2025 18:04:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/gate/</guid><description>&lt;p&gt;gate server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>db</title><link>https://qygame.github.io/blog/docs/server/db/</link><pubDate>Thu, 02 Oct 2025 18:05:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/db/</guid><description>&lt;p&gt;db server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>room</title><link>https://qygame.github.io/blog/docs/server/room/</link><pubDate>Thu, 02 Oct 2025 18:06:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/room/</guid><description>&lt;p&gt;room server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>subgame</title><link>https://qygame.github.io/blog/docs/server/subgame/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/subgame/</guid><description>&lt;p&gt;subgame &lt;br/&gt;&lt;/p&gt;</description></item><item><title>约定俗称</title><link>https://qygame.github.io/blog/docs/server/server/</link><pubDate>Thu, 02 Oct 2025 18:03:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/server/</guid><description>&lt;p&gt;一些约定俗称的 规范 &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
