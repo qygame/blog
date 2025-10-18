@@ -1,0 +1,33 @@
+#+title: 房间配置
+#+date: 2025-10-18 06:58:56
+#+hugo_section: docs
+#+hugo_bundle: server/03_game
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 房间规则
+  房间规则在proto::RoomRule. 其中RoomRuleCommon 为room通用规则, subrules则是子游戏特有
+
+  游戏规则(包含RoomServer与子游戏)主要分为两部分:
+  一部分是静态规则, 游戏本身默认俗称的 或者 是我们默认俗称的. 这部分规则一般在代码中写死的, 比如斗地主本身的规则;
+  另一部分则是可变化的规则, 比如两人斗地主, 三人斗地主; 这部分可暴露的规则, 被提取为房间规则
+  根据是否通用(比如几人玩, 玩几局等)又细分为通用规则和子游戏特有规则
+
+* 房间配置
+** 目的
+   房间配置就是为了获取房间规则.
+   房卡场 proto::FkRuleConfig
+   金币场 proto::GoldRuleConfig
+** 重点
+   Server一定要检验Client传递的数据
+** 流程
+   1. RoomServer 启动的时候, 加载{kindid}.fk.toml, {kindid}.gold.toml
+   2. RoomServer 连接GateServer之后, 根据room.toml中的[room] type来发送相应数据给GateServer
+   3. GateServer 保存 RoomServer session 和 kindid << 16 + goldlevel的映射
+      map <session, vecotr<kg>>,  map<kg, vector<session>>
+      同时GateServer 也保存FkRuleConfig, GoldRuleConfig
+   4. 玩家登陆成功的时候, 下发FkRuleConfig

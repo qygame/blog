@@ -1,4 +1,4 @@
-#+title: 消息号流向
+#+title: 消息流向
 #+date: 2025-10-11 01:38:33
 #+hugo_section: docs
 #+hugo_bundle: server/02_message_flow

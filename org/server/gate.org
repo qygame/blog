@@ -3,7 +3,7 @@
 #+hugo_section: docs
 #+hugo_bundle: server/gate
 #+export_file_name: index
-#+hugo_weight: 12
+#+hugo_weight: 100
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
@@ -131,44 +131,44 @@ gate server
 *** 对外接口
     - PushTask(task_type, uid, score)
 *** 流程图
-     #+BEGIN_EXAMPLE
-      +--------+
-      | start  |
-      +--------+
-          |
-          |
-          v
-      +--------+  否
-      | 触发   |------------+
-      +--------+            |
-        是|                 |
-          |                 |
-          v                 |
-      +--------+  否        |
-      |  完成  | -----+     |
-      +--------+      |     |
-          |           |     |
-       是 |           |     |
-          v           |     |
-      +--------+      |     |
-      | updata | <----+     |
-      +--------+            |
-          |                 |
-      +---v----+            |
-      | end    | <----------+
-      +--------+
-     #+END_EXAMPLE
-     1. 触发条件判断
-        - 时间start - end范围
-        - 特定kind, 特定room_level下的任务.
-          比如完成斗地主高级场一次
-        - 用户身份的限定
-          比如vip才可完成的任务
-     2. 完成条件的判断
-        1) 需要先根据周期重置来重置任务完成状况
-        2) 任务完成状况与task配置中的任务step_all比较, 判断是否完成
-     3. update
-        更新任务完成状况
+    #+BEGIN_EXAMPLE
+     +--------+
+     | start  |
+     +--------+
+         |
+         |
+         v
+     +--------+  否
+     | 触发   |------------+
+     +--------+            |
+       是|                 |
+         |                 |
+         v                 |
+     +--------+  否        |
+     |  完成  | -----+     |
+     +--------+      |     |
+         |           |     |
+      是 |           |     |
+         v           |     |
+     +--------+      |     |
+     | updata | <----+     |
+     +--------+            |
+         |                 |
+     +---v----+            |
+     | end    | <----------+
+     +--------+
+    #+END_EXAMPLE
+    1. 触发条件判断
+       - 时间start - end范围
+       - 特定kind, 特定room_level下的任务.
+         比如完成斗地主高级场一次
+       - 用户身份的限定
+         比如vip才可完成的任务
+    2. 完成条件的判断
+       1) 需要先根据周期重置来重置任务完成状况
+       2) 任务完成状况与task配置中的任务step_all比较, 判断是否完成
+    3. update
+       更新任务完成状况
 *** 配置文件 && 中间状态
     *配置文件放到database task表*
     | 名称 | 描述 | 类型 | 优先级   | 开始时间   | 结束时间 | 重置周期     | 其他触发限制 | 总步数   | 奖励配置 |
@@ -190,12 +190,12 @@ gate server
     time应该是任务完成的时间. 昨天完成的时间, 到了今天也会重置
     status 0 未完成, 1完成未领奖, 2完成已领奖
 *** 任务类的设计
-     1. Task
-        - tagTask 任务配置的数据结构
-        - 触发逻辑判断 task::bOn(...) 入参可能较多
-        - 完成逻辑判断 task::bComplete(tagTaskStatus)
-     2. TaskManager
-        - map<taskid, Task>
-        - 更新逻辑 TaskManager::updata()
-        - 获取不同mtype(或sub_type)的任务
-        - 增加, 删除任务
+    1. Task
+       - tagTask 任务配置的数据结构
+       - 触发逻辑判断 task::bOn(...) 入参可能较多
+       - 完成逻辑判断 task::bComplete(tagTaskStatus)
+    2. TaskManager
+       - map<taskid, Task>
+       - 更新逻辑 TaskManager::updata()
+       - 获取不同mtype(或sub_type)的任务
+       - 增加, 删除任务

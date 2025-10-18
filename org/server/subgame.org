@@ -3,7 +3,7 @@
 #+hugo_section: docs
 #+hugo_bundle: server/subgame
 #+export_file_name: index
-#+hugo_weight: 20
+#+hugo_weight: 200
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false

@@ -1,0 +1,73 @@
+#+title: 门票 Ticket
+#+date: 2025-10-18 07:18:55
+#+hugo_section: docs
+#+hugo_bundle: server/04_ticket
+#+export_file_name: index
+#+hugo_weight: 04
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 门票
+** 背景
+   | 房间类型 | 相关设置                         | 备注 |
+   |----------+----------------------------------+------|
+   | 房卡场   | 支付类型, 局数, 人数(房主支付时) |      |
+   | 金币场   | 正常不需要                       |      |
+   | 比赛场   |                                  |      |
+   | 俱乐部   |                                  |      |
+
+** 详细说明
+   房卡场 门票:
+   1. 房卡场门票 与 局数有对应关系, 而每个游戏门票又都不同.
+      因此可以把 门票与局数 应该有对应关系, 而且每个子游戏可以单独配置
+   2. 房卡场门票 支付类型为房主的时候, 门票与人数就有关系了.
+      当AA时候每人需要支付1 fk, 则变为房主支付的时候, 就变为了1 * player_count fk
+
+
+   金币场 门票:
+   金币场不需要门票. 当门票检测和扣除是通用的, 因此如果要配置也可以.
+
+
+   比赛场 门票:
+   一般都是可配置的
+** 扣除流程
+   房卡场 可能在创建房间 或者 一局结束之后 才进行扣除
+   金币场
+   比赛场 在报名的时候扣除
+
+* TODO 门票 与 房间规则
+  因为每个房间中的门票可以不同, 因此放在了房间规则中.
+
+  但房间规则应该 与 房间类型无关. (房卡场, 金币场, 比赛场等)
+
+  所以应该由房间类型 相关的结构体 包含门票信息, 而非房间规则.
+
+
+** 假设独立出来, 不放在RoomRule
+   房间规则: 不负责门票的处理
+   RoomRule
+   - CommonRule
+   - SubRule
+
+
+   FkTicket
+   - payment :: player_count
+   - pay_type
+   - pay_count :: game_count
+
+
+   GoldTicket
+   - fee
+
+
+   MatchTicket
+   - pay_type
+   - pay_count
+
+
+   那么配置文件要如何改动?
+   现在配置文件有个问题就是 校验规则 其实放在了fk.toml中
+   比如gold.toml中其实只是类比client配置了rule value, 还是要去fk.toml中进行校验 获取RoomRule
