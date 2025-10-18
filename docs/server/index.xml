@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>server on QYGame</title><link>https://qygame.github.io/blog/docs/server/</link><description>Recent content in server on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Fri, 17 Oct 2025 22:53:36 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/server/index.xml" rel="self" type="application/rss+xml"/><item><title>服务器架构</title><link>https://qygame.github.io/blog/docs/server/architecture/</link><pubDate>Fri, 10 Oct 2025 15:22:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/architecture/</guid><description>&lt;h2 id="服务器架构"&gt;服务器架构&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>server on QYGame</title><link>https://qygame.github.io/blog/docs/server/</link><description>Recent content in server on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sat, 18 Oct 2025 03:13:03 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/docs/server/index.xml" rel="self" type="application/rss+xml"/><item><title>服务器架构</title><link>https://qygame.github.io/blog/docs/server/architecture/</link><pubDate>Fri, 10 Oct 2025 15:22:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/architecture/</guid><description>&lt;h2 id="服务器架构"&gt;服务器架构&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;pre class="mermaid"&gt;architecture-beta
 %% client
 service client(internet)[Client]
@@ -101,7 +101,7 @@ gate:B --&amp;gt; T:redis{group}&lt;/pre&gt;&lt;h2 id="服务器说明"&gt;服�
  &lt;td&gt;&lt;/td&gt;
  &lt;/tr&gt;
  &lt;/tbody&gt;
-&lt;/table&gt;</description></item><item><title>消息号流向</title><link>https://qygame.github.io/blog/docs/server/02_message_flow/</link><pubDate>Sat, 11 Oct 2025 01:38:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/02_message_flow/</guid><description>&lt;h2 id="message-flow"&gt;Message Flow&lt;a class="anchor" href="#message-flow"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;/table&gt;</description></item><item><title>消息流向</title><link>https://qygame.github.io/blog/docs/server/02_message_flow/</link><pubDate>Sat, 11 Oct 2025 01:38:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/02_message_flow/</guid><description>&lt;h2 id="message-flow"&gt;Message Flow&lt;a class="anchor" href="#message-flow"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;pre class="mermaid"&gt;flowchart TD
 Start@{ shape: sm-circ, label: &amp;#34;Small start&amp;#34; }
 %% RPC?
@@ -126,4 +126,75 @@ D --&amp;gt; |Main = Login| Module_Login
 D --&amp;gt; |Main = Game| Module_Game
 D --&amp;gt; |other| Module_Other&lt;/pre&gt;&lt;ol&gt;
 &lt;li&gt;
-&lt;p&gt;qykernel read Message时, 判断是否RPC Message &lt;br/&gt;&lt;/p&gt;</description></item><item><title>redis</title><link>https://qygame.github.io/blog/docs/server/redis/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/redis/</guid><description>&lt;p&gt;redis &lt;br/&gt;&lt;/p&gt;</description></item><item><title>gate</title><link>https://qygame.github.io/blog/docs/server/gate/</link><pubDate>Wed, 01 Oct 2025 18:04:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/gate/</guid><description>&lt;p&gt;gate server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>db</title><link>https://qygame.github.io/blog/docs/server/db/</link><pubDate>Thu, 02 Oct 2025 18:05:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/db/</guid><description>&lt;p&gt;db server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>room</title><link>https://qygame.github.io/blog/docs/server/room/</link><pubDate>Thu, 02 Oct 2025 18:06:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/room/</guid><description>&lt;p&gt;room server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>subgame</title><link>https://qygame.github.io/blog/docs/server/subgame/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/subgame/</guid><description>&lt;p&gt;subgame &lt;br/&gt;&lt;/p&gt;</description></item><item><title>约定俗称</title><link>https://qygame.github.io/blog/docs/server/server/</link><pubDate>Thu, 02 Oct 2025 18:03:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/server/</guid><description>&lt;p&gt;一些约定俗称的 规范 &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
+&lt;p&gt;qykernel read Message时, 判断是否RPC Message &lt;br/&gt;&lt;/p&gt;</description></item><item><title>门票 Ticket</title><link>https://qygame.github.io/blog/docs/server/04_ticket/</link><pubDate>Sat, 18 Oct 2025 07:18:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/04_ticket/</guid><description>&lt;h2 id="门票"&gt;门票&lt;a class="anchor" href="#%e9%97%a8%e7%a5%a8"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id="背景"&gt;背景&lt;a class="anchor" href="#%e8%83%8c%e6%99%af"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;table&gt;
+ &lt;thead&gt;
+ &lt;tr&gt;
+ &lt;th&gt;房间类型&lt;/th&gt;
+ &lt;th&gt;相关设置&lt;/th&gt;
+ &lt;th&gt;备注&lt;/th&gt;
+ &lt;/tr&gt;
+ &lt;/thead&gt;
+ &lt;tbody&gt;
+ &lt;tr&gt;
+ &lt;td&gt;房卡场&lt;/td&gt;
+ &lt;td&gt;支付类型, 局数, 人数(房主支付时)&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;金币场&lt;/td&gt;
+ &lt;td&gt;正常不需要&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;比赛场&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;tr&gt;
+ &lt;td&gt;俱乐部&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;td&gt;&lt;/td&gt;
+ &lt;/tr&gt;
+ &lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h3 id="详细说明"&gt;详细说明&lt;a class="anchor" href="#%e8%af%a6%e7%bb%86%e8%af%b4%e6%98%8e"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;房卡场 门票: &lt;br/&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;房卡场门票 与 局数有对应关系, 而每个游戏门票又都不同. &lt;br/&gt;
+因此可以把 门票与局数 应该有对应关系, 而且每个子游戏可以单独配置 &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;房卡场门票 支付类型为房主的时候, 门票与人数就有关系了. &lt;br/&gt;
+当AA时候每人需要支付1 fk, 则变为房主支付的时候, 就变为了1 * player_count fk &lt;br/&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;金币场 门票: &lt;br/&gt;
+金币场不需要门票. 当门票检测和扣除是通用的, 因此如果要配置也可以. &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;比赛场 门票: &lt;br/&gt;
+一般都是可配置的 &lt;br/&gt;&lt;/p&gt;
+&lt;h3 id="扣除流程"&gt;扣除流程&lt;a class="anchor" href="#%e6%89%a3%e9%99%a4%e6%b5%81%e7%a8%8b"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;房卡场 可能在创建房间 或者 一局结束之后 才进行扣除 &lt;br/&gt;
+金币场 &lt;br/&gt;
+比赛场 在报名的时候扣除 &lt;br/&gt;&lt;/p&gt;
+&lt;h2 id="门票-与-房间规则"&gt;&lt;span class="org-todo todo TODO"&gt;TODO&lt;/span&gt; 门票 与 房间规则&lt;a class="anchor" href="#%e9%97%a8%e7%a5%a8-%e4%b8%8e-%e6%88%bf%e9%97%b4%e8%a7%84%e5%88%99"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;因为每个房间中的门票可以不同, 因此放在了房间规则中. &lt;br/&gt;&lt;/p&gt;</description></item><item><title>房间配置</title><link>https://qygame.github.io/blog/docs/server/03_game/</link><pubDate>Sat, 18 Oct 2025 06:58:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/03_game/</guid><description>&lt;h2 id="房间规则"&gt;房间规则&lt;a class="anchor" href="#%e6%88%bf%e9%97%b4%e8%a7%84%e5%88%99"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;房间规则在proto::RoomRule. 其中RoomRuleCommon 为room通用规则, subrules则是子游戏特有 &lt;br/&gt;&lt;/p&gt;
+&lt;p&gt;游戏规则(包含RoomServer与子游戏)主要分为两部分: &lt;br/&gt;
+一部分是静态规则, 游戏本身默认俗称的 或者 是我们默认俗称的. 这部分规则一般在代码中写死的, 比如斗地主本身的规则; &lt;br/&gt;
+另一部分则是可变化的规则, 比如两人斗地主, 三人斗地主; 这部分可暴露的规则, 被提取为房间规则 &lt;br/&gt;
+根据是否通用(比如几人玩, 玩几局等)又细分为通用规则和子游戏特有规则 &lt;br/&gt;&lt;/p&gt;
+&lt;h2 id="房间配置"&gt;房间配置&lt;a class="anchor" href="#%e6%88%bf%e9%97%b4%e9%85%8d%e7%bd%ae"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;h3 id="目的"&gt;目的&lt;a class="anchor" href="#%e7%9b%ae%e7%9a%84"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;房间配置就是为了获取房间规则. &lt;br/&gt;
+房卡场 proto::FkRuleConfig &lt;br/&gt;
+金币场 proto::GoldRuleConfig &lt;br/&gt;&lt;/p&gt;
+&lt;h3 id="重点"&gt;重点&lt;a class="anchor" href="#%e9%87%8d%e7%82%b9"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;p&gt;Server一定要检验Client传递的数据 &lt;br/&gt;&lt;/p&gt;
+&lt;h3 id="流程"&gt;流程&lt;a class="anchor" href="#%e6%b5%81%e7%a8%8b"&gt;#&lt;/a&gt;&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;RoomServer 启动的时候, 加载{kindid}.fk.toml, {kindid}.gold.toml &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;RoomServer 连接GateServer之后, 根据room.toml中的[room] type来发送相应数据给GateServer &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;GateServer 保存 RoomServer session 和 kindid &amp;lt;&amp;lt; 16 + goldlevel的映射 &lt;br/&gt;
+map &amp;lt;session, vecotr&amp;lt;kg&amp;gt;&amp;gt;, map&amp;lt;kg, vector&amp;lt;session&amp;gt;&amp;gt; &lt;br/&gt;
+同时GateServer 也保存FkRuleConfig, GoldRuleConfig &lt;br/&gt;&lt;/li&gt;
+&lt;li&gt;玩家登陆成功的时候, 下发FkRuleConfig &lt;br/&gt;&lt;/li&gt;
+&lt;/ol&gt;</description></item><item><title>约定俗称</title><link>https://qygame.github.io/blog/docs/server/server/</link><pubDate>Thu, 02 Oct 2025 18:03:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/server/</guid><description>&lt;p&gt;一些约定俗称的 规范 &lt;br/&gt;&lt;/p&gt;</description></item><item><title>gate</title><link>https://qygame.github.io/blog/docs/server/gate/</link><pubDate>Wed, 01 Oct 2025 18:04:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/gate/</guid><description>&lt;p&gt;gate server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>room</title><link>https://qygame.github.io/blog/docs/server/room/</link><pubDate>Thu, 02 Oct 2025 18:06:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/room/</guid><description>&lt;p&gt;room server &lt;br/&gt;&lt;/p&gt;</description></item><item><title>redis</title><link>https://qygame.github.io/blog/docs/server/redis/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/redis/</guid><description>&lt;p&gt;redis &lt;br/&gt;&lt;/p&gt;</description></item><item><title>subgame</title><link>https://qygame.github.io/blog/docs/server/subgame/</link><pubDate>Thu, 02 Oct 2025 18:07:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/subgame/</guid><description>&lt;p&gt;subgame &lt;br/&gt;&lt;/p&gt;</description></item></channel></rss>
