@@ -13,7 +13,7 @@ room server
 
 #+hugo: more
 
-* server--room
+* room old
 ** 对外接口
    - GetTable       获取table状态信息
    - GetTableUser   获取玩家是否在桌子上
@@ -208,3 +208,48 @@ enum UserStatusH
 
      *其他游戏模式使用流程*
      对于金币场,比赛场等使用更加简单, 直接提供choose_values即可
+* room new
+  其中room模块是最容易出错的，继续细分
+  1. EnterTable 校验和处理
+  2. 在table中的处理
+  3. LevealTable
+  上面的有点糙，先不管，继续整理出来思路
+
+  table的概念设计 类比真实的 桌子
+  玩家找到一个空闲的桌子，
+  在桌子上找一个空闲椅子
+  在椅子上坐下
+  表示准备好了
+  等所有人准备好了，开始游戏
+
+
+  玩家和椅子：
+  sit，up，ready
+
+  玩家和table
+  enter，leave
+
+  enter table，但没有sit on chair就表示旁观
+
+
+
+  table自身拆分为一系列小的组合. 比如游戏结束的处理就专门给sub_gameend.
+  table 只负责流程， 具体处理扔给后面的handler
+
+
+  ready 要不要是与椅子的交互呢？
+  table肯定是enter和leave 两种动作
+  chair肯定也有sit和up
+  如果ready不是与椅子的交互，又是什么呢？
+
+  玩家状态in table
+  free - 刚刚Enter table
+  sit  — sit on chair
+  ready —  ready action
+  playing  — 游戏开始了
+
+  table状态：
+  free - 游戏未开始
+  playing - 游戏开始了
+  xj end 小局结束了
+  dj end 大局结束了
