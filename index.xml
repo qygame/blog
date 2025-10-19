@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>简介 on QYGame</title><link>https://qygame.github.io/blog/</link><description>Recent content in 简介 on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sat, 18 Oct 2025 03:13:03 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/index.xml" rel="self" type="application/rss+xml"/><item><title>服务器架构</title><link>https://qygame.github.io/blog/docs/server/architecture/</link><pubDate>Fri, 10 Oct 2025 15:22:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/architecture/</guid><description>&lt;h2 id="服务器架构"&gt;服务器架构&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h2&gt;
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>简介 on QYGame</title><link>https://qygame.github.io/blog/</link><description>Recent content in 简介 on QYGame</description><generator>Hugo</generator><language>en</language><lastBuildDate>Sun, 19 Oct 2025 08:10:57 +0000</lastBuildDate><atom:link href="https://qygame.github.io/blog/index.xml" rel="self" type="application/rss+xml"/><item><title>服务器架构</title><link>https://qygame.github.io/blog/docs/server/architecture/</link><pubDate>Fri, 10 Oct 2025 15:22:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/architecture/</guid><description>&lt;h2 id="服务器架构"&gt;服务器架构&lt;a class="anchor" href="#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;pre class="mermaid"&gt;architecture-beta
 %% client
 service client(internet)[Client]
@@ -101,7 +101,9 @@ gate:B --&amp;gt; T:redis{group}&lt;/pre&gt;&lt;h2 id="服务器说明"&gt;服�
  &lt;td&gt;&lt;/td&gt;
  &lt;/tr&gt;
  &lt;/tbody&gt;
-&lt;/table&gt;</description></item><item><title>消息流向</title><link>https://qygame.github.io/blog/docs/server/02_message_flow/</link><pubDate>Sat, 11 Oct 2025 01:38:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/02_message_flow/</guid><description>&lt;h2 id="message-flow"&gt;Message Flow&lt;a class="anchor" href="#message-flow"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;/table&gt;
+&lt;h2 id="业务模块"&gt;业务模块&lt;a class="anchor" href="#%e4%b8%9a%e5%8a%a1%e6%a8%a1%e5%9d%97"&gt;#&lt;/a&gt;&lt;/h2&gt;
+&lt;p&gt;基础模块： &lt;br/&gt;&lt;/p&gt;</description></item><item><title>消息流向</title><link>https://qygame.github.io/blog/docs/server/02_message_flow/</link><pubDate>Sat, 11 Oct 2025 01:38:00 +0000</pubDate><guid>https://qygame.github.io/blog/docs/server/02_message_flow/</guid><description>&lt;h2 id="message-flow"&gt;Message Flow&lt;a class="anchor" href="#message-flow"&gt;#&lt;/a&gt;&lt;/h2&gt;
 &lt;pre class="mermaid"&gt;flowchart TD
 Start@{ shape: sm-circ, label: &amp;#34;Small start&amp;#34; }
 %% RPC?
