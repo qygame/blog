@@ -1,0 +1,26 @@
+#+title: 牌九
+#+date: 2025-10-22 14:27:51
+#+hugo_section: docs
+#+hugo_bundle: server/22
+#+export_file_name: index
+#+hugo_weight: 222
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+保定牌九
+
+* 流程图
+  #+begin_src mermaid :file 22.png
+       flowchart TD
+       Start  --> if1{当前局数>4}
+       if1 -->|no| 抢庄 --> 下注 --> 发牌 --> 摊牌 --> 结算 --> if2{是否大局结束}
+       if1 -->|yes| if3{切锅}
+
+       if3 -->|yes| 结算
+       if3 -->|no| 抢庄
+
+       if2 -->|yes| End
+       if2 -->|no| 抢庄
+  #+end_src
