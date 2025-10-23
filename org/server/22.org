@@ -24,3 +24,6 @@
        if2 -->|yes| End
        if2 -->|no| 抢庄
   #+end_src
+
+  #+RESULTS:
+  [[file:22.png]]
