@@ -1,0 +1,62 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content='消息流向#
+flowchart TD
+Start@{ shape: sm-circ, label: "Small start" }
+%%  RPC?
+Start --> |read message| A{RPC Message}
+A --> |yes| 1[RPC Handler]
+A --> |no | B["Event OnRead()"]
+
+%% Internal Message
+B --> C{Internal Messsage}
+C --> |yes| 2[Route Message]
+C --> |no | D[Client Message Handler]
+
+%% 模块分组
+subgraph Modules["Modules"]
+    Module_Login[Login Module]
+    Module_Game[Game Module]
+    Module_Other[Other Module]
+end
+
+%% 根据 Message Main 分发到不同模块
+D --> |Main = Login| Module_Login
+D --> |Main = Game| Module_Game
+D --> |other| Module_Other消息流向说明#
+
+rpc message 的判断在qykernel 中进行 
+根据qykernel 中定义的(main, sub) 来判断 
+internal message 的判断在业务的OnRead 中进行 
+根据Session中的server_name判断. 
+内部的server都有对应的name, 而client session name 是空的 
+
+设计说明#
+server 内部只会使用rpc 来通信. rpc 的处理在libqykernel 中完成, 业务层无感知; 
+业务测的Event::OnRead 只会处理与client 的消息 '><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/server/02_route/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="消息流向"><meta property="og:description" content='消息流向# flowchart TD Start@{ shape: sm-circ, label: "Small start" } %% RPC? Start --> |read message| A{RPC Message} A --> |yes| 1[RPC Handler] A --> |no | B["Event OnRead()"] %% Internal Message B --> C{Internal Messsage} C --> |yes| 2[Route Message] C --> |no | D[Client Message Handler] %% 模块分组 subgraph Modules["Modules"] Module_Login[Login Module] Module_Game[Game Module] Module_Other[Other Module] end %% 根据 Message Main 分发到不同模块 D --> |Main = Login| Module_Login D --> |Main = Game| Module_Game D --> |other| Module_Other消息流向说明# rpc message 的判断在qykernel 中进行 根据qykernel 中定义的(main, sub) 来判断 internal message 的判断在业务的OnRead 中进行 根据Session中的server_name判断. 内部的server都有对应的name, 而client session name 是空的 设计说明# server 内部只会使用rpc 来通信. rpc 的处理在libqykernel 中完成, 业务层无感知; 业务测的Event::OnRead 只会处理与client 的消息'><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2025-10-11T01:38:00+00:00"><meta property="article:modified_time" content="2026-08-13T11:30:40+00:00"><title>消息流向 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/server/02_route/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.649e25624af66f21be7231d67515a129c87972474c097d4d0558cc9a1e432a97.js integrity="sha256-ZJ4lYkr2byG+cjHWdRWhKch5ckdMCX1NBVjMmh5DKpc=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><input type=checkbox id=section-d15f507e6e1a7624bc54d6a8a1d45016 class=toggle checked>
+<label for=section-d15f507e6e1a7624bc54d6a8a1d45016 class=flex><a role=button>server</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/server/architecture/>服务器架构</a></li><li><a href=/blog/docs/server/02_route/ class=active>消息流向</a></li><li><a href=/blog/docs/server/13_game/>房间配置</a></li><li><a href=/blog/docs/server/14_ticket/>门票 Ticket</a></li><li><a href=/blog/docs/server/server/>约定俗称</a></li><li><a href=/blog/docs/server/gate/>gate</a></li><li><a href=/blog/docs/server/room/>room</a></li><li><a href=/blog/docs/server/redis/>redis</a></li><li><a href=/blog/docs/server/subgame/>subgame</a></li><li><a href=/blog/docs/server/22/>牌九</a></li></ul></li><li><a href=/blog/docs/01_server/03_message_format/>消息号格式</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>消息流向</h3><label for=toc-control><img src=/blog/icons/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#消息流向>消息流向</a></li><li><a href=#消息流向说明>消息流向说明</a></li><li><a href=#设计说明>设计说明</a></li><li><a href=#为什么不用消息中的-main-sub-来路由>为什么不用消息中的 main, sub 来路由</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=消息流向>消息流向<a class=anchor href=#%e6%b6%88%e6%81%af%e6%b5%81%e5%90%91>#</a></h2><pre class=mermaid>flowchart TD
+Start@{ shape: sm-circ, label: &#34;Small start&#34; }
+%%  RPC?
+Start --&gt; |read message| A{RPC Message}
+A --&gt; |yes| 1[RPC Handler]
+A --&gt; |no | B[&#34;Event OnRead()&#34;]
+
+%% Internal Message
+B --&gt; C{Internal Messsage}
+C --&gt; |yes| 2[Route Message]
+C --&gt; |no | D[Client Message Handler]
+
+%% 模块分组
+subgraph Modules[&#34;Modules&#34;]
+    Module_Login[Login Module]
+    Module_Game[Game Module]
+    Module_Other[Other Module]
+end
+
+%% 根据 Message Main 分发到不同模块
+D --&gt; |Main = Login| Module_Login
+D --&gt; |Main = Game| Module_Game
+D --&gt; |other| Module_Other</pre><script src=/blog/mermaid.min.js></script><script>mermaid.initialize({flowchart:{useMaxWidth:!0},theme:"default"})</script><h2 id=消息流向说明>消息流向说明<a class=anchor href=#%e6%b6%88%e6%81%af%e6%b5%81%e5%90%91%e8%af%b4%e6%98%8e>#</a></h2><ol><li>rpc message 的判断在qykernel 中进行<br>根据qykernel 中定义的(main, sub) 来判断<br></li><li>internal message 的判断在业务的OnRead 中进行<br>根据Session中的server_name判断.<br>内部的server都有对应的name, 而client session name 是空的<br></li></ol><h2 id=设计说明>设计说明<a class=anchor href=#%e8%ae%be%e8%ae%a1%e8%af%b4%e6%98%8e>#</a></h2><p>server 内部只会使用rpc 来通信. rpc 的处理在libqykernel 中完成, 业务层无感知;<br>业务测的Event::OnRead 只会处理与client 的消息<br></p><p><code>gate 路由问题:</code><br>client &lt;-> gate &lt;-> room<br>gate 收到消息的时候, 需要判断交给谁(是自己处理, 还是给room, 还是给client)<br></p><ol><li><p>方案一: 给消息协议中增加target.<br>gate 根据target 直接路由, 不需要判断.<br>但这样会比较麻烦, client 并不认识其他server, 只知道gate.<br>所以消息协议中增加target 不方便.<br></p></li><li><p>方案二: 消息协议中增加clientid.<br>client -> gate 的时候clientid 为0. 这时候就知道消息来源是client 了.<br>gate -> room 设置clientid;<br>room->gate 也携带clientid. 这样就可以区分了<br></p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>实际上现在也已经这么做了, cliendid 携带了userid 信息.</span></span></code></pre></div></li><li><p>方案三: 根据session 额外信息判断.<br>既然无法在协议中获得next target. 那直接判断消息来源.<br>与client 连接的session name 为空;<br>与server 连接的session name 则为server name;<br>那么就可以判断消息来源, 根据消息来源再去判断路由<br></p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>这是现在的做法</span></span></code></pre></div></li></ol><blockquote class="book-hint info"><p>Server 提供的rpc 表示了该服务对外提供什么样的功能接口<br></p></blockquote><h2 id=为什么不用消息中的-main-sub-来路由>为什么不用消息中的 main, sub 来路由<a class=anchor href=#%e4%b8%ba%e4%bb%80%e4%b9%88%e4%b8%8d%e7%94%a8%e6%b6%88%e6%81%af%e4%b8%ad%e7%9a%84-main-sub-%e6%9d%a5%e8%b7%af%e7%94%b1>#</a></h2><p>消息中的main 天生包含了路由信息.<br></p><p>如果把main 来当作target, 路由非常容易.<br>比如消息 (login, xxx), 那么gate 也不用管来源是谁, 直接交给login server<br></p><p>稍微需要修改的地方就是:<br>现在的 (loign, request) 和 (login, result) 都是login.<br>但问题不大, 把给client 的返回消息(login, result) 设置为 (client, result) 即可.<br></p><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>cleint 中好不好解析呢...?</span></span></code></pre></div><p>但这样带来非常不好的影响:<br></p><ol><li>main 应该只表示模块信息, 不应该再充当路由信息<br></li><li>client 发送(client, result) 给gate 的时候, gate 应该摒弃这种消息;<br>但gate 想要判断, 还是需要额外信息(比如session 来源)<br>那既然都有来源了, 就更没必要拿main 当作路由判断了.<br></li></ol></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/server/architecture/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=服务器架构>
+<span>服务器架构</span>
+</a></span><span><a href=/blog/docs/server/13_game/ class="flex align-center"><span>房间配置</span>
+<img src=/blog/icons/forward.svg class=book-icon alt=Next title=房间配置></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#消息流向>消息流向</a></li><li><a href=#消息流向说明>消息流向说明</a></li><li><a href=#设计说明>设计说明</a></li><li><a href=#为什么不用消息中的-main-sub-来路由>为什么不用消息中的 main, sub 来路由</a></li></ul></nav></div></aside></main></body></html>
