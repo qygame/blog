@@ -21,9 +21,9 @@ Client 与 Server 之间的消息号(main, sub)
   |           | 2.kSub 表示client->server |                    |
   |           | 3.kCmd 表示server->client |                    |
   |-----------+---------------------------+--------------------|
-  | 结构体    | 消息号去掉前缀'k'         |                    |
+  | 结构体    | 消息号去掉前缀'k'         | SubQueryGoldRooms  |
   |-----------+---------------------------+--------------------|
-  | 处理函数  | 消息号去掉前缀'k'         |                    |
+  | 处理函数  | 消息号去掉前缀'k'         | SubQueryGoldRooms  |
 
 
   #+attr_shortcode: info
@@ -40,11 +40,11 @@ Client 与 Server 之间的消息号(main, sub)
 
 
 * 注意事项
-  代码自动生成 =处理函数的声明= && =分发处理函数=
+  代码自动生成 =处理函数的声明= && =分发函数=
 
   使用的时候只需要实现处理函数即可
 
-  比如, sub_login.proto 中定义的sub消息:
+  比如 sub_login.proto 中定义的sub消息:
   代码会自动生成sub_login.handle.sub.pb.h(处理sub消息) & sub_login.handle.cmd.pb.h(处理cmd消息)
   使用的时候, 只需要实现对应文件中的函数
 
