@@ -13,30 +13,6 @@
 
 #+hugo: more
 
-* 消息号命名规范
-  #+begin_columns
-  - *消息号*
-    驼峰式命名  -> kSubQueryGoldRooms
-  - *结构体*
-    消息号去掉k -> SubQueryGoldRooms
-  - *函数*
-    结构体加On  -> OnSubQueryGoldRooms
-  #+end_columns
-
-  #+attr_shortcode: info
-  #+begin_hint
-  消息号 含义
-  1. 第一个字段 k.  表示常量
-  2. 第二个字段 归属标志. 可能的赋值:
-     - Sub  C端向S端查询
-     - Cmd  S端返回给C端
-  3. 第三个字段 意图  增删改查
-  4. 第四个字段 对象  被op对象 -- 可以没有
-  5. 第无个字段 消息号含义
-  #+end_hint
-
-  -----
-
 * TODO 玩家的桌子号 (待删除)
   player.tableid
   含义:

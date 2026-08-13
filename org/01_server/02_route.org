@@ -1,0 +1,97 @@
+#+title: 消息流向
+#+date: 2025-10-11 01:38:33
+#+hugo_section: docs
+#+hugo_bundle: server/02_route
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 消息流向
+  #+begin_src mermaid :file result.png
+       flowchart TD
+       Start@{ shape: sm-circ, label: "Small start" }
+       %%  RPC?
+       Start --> |read message| A{RPC Message}
+       A --> |yes| 1[RPC Handler]
+       A --> |no | B["Event OnRead()"]
+
+       %% Internal Message
+       B --> C{Internal Messsage}
+       C --> |yes| 2[Route Message]
+       C --> |no | D[Client Message Handler]
+
+       %% 模块分组
+       subgraph Modules["Modules"]
+           Module_Login[Login Module]
+           Module_Game[Game Module]
+           Module_Other[Other Module]
+       end
+
+       %% 根据 Message Main 分发到不同模块
+       D --> |Main = Login| Module_Login
+       D --> |Main = Game| Module_Game
+       D --> |other| Module_Other
+  #+end_src
+
+  #+RESULTS:
+  [[file:result.png]]
+* 消息流向说明
+  1. rpc message 的判断在qykernel 中进行
+     根据qykernel 中定义的(main, sub) 来判断
+  2. internal message 的判断在业务的OnRead 中进行
+     根据Session中的server_name判断.
+     内部的server都有对应的name, 而client session name 是空的
+
+
+* 设计说明
+  server 内部只会使用rpc 来通信. rpc 的处理在libqykernel 中完成, 业务层无感知;
+  业务测的Event::OnRead 只会处理与client 的消息
+
+
+  ~gate 路由问题:~
+  client <-> gate <-> room
+  gate 收到消息的时候, 需要判断交给谁(是自己处理, 还是给room, 还是给client)
+
+  1. 方案一: 给消息协议中增加target.
+     gate 根据target 直接路由, 不需要判断.
+     但这样会比较麻烦, client 并不认识其他server, 只知道gate.
+     所以消息协议中增加target 不方便.
+  2. 方案二: 消息协议中增加clientid.
+     client -> gate 的时候clientid 为0. 这时候就知道消息来源是client 了.
+     gate -> room 设置clientid;
+     room->gate 也携带clientid.  这样就可以区分了
+     : 实际上现在也已经这么做了, cliendid 携带了userid 信息.
+  3. 方案三: 根据session 额外信息判断.
+     既然无法在协议中获得next target. 那直接判断消息来源.
+     与client 连接的session name 为空;
+     与server 连接的session name 则为server name;
+     那么就可以判断消息来源, 根据消息来源再去判断路由
+     : 这是现在的做法
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Server 提供的rpc 表示了该服务对外提供什么样的功能接口
+  #+end_hint
+
+
+* 为什么不用消息中的 main, sub 来路由
+  消息中的main 天生包含了路由信息.
+
+  如果把main 来当作target, 路由非常容易.
+  比如消息 (login, xxx), 那么gate 也不用管来源是谁, 直接交给login server
+
+  稍微需要修改的地方就是:
+  现在的 (loign, request) 和 (login, result) 都是login.
+  但问题不大, 把给client 的返回消息(login, result) 设置为 (client, result) 即可.
+  : cleint 中好不好解析呢...?
+
+
+  但这样带来非常不好的影响:
+  1. main 应该只表示模块信息, 不应该再充当路由信息
+  2. client 发送(client, result) 给gate 的时候, gate 应该摒弃这种消息;
+     但gate 想要判断, 还是需要额外信息(比如session 来源)
+     那既然都有来源了, 就更没必要拿main 当作路由判断了.

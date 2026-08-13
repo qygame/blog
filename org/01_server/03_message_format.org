@@ -1,0 +1,54 @@
+#+title: 消息号格式
+#+date: 2026-08-13 16:25:48
+#+hugo_section: docs
+#+hugo_bundle: 01_server/03_message_format
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+Client 与 Server 之间的消息号(main, sub)
+
+#+hugo: more
+
+* 命名规范
+
+  |           | 规范                      | 例子               |
+  |-----------+---------------------------+--------------------|
+  | sub消息号 | 1.驼峰式命名              | kSubQueryGoldRooms |
+  |           | 2.kSub 表示client->server |                    |
+  |           | 3.kCmd 表示server->client |                    |
+  |-----------+---------------------------+--------------------|
+  | 结构体    | 消息号去掉前缀'k'         |                    |
+  |-----------+---------------------------+--------------------|
+  | 处理函数  | 消息号去掉前缀'k'         |                    |
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  消息号 含义
+  1. 第一个字段 k.  表示常量
+  2. 第二个字段 归属标志. 可能的赋值:
+     - Sub  Client向Server查询
+     - Cmd  Server返回给Client
+  3. 第三个字段 意图  增删改查
+  4. 第四个字段 对象  被op对象 -- 可以没有
+  5. 第五个字段 消息号含义
+  #+end_hint
+
+
+* 注意事项
+  代码自动生成 =处理函数的声明= && =分发处理函数=
+
+  使用的时候只需要实现处理函数即可
+
+  比如, sub_login.proto 中定义的sub消息:
+  代码会自动生成sub_login.handle.sub.pb.h(处理sub消息) & sub_login.handle.cmd.pb.h(处理cmd消息)
+  使用的时候, 只需要实现对应文件中的函数
+
+
+  ~优势:~
+  1. 避免人为处理 sub 与 sub_handler函数之间的映射, 减少出错
+  2. 可以在编译期间就知道哪些sub 没有处理函数
