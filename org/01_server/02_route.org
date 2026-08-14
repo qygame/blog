@@ -1,7 +1,7 @@
 #+title: 消息流向
 #+date: 2025-10-11 01:38:33
 #+hugo_section: docs
-#+hugo_bundle: server/02_route
+#+hugo_bundle: 01_server/02_route
 #+export_file_name: index
 #+hugo_weight: 2
 #+hugo_draft: false

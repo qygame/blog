@@ -1,7 +1,7 @@
 #+title: 房间配置
 #+date: 2025-10-18 06:58:56
 #+hugo_section: docs
-#+hugo_bundle: server/13_game
+#+hugo_bundle: 01_server/13_game
 #+export_file_name: index
 #+hugo_weight: 13
 #+hugo_draft: false

@@ -1,7 +1,7 @@
 #+title: 牌九
 #+date: 2025-10-22 14:27:51
 #+hugo_section: docs
-#+hugo_bundle: server/22
+#+hugo_bundle: 01_server/22
 #+export_file_name: index
 #+hugo_weight: 222
 #+hugo_draft: false

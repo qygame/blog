@@ -1,7 +1,7 @@
 #+title: redis
 #+date: 2025-10-02 18:07:50
 #+hugo_section: docs
-#+hugo_bundle: server/redis
+#+hugo_bundle: 01_server/redis
 #+export_file_name: index
 #+hugo_weight: 110
 #+hugo_draft: false

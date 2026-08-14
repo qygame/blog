@@ -1,7 +1,7 @@
 #+title: gate
 #+date: 2025-10-01 18:04:59
 #+hugo_section: docs
-#+hugo_bundle: server/gate
+#+hugo_bundle: 01_server/gate
 #+export_file_name: index
 #+hugo_weight: 100
 #+hugo_draft: false

@@ -1,7 +1,7 @@
 #+title: 门票 Ticket
 #+date: 2025-10-18 07:18:55
 #+hugo_section: docs
-#+hugo_bundle: server/14_ticket
+#+hugo_bundle: 01_server/14_ticket
 #+export_file_name: index
 #+hugo_weight: 14
 #+hugo_draft: false
