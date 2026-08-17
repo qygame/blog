@@ -53,7 +53,7 @@
   Loader流程:
   1. 读取配置
      读取配置文件, 并将配置内容解析后保存到 =toml_tables= 中, 定义如下:
-     #+begin_src C++ :hl_lines
+     #+begin_src C++
        std::map<std::string, T> toml_tables
      #+end_src
 
