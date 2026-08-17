@@ -1,0 +1,98 @@
+#+title: 房间配置
+#+date: 2026-08-17 17:57:37
+#+hugo_section: docs
+#+hugo_bundle: 01_server/30_room_server/11_room_rule_config
+#+export_file_name: index
+#+hugo_weight: 11
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 设计思路
+  目的: 房间配置用于构造房间规则
+
+  设计原则:
+  1. 为了减少人为失误, 程序应该保证房间配置与房间规则完全匹配.
+     也就是说, 配置中应该包含房间规则的所有字段, 且不能有多余的字段.
+  2. 每个场次都应该有独立的配置文件. 例如:
+     fk.config, gold.level1.config, gold.level2.config
+     配置文件中可以包含场次特有的信息
+
+
+* 代码实现思路
+  1. 为了实现设计原则1, 需要比对房间规则 =proto::RoomRule= 和 =toml配置=, 确保两者完全匹配
+
+     #+begin_src protobuf
+       message RoomRule {
+         RoomRuleCommon common           = 1;  // 通用房间规则
+         bytes subgame                   = 2;  // 子游戏规则. 对应子游戏的SubRoomRule
+       }
+     #+end_src
+
+     其中, =proto::RoomRule= 中的 =subgame= 类型为 =bytes=,
+     实际存储的是具体的子游戏 =SubRoomRule=
+
+  2. 配置文件统一采用 TOML 格式
+
+  3. 为了方便比对 =proto::RoomRule= 与 =toml 配置=,
+     约定 =proto::RoomRule= 中的每个 ~field~ 对应 TOML 中的一个 ~table~.
+
+
+* 代码实现v0.1
+
+  #+begin_example
+  Class FkConfigLoader    读取并保存 fk   场次的配置
+  Class GoldConfigLoader  读取并保存 gold 场次的配置
+
+  Class RoomRuleBuilder   根据配置构造房间规则
+  #+end_example
+
+
+  Loader流程:
+  1. 读取配置
+     读取配置文件, 并将配置内容解析后保存到 =toml_tables= 中, 定义如下:
+     #+begin_src C++ :hl_lines
+       std::map<std::string, T> toml_tables
+     #+end_src
+
+     其中, key 为 TOML table 的 path, T 为对应配置 table 的数据类型,
+     具体类型根据场次的配置定义.
+
+  2. 校验配置
+     1) 首先比对 =toml_tables.key= 与 =RoomRule fileds=, 确保完全匹配
+     2) 其次校验配置内容是否符合对应到业务规则.
+
+  3. 构造场次配置
+     根据配置内容构造该场次特有的配置信息
+
+
+* 代码实现v0.2
+  v0.2 主要进行一下调整:
+
+  1. 通过梳理 v0.1 的流程, 发现配置文件都需要与 =proto::RoomRule= 进行匹配校验,
+     因此, 可以将 =proto::RoomRule= 中的 fields 提前读取并保存.
+
+  2. 同时增加 =ConfigManager= 作为配置模块的对外接口, 屏蔽不同场次配置的具体实现.
+
+  #+begin_example
+    Config 模块
+
+    Class ConfigManager          配置模块对外接口
+    |
+    |-- Class FkConfigLoader     读取并保存 FK 场次的配置
+    |
+    |-- Class GoldConfigLoader   读取并保存 Gold 场次的配置
+    |
+    |-- Class RoomRuleBuilder    根据配置构造房间规则
+    |
+    |__ Class RuleSchemaLoader   读取proto::RoomRule 中所有的fields
+  #+end_example
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  上面的 Class 仅表示一个独立的功能模块, 并不特指 C++ 中的 =class= 类型.
+  具体实现可以是 =class=, =namespace=, 也可以是其他形式的代码组织单元
+  #+end_hint

@@ -1,0 +1,33 @@
+#+title: 房间规则
+#+date: 2026-08-17 17:55:24
+#+hugo_section: docs
+#+hugo_bundle: 01_server/30_room_server/10_room_rule
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 房间规则
+  #+begin_example
+    游戏规则
+    ├── 静态规则
+    │   └── 写死在游戏代码里的规则
+    │       例如：斗地主必须有地主、发牌方式、牌型定义等
+    │
+    └── 动态规则 = RoomRule
+        ├── RoomRuleCommon
+        │   └── 所有游戏/房间通用
+        │       例如：人数、局数、房间类型等
+        │
+        └── SubRoomRule
+            └── 子游戏自己的可配置规则
+                例如：斗地主是否允许某种玩法、几人斗地主
+  #+end_example
+
+  #+attr_shortcode: info
+  #+begin_hint
+  静态规则与动态规则只是大约分类, 根据运营随时切换.
+  #+end_hint

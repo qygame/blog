@@ -1,0 +1,19 @@
+#+title: RoomServer
+#+date: 2026-08-17 17:53:38
+#+hugo_section: docs
+#+hugo_bundle: 01_server/30_room_server
+#+export_file_name: _index
+#+hugo_weight: 30
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+RoomServer 主要由以下两个模块组成:
+
+1. 配置模块 =config=
+   负责管理房间配置文件, 并根据配置构造房间规则.
+
+2. 房间模块 =room=
+   负责房间的创建、管理及房间运行相关逻辑.

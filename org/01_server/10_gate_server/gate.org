@@ -1,17 +1,13 @@
-#+title: gate
-#+date: 2025-10-01 18:04:59
+#+title: Gate
+#+date: 2026-08-17 19:17:57
 #+hugo_section: docs
-#+hugo_bundle: 01_server/gate
+#+hugo_bundle: 01_server/10_gate_server/gate
 #+export_file_name: index
-#+hugo_weight: 100
+#+hugo_weight: 1
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
-
-gate server
-
-#+hugo: more
 
 * server-gate
 ** logon

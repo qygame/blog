@@ -1,9 +1,9 @@
 #+title: 牌九
-#+date: 2025-10-22 14:27:51
+#+date: 2026-08-17 19:13:02
 #+hugo_section: docs
-#+hugo_bundle: 01_server/22
+#+hugo_bundle: 01_server/99_subgame/22
 #+export_file_name: index
-#+hugo_weight: 222
+#+hugo_weight: 22
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
