@@ -8,3 +8,20 @@
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection true
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+GateServer 主要由以下模块组成:
+
+1. 登陆模块 =login=
+
+2. 大厅模块 =lobby=
+
+3. 游戏模块 =game=
+
+4. 任务模块 =task=
+
+5. 排行榜 =rank=
+
+6. 比赛 =match=
+
+7. 路由

@@ -1,0 +1,42 @@
+#+title: 登陆模块
+#+date: 2026-09-09 08:37:27
+#+hugo_section: docs
+#+hugo_bundle: 01_server/10_gate_server/10_login
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+登陆模块 重点处理:
+
+1. 重复登陆
+2. 断线重连
+
+
+* 重复登陆
+  *在当前gateSvr中重复登陆*
+  auto player = player_manager.get(uid);
+  player.gatesvr_session != player.current_session 就认为是重复登陆
+
+
+  *在所有gateSvr中重复登陆*
+  redis中存在 key=gate_$uid, val=gatesvrid
+  redis.val != current_serverid 说明该uid正在其他gateSvr上. 认为重复登陆
+
+
+  *重复登陆处理*
+  在当前gateSvr中重复登陆, 可以直接关闭旧的连接
+  在其他gateSvr中重复登陆, 需要通过 ?? 通知对应的gateSvr, 关闭玩家连接
+
+* 断线重连
+  *判断依据*
+  玩家登陆的时候,
+  redis中存在 key=room_$uid, val=roomsvrid
+  gateSvr会向roomSvr确认玩家是否真的在roomSvr中,
+  如果roomSvr返回在, 则认为玩家是断线重连
+
+  *断线处理*
+  1. gateSvr更新player的roomsvrid信息
+  2. 通知client
