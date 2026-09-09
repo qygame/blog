@@ -1,0 +1,10 @@
+#+title: 子游戏
+#+date: 2026-09-09 08:05:37
+#+hugo_section: docs
+#+hugo_bundle: 01_server/99_subgame
+#+export_file_name: _index
+#+hugo_weight: 99
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
