@@ -81,3 +81,10 @@
      GateServer保存一段时间ttl, 如果在此期间正常连接. 无事发生
      ttl之后, GateServer删除连接信息, 并通知到ActorServer
      Client 需要重新连接loginServer分配GateServer
+
+* TODO 重要说明
+
+  1. 分层只是计算资源有限下的妥协之举
+     如果计算资源是无限的, 就不需要去考虑分层
+
+  2. 对于服务器, 最重要的不是分层, 而是灾后重建
