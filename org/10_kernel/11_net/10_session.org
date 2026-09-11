@@ -11,6 +11,13 @@
 
 
 * session说明
+
+  #+attr_shortcode: info
+  #+begin_hint
+  外部不需要在乎session的具体类型, 只需要处理session事件即可
+  #+end_hint
+
+
   在kernel中, session可能是TcpClient, TcpServerSession, HttpServerSession等.
   但所有的session对外提供统一接口, 接口主要分两部分:
   1. session 自身的数据. API 为 SessionInterface
@@ -48,9 +55,3 @@
     };
 
   #+end_src
-
-
-  #+attr_shortcode: info
-  #+begin_hint
-  外部不需要在乎session的具体类型, 只需要处理session事件即可
-  #+end_hint
