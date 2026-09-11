@@ -1,0 +1,88 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="服务器架构#
+architecture-beta
+%% client
+service client(internet)[Client]
+
+%% Server
+group servers(server)[Servers]
+service gate(server)[Gate] in servers
+service room(server)[Room] in servers
+gate:R <-- L:room
+
+%% 数据层
+group dbs(database)[Databses]
+service redis(database)[Redis] in dbs
+service postgres(database)[Postgres] in dbs
+redis:R -- L:postgres
+
+%% 指向
+client:R --> L:gate
+
+gate:B --> T:redis{group}服务器说明#
+[ 客户端 Client ]
+       │
+       │ 1. DNS / Anycast 将域名解析分发给不同的 LB IP
+       ▼
+[ LB 集群 (Nginx / Cloud NLB) ] ── (第一层负载：入口分流、解密 HTTPS)
+       │
+       │ 2. LB 通过 HTTP 轮询转发给不同的 LoginServer
+       ▼
+[ LoginServer 集群 ]            ── (第二层负载：无状态鉴权、业务逻辑计算)
+       │
+       │ 3. Login 查 Redis 挑选最空闲的 Gate，把 Gate IP 返回给 Client
+       ▼
+[ GateServer 集群 ]             ── (第三层负载：重定向直连，平摊海量长连接)
+       │
+       │ 4. Gate 根据 RoleID 通过一致性 Hash 路由给指定的 Actor
+       ▼
+[ ActorServer 集群 ]           ── (第四层负载：有状态计算，按 RoleID 动态加载)帐号登陆: 
+loginServer根据 帐号, 密码 与数据库比对. 成功的话: "><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/architecture/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="服务器架构"><meta property="og:description" content="服务器架构# architecture-beta %% client service client(internet)[Client] %% Server group servers(server)[Servers] service gate(server)[Gate] in servers service room(server)[Room] in servers gate:R <-- L:room %% 数据层 group dbs(database)[Databses] service redis(database)[Redis] in dbs service postgres(database)[Postgres] in dbs redis:R -- L:postgres %% 指向 client:R --> L:gate gate:B --> T:redis{group}服务器说明# [ 客户端 Client ] │ │ 1. DNS / Anycast 将域名解析分发给不同的 LB IP ▼ [ LB 集群 (Nginx / Cloud NLB) ] ── (第一层负载：入口分流、解密 HTTPS) │ │ 2. LB 通过 HTTP 轮询转发给不同的 LoginServer ▼ [ LoginServer 集群 ] ── (第二层负载：无状态鉴权、业务逻辑计算) │ │ 3. Login 查 Redis 挑选最空闲的 Gate，把 Gate IP 返回给 Client ▼ [ GateServer 集群 ] ── (第三层负载：重定向直连，平摊海量长连接) │ │ 4. Gate 根据 RoleID 通过一致性 Hash 路由给指定的 Actor ▼ [ ActorServer 集群 ] ── (第四层负载：有状态计算，按 RoleID 动态加载)帐号登陆: loginServer根据 帐号, 密码 与数据库比对. 成功的话:"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2025-10-10T15:22:00+00:00"><meta property="article:modified_time" content="2026-09-11T02:35:41+00:00"><title>服务器架构 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/architecture/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.07715588771dec37ebd93d83632048d6a4c426a09b909aa0facf7aed19326bde.js integrity="sha256-B3FViHcd7Dfr2T2DYyBI1qTEJqCbkJqg+s967Rkya94=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><input type=checkbox id=section-1746b96ec62411fa5887a09b3b846c22 class=toggle>
+<label for=section-1746b96ec62411fa5887a09b3b846c22 class=flex><a role=button>libqykernel</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/10_kernel/01_target/>目标</a></li><li><a href=/blog/docs/10_kernel/02_directory/>目录说明</a></li><li><a href=/blog/docs/10_kernel/10_thread/>多线程问题</a></li><li><a href=/blog/docs/10_kernel/11_net/>net封装</a></li><li><a href=/blog/docs/10_kernel/12_log/>log 封装</a></li><li><a href=/blog/docs/10_kernel/12_rpc/>自定义RPC框架</a></li><li><a href=/blog/docs/10_kernel/99_call_note/>使用说明</a></li></ul></li><li><input type=checkbox id=section-ee85f51830272357047967355c2a094e class=toggle checked>
+<label for=section-ee85f51830272357047967355c2a094e class=flex><a role=button>server</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/architecture/ class=active>服务器架构</a></li><li><a href=/blog/docs/11_server/02_route/>消息流向</a></li><li><a href=/blog/docs/11_server/03_message_format/>消息号格式</a></li><li><input type=checkbox id=section-abe5fdb427af46f50ff591b3c5990ded class=toggle>
+<label for=section-abe5fdb427af46f50ff591b3c5990ded class=flex><a href=/blog/docs/11_server/10_gate_server/>GateServer</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/10_gate_server/10_login/>登陆模块</a></li><li><a href=/blog/docs/11_server/10_gate_server/gate/>Gate</a></li></ul></li><li><a href=/blog/docs/11_server/14_ticket/>门票 Ticket</a></li><li><input type=checkbox id=section-9a26cfa1b39792b39f3de78cf56b74f8 class=toggle>
+<label for=section-9a26cfa1b39792b39f3de78cf56b74f8 class=flex><a href=/blog/docs/11_server/30_room_server/>RoomServer</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/30_room_server/10_room_rule/>房间规则</a></li><li><a href=/blog/docs/11_server/30_room_server/11_room_rule_config/>房间配置</a></li><li><a href=/blog/docs/11_server/30_room_server/room/>room</a></li><li><a href=/blog/docs/11_server/30_room_server/rule/>约定俗成</a></li></ul></li><li><input type=checkbox id=section-25ef20cc2a623fb126b894dbfbee4c12 class=toggle>
+<label for=section-25ef20cc2a623fb126b894dbfbee4c12 class=flex><a role=button>子游戏</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/99_subgame/subgame/>SubGame</a></li><li><a href=/blog/docs/11_server/99_subgame/22/>牌九</a></li></ul></li><li><a href=/blog/docs/11_server/redis/>redis</a></li></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>服务器架构</h3><label for=toc-control><img src=/blog/icons/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#服务器架构>服务器架构</a></li><li><a href=#服务器说明>服务器说明</a></li><li><a href=#重要说明><span class="org-todo todo TODO">TODO</span> 重要说明</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=服务器架构>服务器架构<a class=anchor href=#%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%9e%b6%e6%9e%84>#</a></h2><pre class=mermaid>architecture-beta
+%% client
+service client(internet)[Client]
+
+%% Server
+group servers(server)[Servers]
+service gate(server)[Gate] in servers
+service room(server)[Room] in servers
+gate:R &lt;-- L:room
+
+%% 数据层
+group dbs(database)[Databses]
+service redis(database)[Redis] in dbs
+service postgres(database)[Postgres] in dbs
+redis:R -- L:postgres
+
+%% 指向
+client:R --&gt; L:gate
+
+gate:B --&gt; T:redis{group}</pre><script src=/blog/mermaid.min.js></script><script>mermaid.initialize({flowchart:{useMaxWidth:!0},theme:"default"})</script><h2 id=服务器说明>服务器说明<a class=anchor href=#%e6%9c%8d%e5%8a%a1%e5%99%a8%e8%af%b4%e6%98%8e>#</a></h2><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>[ 客户端 Client ]
+</span></span><span style=display:flex><span>       │
+</span></span><span style=display:flex><span>       │ 1. DNS / Anycast 将域名解析分发给不同的 LB IP
+</span></span><span style=display:flex><span>       ▼
+</span></span><span style=display:flex><span>[ LB 集群 (Nginx / Cloud NLB) ] ── (第一层负载：入口分流、解密 HTTPS)
+</span></span><span style=display:flex><span>       │
+</span></span><span style=display:flex><span>       │ 2. LB 通过 HTTP 轮询转发给不同的 LoginServer
+</span></span><span style=display:flex><span>       ▼
+</span></span><span style=display:flex><span>[ LoginServer 集群 ]            ── (第二层负载：无状态鉴权、业务逻辑计算)
+</span></span><span style=display:flex><span>       │
+</span></span><span style=display:flex><span>       │ 3. Login 查 Redis 挑选最空闲的 Gate，把 Gate IP 返回给 Client
+</span></span><span style=display:flex><span>       ▼
+</span></span><span style=display:flex><span>[ GateServer 集群 ]             ── (第三层负载：重定向直连，平摊海量长连接)
+</span></span><span style=display:flex><span>       │
+</span></span><span style=display:flex><span>       │ 4. Gate 根据 RoleID 通过一致性 Hash 路由给指定的 Actor
+</span></span><span style=display:flex><span>       ▼
+</span></span><span style=display:flex><span>[ ActorServer 集群 ]           ── (第四层负载：有状态计算，按 RoleID 动态加载)</span></span></code></pre></div><p>帐号登陆:<br>loginServer根据 帐号, 密码 与数据库比对. 成功的话:<br></p><ol><li>获取gate server 的ip, port (从redis中查询获取, loginServer与GateServer分离)<br></li><li>在redis中写入roleID ->token.<br></li><li>返回gate server, token给client<br></li><li>client 去连接gateServer, 并携带token<br></li><li>gateServer比对redis中的roleID, token 是否一致.<br>如果一致, 则通知ActorServer (这里使用强hash计算出ActorServer)<br></li><li>ActorServer中处理重复登陆<br>通知old GateServer 踢人; 记录新的GateServer<br></li></ol><p>帐号注册:<br></p><ol><li>写入数据库<br></li><li>写入成功, 复用帐号登陆逻辑<br></li></ol><p>断线重连的逻辑:<br></p><ol><li>断线之后, client首先连接GateServer<br>GateServer保存一段时间ttl, 如果在此期间正常连接. 无事发生<br>ttl之后, GateServer删除连接信息, 并通知到ActorServer<br>Client 需要重新连接loginServer分配GateServer<br></li></ol><h2 id=重要说明><span class="org-todo todo TODO">TODO</span> 重要说明<a class=anchor href=#%e9%87%8d%e8%a6%81%e8%af%b4%e6%98%8e>#</a></h2><ol><li><p>分层只是计算资源有限下的妥协之举<br>如果计算资源是无限的, 就不需要去考虑分层<br></p></li><li><p>对于服务器, 最重要的不是分层, 而是灾后重建<br></p></li></ol></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/10_kernel/99_call_note/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=使用说明>
+<span>使用说明</span>
+</a></span><span><a href=/blog/docs/11_server/02_route/ class="flex align-center"><span>消息流向</span>
+<img src=/blog/icons/forward.svg class=book-icon alt=Next title=消息流向></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#服务器架构>服务器架构</a></li><li><a href=#服务器说明>服务器说明</a></li><li><a href=#重要说明><span class="org-todo todo TODO">TODO</span> 重要说明</a></li></ul></nav></div></aside></main></body></html>
