@@ -1,7 +1,7 @@
 #+title: 房间规则
 #+date: 2026-08-17 17:55:24
 #+hugo_section: docs
-#+hugo_bundle: 01_server/30_room_server/10_room_rule
+#+hugo_bundle: 11_server/30_room_server/10_room_rule
 #+export_file_name: index
 #+hugo_weight: 10
 #+hugo_draft: false

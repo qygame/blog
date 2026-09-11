@@ -9,7 +9,6 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-
 * net多线程 注意事项
   1. 不要捕获this, 使用shared_ptr代替
      this 只是一个地址, 如果对象内存摧毁后, 会变成悬空指针
@@ -17,6 +16,8 @@
   2. 为了避免work 与 io 线程竞争, 不要传递this. 尽量使用副本(thread local)
   3. 为了避免多线程io_context 竞争, 使用strand, 即使io_context 是单线程, 也推荐strand
   4. 为了避免线程之间的数据copy. 使用 unique_ptr + std::move
+
+
 * 回调设置
   1. EventInterface 对上层接口
      - EventInterface::OnRead :: 读取到消息
@@ -45,5 +46,18 @@
      TODO 后续补充逻辑
   4) 其他消息
      转发给 EventInterface::OnRead 处理
+
 * 传输格式
   tcp 传输格式见 [[file:src/net/tools/codec.h::struct TcpHead {][TcpHead]]
+
+
+
+* TODO 完善文档
+  net 文档目录结构应该是
+  #+begin_example
+    net
+    |-- 说明
+    |-- tcp
+    |-- http
+    |-- ...
+  #+end_example
