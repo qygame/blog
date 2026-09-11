@@ -29,7 +29,7 @@
      - socket::Read       -> EventInterface::OnRead
 
 
-  #+attr_shortcode: info|success|warning|danger
+  #+attr_shortcode: info
   #+begin_hint
   只做了HttpServer, 没有写HttpClient.
   暂时对HttpClient没什么需求
