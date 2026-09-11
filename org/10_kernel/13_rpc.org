@@ -3,7 +3,7 @@
 #+hugo_section: docs
 #+hugo_bundle: 10_kernel/12_rpc
 #+export_file_name: index
-#+hugo_weight: 12
+#+hugo_weight: 13
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
