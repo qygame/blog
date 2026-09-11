@@ -180,7 +180,7 @@
      从而简化done 的构造
 
 * 自定义RPC框架v0.3 使用示例
-  #+begin_src C++ :hl_lines
+  #+begin_src C++
     // 上层业务代码，零 new，零 delete，零内存泄露风险！
     proto::CmdLoginRequest request;
     request.set_username("admin");
