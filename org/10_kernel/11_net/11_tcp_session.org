@@ -24,7 +24,6 @@
      - socket::Closed     -> EventInterface::OnClosed
      - socket::Read       -> MessageCallback
 
-
   -----
   [[file:src/net/create_net.cc::void MessageCallback(EventInterface* event, const Message& message) {][MessageCallback]] 逻辑
   1) SubResit2Server 消息
