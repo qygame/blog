@@ -1,0 +1,21 @@
+#+title: log 封装
+#+date: 2026-09-11 10:19:15
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/12_log
+#+export_file_name: index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* log封装
+  进程xxx有下面几个log文件:
+
+  | log name       | desc                  | spdlog logger details                                    |
+  |----------------+-----------------------+----------------------------------------------------------|
+  | xxx-kernel.txt | 进程内核log           | 异步文件logger, 不对上层提供                             |
+  | xxx-db.txt     | 进程的业务层数据库log | 同步文件logger, 不对上层提供                             |
+  | xxx.txt        | 进程的业务层log       | 同步文件logger, 默认logger. 仅在上层使用, qykernel不使用 |
+  |----------------+-----------------------+----------------------------------------------------------|

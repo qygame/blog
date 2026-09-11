@@ -1,0 +1,212 @@
+#+title: 自定义RPC框架
+#+date: 2026-09-11 10:19:41
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/12_rpc
+#+export_file_name: index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* google::protobuf service中的定义
+  RpcChannel 是 RPC 调用的通道接口，类似一个网络客户端的抽象。它负责:
+  - 将本地函数调用序列化为网络请求.
+  - 发送请求给远程服务器.
+  - 接收响应并反序列化.
+
+  RpcController 是每次 RPC 调用的控制器，用于管理调用状态、错误信息等。它通常用于:
+  - 设置/查询 RPC 调用失败状态.
+  - 查询错误信息.
+  - 中断调用（在自定义实现中).
+* google::protobuf service使用示例
+  protobuf service 定义
+  #+begin_src protobuf
+    service MyService {
+      rpc SayHello (HelloRequest) returns (HelloResponse);
+    }
+
+    message HelloRequest {
+      string name = 1;
+    }
+
+    message HelloResponse {
+      string message = 1;
+    }
+  #+end_src
+
+  客户端调用
+  #+begin_src C++
+    // 自定义 RpcChannel
+    MyRpcChannel channel("127.0.0.1", 50051);
+    MyService::Stub stub(&channel);  // Stub 内部会调用 RpcChannel::CallMethod
+
+    // 创建请求
+    HelloRequest request;
+    request.set_name("Alice");
+
+    // 创建响应
+    HelloResponse response;
+
+    // 控制器
+    MyRpcController controller;
+
+    // 同步调用
+    stub.SayHello(&controller, &request, &response, nullptr);
+
+    if (controller.Failed()) {
+      std::cout << "RPC failed: " << controller.ErrorText() << std::endl;
+     } else {
+      std::cout << "Server response: " << response.message() << std::endl;
+     }
+
+    // 异步调用
+    // OnResponse 是一个回调函数，在 RPC 完成后被调用
+    stub.SayHello(&controller, &request, &response, google::protobuf::NewCallback(&OnResponse));
+
+  #+end_src
+
+
+* 自定义RPC框架v0.1
+  从protobuf service中可以看到, protobuf已经提供了protobuf::RpcChannel和protobuf::RpcController接口.
+  我们要做的是继承这两个接口, 并完成在网络通信的处理
+
+  *继承接口*
+  这里使用kernel::rpc::RpcChannel和kernel::rpc::RpcController
+
+  *网络处理*
+  1. 上层通过kernel::rpc::Register(), 向kernel注册service服务.
+     kernel把service信息保存在kernel::rpc::RpcManagerServer::map_service_中
+  2. 当调用[[file:src/kernel/rpc.h::void Call][kernel::rpc::Rpc::Call()]]的时候, 在[[file:src/rpc/rpc_channel.cc::void RpcChannel::CallMethod][kernel::rpc::RpcChannel::CallMethod]]中
+     1) 对request信息, 添加了一系列额外信息proto::RpcMessage
+     2) 把该调用保存在kernel::rpc::RpcManagerClient::map_callback中
+     3) 调用net的Send. 发送给对应session
+  3. 在net session的Read 回调函数 [[file:src/net/create_net.cc::if (rpc_message.type() == proto::kRpcTypeRequest) {][MessageCallback()]] 中先对消息号(main, sub)检测.
+     1) 如果main == proto::kKernelInternal && sub = proto::kKernelRpc, 则表示是RPC调用
+     2) 如果是RPC调用, 则继续检测proto::RpcMessage中的MessageType type
+        - 如果type是request, 表明是在调用kernel::RpcChannel.
+          那么调用kernel::rpc::RpcManagerServer::Handle()来处理.
+          并在Handle()处理完成之后, 封装response消息并调用net的Send()发送
+        - 如果type是response, 表明是RpcManagerServer::Handle()处理完之后的回调
+          则调用kernel::rpc::RpcManagerClient::Handle()中处理
+* 自定义RPC框架v0.1 使用示例
+  #+begin_src C++
+    // rpc callback
+    proto::CmdLoginResult *response = new proto::CmdLoginResult;
+    auto done = google::protobuf::NewCallback(&LoginVisitorCallback,
+                                              response,
+                                              message.session);
+
+
+    kernel::rpc::RpcChannel channel(message.session);
+    kernel::rpc::RpcController controller;
+
+    proto::DatabaseService_Stub stub(&channel);
+    stub.LoginVisitor(&controller, &request, response, done);
+  #+end_src
+* 自定义RPC框架v0.2
+  v0.1示例有两个缺点:
+  1. 写起来非常的麻烦, 需要构建很多不关心的额外信息
+  2. 同时导致kernel必须暴露kernel::rpc::RpcChannel和kernel::rpc::RpcController给上层
+  3. proto::CmdLoginResult *response 是new出来的, 如果不处理, 会导致内存泄漏
+
+  对接口增加了一层wrap, 用来处理第一个缺点
+  #+begin_src C++
+    // Rpc 方法
+    template<typename Stub, typename Request, typename Response>
+    using RpcMethod = void (Stub::*)(google::protobuf::RpcController*,
+                                     const Request*,
+                                     Response*,
+                                     google::protobuf::Closure*);
+
+    // 硬性要求: 这里的response和done必须是new出来的 或者 是nullptr
+    template<typename Stub, typename RequestType, typename ResponseType>
+    static void Call(RpcMethod<Stub, RequestType, ResponseType> rpc_method,
+                     RequestType* request,
+                     ResponseType* response,
+                     const SessionInterface* session,
+                     google::protobuf::Closure* done) {
+      rpc::RpcChannel channel(const_cast<SessionInterface*>(session));
+      rpc::RpcController controller;
+
+      Stub stub(&channel);
+      (stub.*rpc_method)(&controller, request, response, done);
+
+      // delete in RpcMangerClient::Handle()
+      // done->Run();
+      // delete done;
+    }
+
+  #+end_src
+
+* 自定义RPC框架v0.2 使用示例
+  #+begin_src C++
+    // rpc callback
+    // response 必须是new的, 会在RpcManagerClient::Handle中delete
+    // done 必须是new的, 会在RpcManagerClient::Handle中delete
+    auto response = new proto::CmdLoginResult;
+    auto done = google::protobuf::NewCallback(&LoginVisitorCallback,
+                                              response,
+                                              message.session);
+
+    kernel::Rpc::Call(&proto::DatabaseService_Stub::LoginVisitor,
+                      &request,
+                      response,
+                      message.session,
+                      done);
+
+
+    // 如果不需要返回信息
+    kernel::Rpc::Call(&proto::DatabaseService_Stub::LoginVisitor,
+                      &request,
+                      nullptr,
+                      message.session,
+                      nullptr);
+  #+end_src
+* 自定义RPC框架v0.3
+  v0.2 的问题:
+  1. 没有解决 kernel::Rpc::Call()中的response和done 的new/delete问题
+     respons/done 在上层new, 在qykenel中delete. 非常容易造成问题
+     - 上层调用kernel::Rpc::Call(), 传递response和done
+     - 在RpcChannel::CallMethod中传递给RpcManagerClient
+     - 后续在RepcManagerClient::Handle()中处理
+  2. v0.2 中的同步调用是假的
+
+
+  v0.3 改动:
+  1. 问题1 增加一层闭包, 来管理response 和 done 的生命周期
+  2. 问题2 删除rpc 中的同步调用. 没必要存在同步使用
+  3. 增加tools::MakeClosure 来替代google::protobuf::NewCallback
+     从而简化done 的构造
+
+* 自定义RPC框架v0.3 使用示例
+  #+begin_src C++ :hl_lines
+    // 上层业务代码，零 new，零 delete，零内存泄露风险！
+    proto::CmdLoginRequest request;
+    request.set_username("admin");
+
+    kernel::rpc::Call(message.session,
+                      &proto::DatabaseService_Stub::LoginVisitor,
+                      request,
+                      [](const proto::CmdLoginResult& response) {
+                        if (ok) {
+                          KINFO("Login success, user_id: {}", response.user_id());
+                        } else {
+                          KERROR("Login failed!");
+                        }
+                      });
+
+
+    // 无须返回结果的版本
+    proto::CmdLoginRequest request;
+    request.set_username("admin");
+
+    kernel::rpc::Call(message.session,
+                      &proto::DatabaseService_Stub::LoginVisitor,
+                      request);
+  #+end_src
+
+* TODO 可继续优化
+  *问题*
+  1. v0.3使用模板来封装kernel::Rpc::Call(),
+     但模板只能在头文件中定义, 导致仍然暴露kernel::rpc::RpcChannel对上层

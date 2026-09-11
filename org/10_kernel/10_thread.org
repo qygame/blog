@@ -1,0 +1,62 @@
+#+title: 多线程问题
+#+date: 2026-09-11 10:15:36
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/10_thread
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 线程视图
+  1. 主线程 阻塞
+     [[file:src/kernel.cc::void Run() {][具体代码]]
+  2. work线程 (业务线程)
+     1) 上层业务所在的线程
+     2) Timer定时器 callback 的执行线程
+     : 现在的设计, 除dbServer外, 都是单线程
+  3. io线程
+     1) 创建socket::client的时候绑定的线程
+     2) socket::server 产生的tcpsession所在的线程
+     3) timer 自身所在的线程
+  4. accept io线程 (tcpserver 监听线程)
+
+
+* 图形展示
+  #+begin_example
+                         Main Thread
+                        (Start/Stop)
+                             |
+       ------------------------------------------------
+       |                     |                       |
+       v                     v                       v
+    accept_io              io pool               work pool
+       |                     |                       |
+    acceptor             TcpSession                Logic
+       |                  (read/write)             Timer
+    create session            |
+                              |
+                           post msg
+  #+end_example
+
+
+
+
+* 多线程涉及的模块
+  推荐使用 底层多线程 + 业务单线程
+
+  底层都是通过把callback() post 到work 线程, 从而避免业务层出现多线程问题
+
+
+  底层自身使用了多线程的模块:
+  1. net/client, server 使用strand_ 来解决自身的多线程问题,
+  2. net/timer 使用strand_ 来解决自身的多线程问题
+
+
+
+  底层可能被 =多线程的业务层= 调用的模块:
+  1. database
+     只有DbServer 才可能是多线程.
+     database 使用锁来保护自己的数据(数据库连接)

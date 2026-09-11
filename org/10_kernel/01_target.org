@@ -1,0 +1,35 @@
+#+title: 目标
+#+date: 2026-09-11 10:10:29
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/01_target
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+封装底层库, 对上层提供统一接口. 实现上层与底层的分离
+
+
+| 功能     | 状态   | 封装的库    | 对上层接口  | 备注                               |
+|----------+--------+-------------+-------------+------------------------------------|
+| net      | 已封装 | asio        | interface.h |                                    |
+|          |        |             | kernel.h    |                                    |
+|----------+--------+-------------+-------------+------------------------------------|
+| log      | 半封装 | spdlog      | kernel.h    | 仅封装了sqdlog的创建               |
+|          |        |             |             | 对上层提供的是 spdlog::xxx()       |
+|----------+--------+-------------+-------------+------------------------------------|
+| redis    | 半封装 | redis       | kernel.h    | 仅封装了redis的创建                |
+|          |        |             |             | 对上层提供的是redis实例            |
+|----------+--------+-------------+-------------+------------------------------------|
+| database | 半封装 | postgresSQL | database.h  | 仅封装了database的创建             |
+|          |        |             |             | 对上层提供的是database session实例 |
+|----------+--------+-------------+-------------+------------------------------------|
+| RPC      | 已封装 |             | rpc.h       | 使用protobuf完成了自定义RPC框架    |
+|----------+--------+-------------+-------------+------------------------------------|
+
+
+* TODO 代办
+  1. 后续从libqykernel中移除redis
+  2. 后续从libqykernel中移除database
