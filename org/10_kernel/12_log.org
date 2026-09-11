@@ -1,4 +1,4 @@
-#+title: log 封装
+#+title: 日志模块
 #+date: 2026-09-11 10:19:15
 #+hugo_section: docs
 #+hugo_bundle: 10_kernel/12_log
