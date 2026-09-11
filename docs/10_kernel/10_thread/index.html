@@ -1,0 +1,66 @@
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="线程视图#
+
+
+主线程 阻塞 
+具体代码 
+
+
+work线程 (业务线程) 
+
+上层业务所在的线程 
+Timer定时器 callback 的执行线程 
+
+现在的设计, 除dbServer外, 都是单线程
+
+io线程 
+
+创建socket::client的时候绑定的线程 
+socket::server 产生的tcpsession所在的线程 
+timer 自身所在的线程 
+
+
+
+accept io线程 (tcpserver 监听线程) 
+
+
+图形展示#
+                     Main Thread
+                    (Start/Stop)
+                         |
+   ------------------------------------------------
+   |                     |                       |
+   v                     v                       v
+accept_io              io pool               work pool
+   |                     |                       |
+acceptor             TcpSession                Logic
+   |                  (read/write)             Timer
+create session            |
+                          |
+                       post msg多线程涉及的模块#
+推荐使用 底层多线程 + 业务单线程 "><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/10_kernel/10_thread/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="多线程问题"><meta property="og:description" content="线程视图# 主线程 阻塞 具体代码 work线程 (业务线程) 上层业务所在的线程 Timer定时器 callback 的执行线程 现在的设计, 除dbServer外, 都是单线程 io线程 创建socket::client的时候绑定的线程 socket::server 产生的tcpsession所在的线程 timer 自身所在的线程 accept io线程 (tcpserver 监听线程) 图形展示# Main Thread (Start/Stop) | ------------------------------------------------ | | | v v v accept_io io pool work pool | | | acceptor TcpSession Logic | (read/write) Timer create session | | post msg多线程涉及的模块# 推荐使用 底层多线程 + 业务单线程"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2026-09-11T10:15:00+00:00"><meta property="article:modified_time" content="2026-09-11T02:27:38+00:00"><title>多线程问题 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/10_kernel/10_thread/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.48daa2a5a7e2e36a044660c3b33b86e2b2a37cce88d2e976ec6de7f4ac46cf78.js integrity="sha256-SNqipafi42oERmDDszuG4rKjfM6I0ul27G3n9KxGz3g=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+<input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><a href=/blog/docs/01_server/architecture/>服务器架构</a></li><li><a href=/blog/docs/01_server/02_route/>消息流向</a></li><li><a href=/blog/docs/01_server/03_message_format/>消息号格式</a></li><li><input type=checkbox id=section-1746b96ec62411fa5887a09b3b846c22 class=toggle checked>
+<label for=section-1746b96ec62411fa5887a09b3b846c22 class=flex><a role=button>libqykernel</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/10_kernel/01_target/>目标</a></li><li><a href=/blog/docs/10_kernel/02_directory/>目录说明</a></li><li><a href=/blog/docs/10_kernel/10_thread/ class=active>多线程问题</a></li><li><a href=/blog/docs/10_kernel/11_net/>net封装</a></li><li><a href=/blog/docs/10_kernel/12_log/>log 封装</a></li><li><a href=/blog/docs/10_kernel/12_rpc/>自定义RPC框架</a></li><li><a href=/blog/docs/10_kernel/99_call_note/>使用说明</a></li></ul></li><li><input type=checkbox id=section-39a21f3321b16d2270a3d099175d03e8 class=toggle>
+<label for=section-39a21f3321b16d2270a3d099175d03e8 class=flex><a href=/blog/docs/01_server/10_gate_server/>GateServer</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/01_server/10_gate_server/10_login/>登陆模块</a></li><li><a href=/blog/docs/01_server/10_gate_server/gate/>Gate</a></li></ul></li><li><input type=checkbox id=section-ee85f51830272357047967355c2a094e class=toggle>
+<label for=section-ee85f51830272357047967355c2a094e class=flex><a role=button>server</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul></ul></li><li><a href=/blog/docs/01_server/14_ticket/>门票 Ticket</a></li><li><input type=checkbox id=section-15aa31a3f6f8394d3fc38d3e5915180b class=toggle>
+<label for=section-15aa31a3f6f8394d3fc38d3e5915180b class=flex><a href=/blog/docs/01_server/30_room_server/>RoomServer</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/01_server/30_room_server/10_room_rule/>房间规则</a></li><li><a href=/blog/docs/01_server/30_room_server/11_room_rule_config/>房间配置</a></li><li><a href=/blog/docs/01_server/30_room_server/room/>room</a></li><li><a href=/blog/docs/01_server/30_room_server/rule/>约定俗成</a></li></ul></li><li><input type=checkbox id=section-8cd4b86e04c4c333ad6a93ab381690d6 class=toggle>
+<label for=section-8cd4b86e04c4c333ad6a93ab381690d6 class=flex><a role=button>子游戏</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/01_server/99_subgame/subgame/>SubGame</a></li><li><a href=/blog/docs/01_server/99_subgame/22/>牌九</a></li></ul></li><li><a href=/blog/docs/01_server/redis/>redis</a></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>多线程问题</h3><label for=toc-control><img src=/blog/icons/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#线程视图>线程视图</a></li><li><a href=#图形展示>图形展示</a></li><li><a href=#多线程涉及的模块>多线程涉及的模块</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=线程视图>线程视图<a class=anchor href=#%e7%ba%bf%e7%a8%8b%e8%a7%86%e5%9b%be>#</a></h2><ol><li><p>主线程 阻塞<br><a href=src/kernel.cc>具体代码</a><br></p></li><li><p>work线程 (业务线程)<br></p><ol><li>上层业务所在的线程<br></li><li>Timer定时器 callback 的执行线程<br></li></ol><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>现在的设计, 除dbServer外, 都是单线程</span></span></code></pre></div></li><li><p>io线程<br></p><ol><li>创建socket::client的时候绑定的线程<br></li><li>socket::server 产生的tcpsession所在的线程<br></li><li>timer 自身所在的线程<br></li></ol></li><li><p>accept io线程 (tcpserver 监听线程)<br></p></li></ol><h2 id=图形展示>图形展示<a class=anchor href=#%e5%9b%be%e5%bd%a2%e5%b1%95%e7%a4%ba>#</a></h2><div class=highlight><pre tabindex=0 style=background-color:#f0f3f3;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-text data-lang=text><span style=display:flex><span>                     Main Thread
+</span></span><span style=display:flex><span>                    (Start/Stop)
+</span></span><span style=display:flex><span>                         |
+</span></span><span style=display:flex><span>   ------------------------------------------------
+</span></span><span style=display:flex><span>   |                     |                       |
+</span></span><span style=display:flex><span>   v                     v                       v
+</span></span><span style=display:flex><span>accept_io              io pool               work pool
+</span></span><span style=display:flex><span>   |                     |                       |
+</span></span><span style=display:flex><span>acceptor             TcpSession                Logic
+</span></span><span style=display:flex><span>   |                  (read/write)             Timer
+</span></span><span style=display:flex><span>create session            |
+</span></span><span style=display:flex><span>                          |
+</span></span><span style=display:flex><span>                       post msg</span></span></code></pre></div><h2 id=多线程涉及的模块>多线程涉及的模块<a class=anchor href=#%e5%a4%9a%e7%ba%bf%e7%a8%8b%e6%b6%89%e5%8f%8a%e7%9a%84%e6%a8%a1%e5%9d%97>#</a></h2><p>推荐使用 底层多线程 + 业务单线程<br></p><p>底层都是通过把callback() post 到work 线程, 从而避免业务层出现多线程问题<br></p><p>底层自身使用了多线程的模块:<br></p><ol><li>net/client, server 使用strand_ 来解决自身的多线程问题,<br></li><li>net/timer 使用strand_ 来解决自身的多线程问题<br></li></ol><p>底层可能被 <code>多线程的业务层</code> 调用的模块:<br></p><ol><li>database<br>只有DbServer 才可能是多线程.<br>database 使用锁来保护自己的数据(数据库连接)<br></li></ol></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/10_kernel/02_directory/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=目录说明>
+<span>目录说明</span>
+</a></span><span><a href=/blog/docs/10_kernel/11_net/ class="flex align-center"><span>net封装</span>
+<img src=/blog/icons/forward.svg class=book-icon alt=Next title=net封装></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#线程视图>线程视图</a></li><li><a href=#图形展示>图形展示</a></li><li><a href=#多线程涉及的模块>多线程涉及的模块</a></li></ul></nav></div></aside></main></body></html>
