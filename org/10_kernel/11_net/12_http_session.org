@@ -1,0 +1,36 @@
+#+title: http
+#+date: 2026-09-11 11:06:18
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/11_net/12_http_session
+#+export_file_name: index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 传输格式
+  #+begin_example
+    POST /api HTTP/1.1\r\n
+    check_code: {}\r\n
+    main: {}\r\n
+    sub: {}\r\n
+    uid: {}\r\n
+    Content-Length: {}\r\n
+    Connection: keep-alive\r\n
+    \r\n
+    body message
+  #+end_example
+
+
+* 回调设置
+  1. HttpServerSession
+     - socket::Read       -> EventInterface::OnRead
+
+
+  #+attr_shortcode: info|success|warning|danger
+  #+begin_hint
+  只做了HttpServer, 没有写HttpClient.
+  暂时对HttpClient没什么需求
+  #+end_hint

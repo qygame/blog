@@ -1,0 +1,50 @@
+#+title: tcp
+#+date: 2026-09-11 11:06:04
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/11_net/11_tcp_session
+#+export_file_name: index
+#+hugo_weight: 11
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 传输格式
+  tcp 传输格式见 [[file:src/net/tools/codec.h::struct TcpHead {][TcpHead]]
+
+
+* 回调设置
+  1. TcpClient
+     - [[file:src/net/create_net.cc::if (state == State::Connected) {][socket::Connected]]  -> [[file:src/net/create_net.cc::void Resit2Server(SessionPtr session) {][SubResit2Server]]
+     - socket::Closed     -> EventInterface::OnClosed
+     - socker::Read       -> MessageCallback
+  2. TcpServerSession
+     - socket::Connected  -> 不做任何处理
+     - socket::Closed     -> EventInterface::OnClosed
+     - socket::Read       -> MessageCallback
+
+
+  [[file:src/net/create_net.cc::void MessageCallback(EventInterface* event, const Message& message) {][MessageCallback]] 逻辑
+  1) SubResit2Server 消息
+     返回注册成功 CmdResit2Server;
+     通知 EventInterface::OnConnected
+
+     #+attr_shortcode: info
+     #+begin_hint
+     只有TcpClient 会向TcpServer 发送注册消息.
+     收到注册消息后, TcpServer才会认为与TcpClient连接成功. (与socket的连接成功不一样)
+     #+end_hint
+
+  2) CmdResit2Server 消息
+     通知 EventInterface::OnConnected
+
+     #+attr_shortcode: info
+     #+begin_hint
+     只有收到注册成功消息后, client才会认为与server连接成功. (与socket的连接成功不一样)
+     #+end_hint
+
+  3) rpc 消息
+     TODO 后续补充逻辑
+  4) 其他消息
+     转发给 EventInterface::OnRead 处理

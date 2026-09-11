@@ -1,0 +1,56 @@
+#+title: Session 对外API
+#+date: 2026-09-11 10:48:12
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/11_net/10_session
+#+export_file_name: index
+#+hugo_weight: 10
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* session说明
+  在kernel中, session可能是TcpClient, TcpServerSession, HttpServerSession等.
+  但所有的session对外提供统一接口, 接口主要分两部分:
+  1. session 自身的数据. API 为 SessionInterface
+  2. session 响应事件.   API 为 EventInterface
+
+  #+begin_src C++
+    class SessionInterface {
+     public:
+      virtual ~SessionInterface() = default;
+
+      // close session
+      virtual void Stop() = 0;
+
+      // get server id. 0表示属于client
+      virtual std::string server_id() const = 0;
+
+      // get server name (进程的名字. qy_room就是room)
+      virtual std::string server_name() const = 0;
+
+      // qykernel 内部使用, 外部不要调用
+      virtual void Send(int16_t main, int16_t sub, int64_t uid,
+                        const void* data, int32_t data_size) = 0;
+    };
+  #+end_src
+
+  #+begin_src C++
+    class EventInterface {
+     public:
+      // read
+      virtual void OnRead(const Message& message) = 0;
+      // closed
+      virtual void OnClosed(SessionPtr session) = 0;
+      // connectd
+      virtual void OnConnected(SessionPtr session) = 0;
+    };
+
+  #+end_src
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  外部不需要在乎session的具体类型, 只需要处理session事件即可
+  #+end_hint

@@ -1,0 +1,10 @@
+#+title: 网络模块
+#+date: 2026-09-11 10:39:34
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/11_net
+#+export_file_name: _index
+#+hugo_weight: 11
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab

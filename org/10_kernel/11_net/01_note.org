@@ -1,0 +1,27 @@
+#+title: 编码注意事项
+#+date: 2026-09-11 10:41:14
+#+hugo_section: docs
+#+hugo_bundle: 10_kernel/11_net/01_note
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* this相关
+  #+attr_shortcode: info
+  #+begin_hint
+  1. 不要捕获this, 使用shared_ptr代替
+     this 只是一个地址, 如果对象内存摧毁后, 会变成悬空指针
+     智能指针可以保证, 只要智能指针还在, 对象的内存就不会被摧毁
+  #+end_hint
+
+* 多线程
+  #+attr_shortcode: info
+  #+begin_hint
+  1. 为了避免线程竞争, 不要传递变量本身, 而是使用副本(tread local)
+  2. 为了避免asio io_context 线程竞争, 使用strand, 即使io_context是单线程, 也推荐strand
+  3. 为了避免线程之间的数据copy. 使用unique_ptr + std::move 组合
+  #+end_hint
