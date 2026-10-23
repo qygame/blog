@@ -25,11 +25,7 @@
   | redis    | redis       | kernel.h              | 仅封装了redis的创建                |
   |          |             |                       | 对上层提供的是redis实例            |
   |----------+-------------+-----------------------+------------------------------------|
-  | database | postgresSQL | database.h            | 仅封装了database的创建             |
-  |          |             |                       | 对上层提供的是database session实例 |
-  |----------+-------------+-----------------------+------------------------------------|
 
 
 * TODO 代办
   1. 后续从libqykernel中移除redis
-  2. 后续从libqykernel中移除database
