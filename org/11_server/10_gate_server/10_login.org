@@ -27,4 +27,9 @@
 #+end_hint
 
 * 处理流程
-  [[file:login.png]]
+  在UserManager中查询用户, 并按一下逻辑处理.
+  1. 用户不存在: 创建新的User对象, 并插入UserManager
+  2. 用户已存在:
+     - 如果User中的 =gate_session= 与新的 =gate_session= 不同,
+       则通知旧玩家下线; 并更新User中的 =gate_session=
+     - 如果User中的 =room_session= 不为空, 则设置断线重连标志
