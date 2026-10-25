@@ -18,7 +18,6 @@
 -----
 
 * TODO 创建房间流程
-  现在的创建房间流程
   1. client 创建房间, 携带房间标志kindid 和 =房间配置= 数据. 比如2人, 4局
   2. GateServer 检查玩家是否已在RoomServer中
   3. GateServer 检查kindid对应的RoomServer是否已启动
@@ -27,9 +26,9 @@
   6. RoomServer 判断玩家门票是否满足
   7. RoomServer 创建table
   8. RoomServer 主动让玩家坐下
-  9. RoomServer 通知client 创建成功, 进入子游戏
-  10. RoomServer 游戏开始的时候, 扣除门票
-
+  9. RoomServer 通知GateServer 结果
+  10. GateServer 通知client 创建成功, 进入子游戏
+  12. RoomServer 游戏开始的时候, 扣除门票
 
   #+attr_shortcode: info
   #+begin_hint
@@ -38,11 +37,5 @@
   例如: RoomServer中门票扣除20钻石;
   实际是RPC到ActorServer中, 在ActorServer中进行-20钻石的计算, 并返回结果给RoomServer
   #+end_hint
-
-  现在的问题:
-  1. 步骤2 多次点击, 会导致问题; 应该在ActorServer中引入 User 状态
-  3. "通知client 创建成功,进入子游戏" 放到GateServer中处理
-     可以同时更新User status
-
 
 * TODO 加入房间流程
