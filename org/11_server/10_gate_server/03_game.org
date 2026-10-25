@@ -1,0 +1,48 @@
+#+title: 游戏模块
+#+date: 2026-10-25 08:51:52
+#+hugo_section: docs
+#+hugo_bundle: 11_server/10_gate_server/03_game
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+游戏模块 处理:
+
+1. 下发 [[file:~/qy/blog/org/11_server/30_room_server/11_room_rule_config.org::*房间配置文件][房间配置]] 给client
+2. 创建房间流程
+3. 加入房间流程
+
+-----
+
+* TODO 创建房间流程
+  现在的创建房间流程
+  1. client 创建房间, 携带房间标志kindid 和 =房间配置= 数据. 比如2人, 4局
+  2. GateServer 检查玩家是否已在RoomServer中
+  3. GateServer 检查kindid对应的RoomServer是否已启动
+  4. GateServer 转发kindid 和 =房间配置= 数据给对应的RoomServer
+  5. RoomServer 根据client发送的 =房间配置= 数据 构造 =RoomRule=
+  6. RoomServer 判断玩家门票是否满足
+  7. RoomServer 创建table
+  8. RoomServer 主动让玩家坐下
+  9. RoomServer 通知client 创建成功, 进入子游戏
+  10. RoomServer 游戏开始的时候, 扣除门票
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  门票扣除可以在RoomServer中进行, 但必须RPC到ActorServer中进行实际处理.
+
+  例如: RoomServer中门票扣除20钻石;
+  实际是RPC到ActorServer中, 在ActorServer中进行-20钻石的计算, 并返回结果给RoomServer
+  #+end_hint
+
+  现在的问题:
+  1. 步骤2 多次点击, 会导致问题; 应该在ActorServer中引入 User 状态
+  3. "通知client 创建成功,进入子游戏" 放到GateServer中处理
+     可以同时更新User status
+
+
+* TODO 加入房间流程
