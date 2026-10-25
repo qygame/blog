@@ -11,7 +11,7 @@
 
 游戏模块 处理:
 
-1. 下发 [[file:~/qy/blog/org/11_server/30_room_server/11_room_rule_config.org::*房间配置文件][房间配置]] 给client
+1. 下发 =房间配置= 给client
 2. 创建房间流程
 3. 加入房间流程
 
