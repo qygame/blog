@@ -17,7 +17,7 @@
 
 -----
 
-* TODO 创建房间流程
+* 创建房间流程
   1. client 创建房间, 携带房间标志kindid 和 =房间配置= 数据. 比如2人, 4局
   2. GateServer 检查玩家是否已在RoomServer中
   3. GateServer 检查kindid对应的RoomServer是否已启动
