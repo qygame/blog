@@ -38,4 +38,5 @@
   实际是RPC到ActorServer中, 在ActorServer中进行-20钻石的计算, 并返回结果给RoomServer
   #+end_hint
 
-* TODO 加入房间流程
+* 加入房间流程
+  同上
