@@ -1,0 +1,27 @@
+#+title: 创建房间/加入房间
+#+date: 2026-10-28 10:26:06
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/12_enter_room
+#+export_file_name: index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 桌子数据 && 玩家数据
+
+  GateServer通知client创建/加入房间成功后, 下发kindid给client.
+  client主动去拉取房间数据和玩家数据
+
+  后续的数据更新, 由server主动下发
+
+
+
+  玩家A加入房间 -- 广播A玩家数据给桌子上已有的玩家
+                -- A玩家因为是新加入的房间, 会主动拉取房间数据和玩家数据(包含了玩家A)
+
+  玩家A坐下     -- 广播A玩家数据给桌子上已有的玩家
+                -- A玩家如果是从status:加入房间 -> status: 坐下. 那么广播的时候也会给A
+                -- A玩家如果是直接坐下, 会主动拉取玩家数据(包含了玩家A)

@@ -18,17 +18,20 @@
 -----
 
 * 创建房间流程
-  1. client 创建房间, 携带房间标志kindid 和 =房间配置= 数据. 比如2人, 4局
-  2. GateServer 检查玩家是否已在RoomServer中
-  3. GateServer 检查kindid对应的RoomServer是否已启动
-  4. GateServer 转发kindid 和 =房间配置= 数据给对应的RoomServer
-  5. RoomServer 根据client发送的 =房间配置= 数据 构造 =RoomRule=
-  6. RoomServer 判断玩家门票是否满足
-  7. RoomServer 创建table
-  8. RoomServer 主动让玩家坐下
-  9. RoomServer 通知GateServer 结果
-  10. GateServer 通知client 创建成功, 进入子游戏
-  12. RoomServer 游戏开始的时候, 扣除门票
+  1. client 创建房间, 携带房间标志(kindid或tableid) 和 =房间配置= 数据. 比如2人, 4局
+  2. GateServer 检查
+     - 对应的RoomServer是否已启动
+     - 玩家是否已在RoomServer中
+  3. GateServer 检查通过后, 转发房间标志 和 =房间配置= 数据给对应的RoomServer
+  4. RoomServer 创建table
+     - 构造房间规则 =RoomRule=
+     - 校验玩家门票
+     - 创建Table
+     - 创建User
+     - 玩家入座 User Sit on Table
+  5. RoomServer 处理成功后, 通知GateServer
+  6. GateServer 通知client 创建成功, 下发房间对应的kindid
+     这里只对client下发了kindid. client需要自己去拉取房间数据.
 
   #+attr_shortcode: info
   #+begin_hint
