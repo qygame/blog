@@ -11,13 +11,14 @@
 
 
 * 桌子数据 && 玩家数据
+  1. 创建/加入成功, GateServer只是下发kindid, 告诉client成功了. 但是数据并不在GateServer
+  2. client 拿到成功消息后, 主动去找RoomServer要数据(table数据, 玩家数据). 相当于第一次进入房间.
+     client: AskRoomData&&Users
+     RoomServer: 返回table数据 和 玩家数据
+  3. 后续玩家状态的更新, 由RoomServer主动推送
 
-  GateServer通知client创建/加入房间成功后, 下发kindid给client.
-  client主动去拉取房间数据和玩家数据
 
-  后续的数据更新, 由server主动下发
-
-
+  -----
 
   玩家A加入房间 -- 广播A玩家数据给桌子上已有的玩家
                 -- A玩家因为是新加入的房间, 会主动拉取房间数据和玩家数据(包含了玩家A)
