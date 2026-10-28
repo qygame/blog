@@ -30,8 +30,8 @@
      - 创建User
      - 玩家入座 User Sit on Table
   5. RoomServer 处理成功后, 通知GateServer
-  6. GateServer 通知client 创建成功, 下发房间对应的kindid
-     这里只对client下发了kindid. client需要自己去拉取房间数据.
+  6. GateServer 通知client创建成功
+  7. client 主动去拉取房间数据&&玩家数据, 完成子游戏场景的初始化
 
   #+attr_shortcode: info
   #+begin_hint

@@ -11,7 +11,7 @@
 
 
 * 桌子数据 && 玩家数据
-  1. 创建/加入成功, GateServer只是下发kindid, 告诉client成功了. 但是数据并不在GateServer
+  1. 创建/加入成功, GateServer只是告诉client成功了. 但是数据并不在GateServer
   2. client 拿到成功消息后, 主动去找RoomServer要数据(table数据, 玩家数据). 相当于第一次进入房间.
      client: AskRoomData&&Users
      RoomServer: 返回table数据 和 玩家数据
