@@ -1,0 +1,42 @@
+#+title: 界面椅子号
+#+date: 2026-10-30 10:47:23
+#+hugo_section: docs
+#+hugo_bundle: 12_client/11_subgame/03_ui_chair
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+在子游戏中，需要区分两种椅子编号:
+- 正常椅子号 Chair
+  Server 下发的原始椅子编号, 作为游戏逻辑中的统一标识.
+  也是Message Handler, Flow, Data中使用的chair
+- UI Chair
+  UI 根据本地玩家视角转换后的椅子编号，用于确定玩家在界面上的显示位置
+
+
+无论本地玩家在Server中分配到哪个Chair, 在自己的UI界面中, 始终显示在 player_node_0
+
+为了保证不同玩家的界面视角一致，必须进行 Chair 与 UI Chair 之间的转换
+
+-----
+
+
+=已知条件=
+1. Server下发的Chair 从0开始编号
+2. UI 按照顺时针方向排列玩家节点
+   player_node_0, player_node_1, player_node_2 ... 按顺时针方向递增
+3. UI中玩家节点的数量为 N
+
+
+-----
+=转换公式=
+
+#+begin_example
+ui_chair = (chair - my_chair + N) mod N
+
+chair = (ui_chair + my_chair) mod N
+#+end_example

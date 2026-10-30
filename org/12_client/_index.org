@@ -1,0 +1,10 @@
+#+title: client
+#+date: 2026-10-30 09:36:07
+#+hugo_section: docs
+#+hugo_bundle: 12_client
+#+export_file_name: _index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab

@@ -1,0 +1,140 @@
+#+title: 数据模型
+#+date: 2026-10-30 09:46:47
+#+hugo_section: docs
+#+hugo_bundle: 12_client/11_subgame/02_data_model
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+子游戏（SubGame）必须严格遵循以下架构模型进行设计与编码. 各模块应保持明确的职责边界, 通过信号（Signal）和接口调用进行通信, 避免模块之间产生不必要的耦合
+
+* 模块概述
+  子游戏由以下四个核心模块组成：
+  - SubGame：子游戏入口, 负责模块组织与外部交互
+  - Data：数据层, 负责维护子游戏的数据状态, 通过信号通知数据变化
+  - Flow：逻辑层, 负责消息协议处理及业务逻辑
+  - UI：表现层, 负责界面展示与用户交互
+
+  此外，子游戏还包含一个 MessageHandler，负责消息处理与分发。
+
+  #+begin_example
+                             外部系统
+                                │
+                                ▼
+                            SubGame11
+                                │
+              ┌─────────────────┼─────────────────┬─────────────────┐
+              │                 │                 │                 │
+              ▼                 │                 │                 │
+        MessageHandler   ───►  Flow   ───►       Data              UI
+                                                  │                 ▲
+                                                  │                 │
+                                                  ▼                 │
+                                                Signal ─────────────┘
+  #+end_example
+
+
+* 数据模型设计
+** SubGame
+   职责：
+   - 持有并管理 Data、UI、Flow 三个模块
+   - 负责处理外部系统与子游戏之间的交互
+   - 负责协调子游戏内部 Data、UI 之间的信号通信
+   - 作为子游戏的统一入口，管理各模块的初始化与生命周期
+
+
+   设计约束:
+   1. 除了模块之外, 不应该持有任何数据
+
+** Data
+   Data 是子游戏数据的唯一权威来源，负责维护:
+   - table数据: 游戏状态, 棋盘, 当前行动方等
+   - 玩家数据: 玩家在游戏过程中产生的数据(不维护玩家信息UserInfo)
+
+
+   设计约束：
+   1. 所有内部数据字段均为私有字段，使用下划线前缀表达内部访问约定
+   2. 所有数据写入均通过私有setter
+   3. Setter负责校验数据、判断是否发生变化, 只有数据发生实际变化时，才更新数据并发送信号
+      并且信号只能在对应 setter 中发送
+   4. 对外提供只读查询接口，必要时返回副本，避免外部直接修改内部数据
+   5. 先更新完全部数据, 后发送信号
+   6. Data 不负责UI展示, 也不执行需要由Flow编排的业务操作
+
+
+   #+begin_example
+     # 例如，修改当前行动方时：
+     signal turn_chair_changed(chair: int)
+
+     var _turn_chair: int = -1
+
+     func _set_turn_chair(chair: int) -> void:
+         if _turn_chair == chair:
+             return
+         _turn_chair = chair
+         turn_chair_changed.emit(chair)
+
+     func get_turn_chair() -> int:
+         return _turn_chair
+
+   #+end_example
+
+
+** Flow
+   Flow 是子游戏的业务逻辑入口，负责实现消息协议中的所有 `Sub` 函数和 `Cmd` 函数
+
+
+   设计约束：
+   1. Flow 持有 Data, 不自行维护第二份对局状态
+   2. Flow 可以拥有自己的数据, 但仅限于流程状态数据. 例如:
+      玩家点击了"悔棋", client向server进行发送悔棋请求.
+      此时Flow可以记录 悔棋正在请求的状态.
+      可以避免重复发送悔棋数据给server
+   3. 所有业务操作先进行必要的合法性校验，再调用 Data 更新状态
+   4. UI 需要查询业务相关信息时，可以调用 Flow 提供的查询接口，由 Flow 转发给 Data
+      但应该尽量减少这部分查询接口
+
+   -----
+
+** UI
+   UI 负责显示游戏状态，并接收用户输入
+
+
+   设计约束：
+   1. UI 不持有Data
+      Data发送信号的时候, 应该携带足够的数据给UI模块
+      如果UI确实需要Data数据, 应该通过Flow函数间接调用
+   2. UI 可以持有临时的表现状态. 例如动画播放状态、悬停预览位置和弹窗显示状态,
+      但不能将这些状态作为对局数据的权威来源
+   3. UI 通过信号对应的处理函数更新界面
+
+   ------
+
+
+* 文件与节点绑定关系
+  各模块必须按照以下文件命名、类命名及节点绑定关系组织
+
+  | 模型           | 文件名             | class name       | 绑定节点                     |
+  |----------------+--------------------+------------------+------------------------------|
+  | SubGame        | 11.gd              | 不需要           | 子游戏场景根节点下的 11 Node |
+  | Data           | data.gd            | Data11           | 不需要                       |
+  | Flow           | sub_flow.gd        | Flow11           | 不需要                       |
+  | UI             | sub_ui.gd          | UI11             | 子游戏场景根节点             |
+  | MessageHandler | message_handler.gd | MessageHandler11 | 不需要                       |
+
+
+* 核心设计：数据、信号与 UI 操作的映射
+  =Data 数据模型 -> 信号 -> UI操作=
+  这是整个架构中最需要仔细设计的部分.
+
+
+  设计原则:
+  1. 一个信号表达一种清晰的数据变化. 不要让一个信号同时承担多个不相关字段的更新
+  2. 信号参数携带 UI 更新所需的最小信息
+  3. 只发送真实变化
+  4. 批量变更需要明确语义. 比如重置棋盘时使用 `board_reset`，而不是逐格发送大量清空信号
+  5. 信号顺序必须明确. 当一次业务操作修改多个字段时, 应定义信号的发送顺序, 避免 UI 暂时显示不一致的状态
+  6. 初始化与增量更新分离. 信号用于通知变化，快照查询用于初始化和恢复界面
