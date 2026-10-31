@@ -42,7 +42,7 @@
   子游戏之间保持目录隔离，避免资源和业务逻辑相互耦合
 
   #+begin_example
-  |-- auto_generate            // 自动生成的代码
+  |-- auto_generated           // 自动生成的代码
   |   |-- flow.h               // 流程模型
   |   `-- table_sink.h         // 子游戏桌子
   |-- conf                     //
