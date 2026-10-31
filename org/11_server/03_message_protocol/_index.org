@@ -1,0 +1,10 @@
+#+title: 消息协议
+#+date: 2026-10-31 21:02:38
+#+hugo_section: docs
+#+hugo_bundle: 11_server/03_message_protocol
+#+export_file_name: _index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab

@@ -1,0 +1,16 @@
+#+title: 自动生成
+#+date: 2026-10-31 21:20:32
+#+hugo_section: docs
+#+hugo_bundle: 11_server/99_subgame/03_auto_generate
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+为了减少人为出错. 以下文件会自动生成
+
+flow.h
+table_sink.h

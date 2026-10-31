@@ -1,0 +1,99 @@
+#+title: 数据模型
+#+date: 2026-10-31 20:42:23
+#+hugo_section: docs
+#+hugo_bundle: 11_server/99_subgame/02_data_model
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+子游戏（SubGame）必须严格遵循以下架构模型进行设计与编码. 各模块应保持明确的职责边界.
+
+* 模块概述
+  子游戏由以下三个核心模块组成：
+  - TableSink: 子游戏入口, 负责模块组织与外部交互
+  - Data: 数据层, 负责维护子游戏的数据状态
+  - Flow: 逻辑层, 负责消息协议处理及业务逻辑
+
+
+  #+begin_example
+                    room::Table
+                        │
+                        ▼
+                     TableSink
+                        │
+              ┌─────────┴─────────┐
+              │                   │
+              ▼                   ▼
+            Flow ───────────────► Data
+  #+end_example
+
+
+* 数据模型设计
+** TableSink
+   职责：
+   - 继承TableBase, 是子游戏桌子的入口
+   - 持有并管理 Data, Flow 两个模块
+
+
+   设计约束:
+   1. 除了模块之外, 不应该持有任何数据
+
+   ------
+** Data
+   Data 是子游戏数据的唯一权威来源，负责维护:
+   - table数据: 游戏状态, 棋盘, 当前行动方等
+   - 玩家数据: 玩家在游戏过程中产生的数据(不维护玩家信息UserInfo)
+
+
+   设计约束：
+   1. 所有内部数据字段均为私有字段
+   2. 所有数据写入均通过setter
+   3. Setter负责校验数据是否可写入, 忽略不合法的数据
+   4. 对外提供只读查询接口，必要时返回副本，避免外部直接修改内部数据
+
+   #+begin_example
+     # 例如，修改当前行动方时：
+
+     public:
+     void set_turn_chair(int chair) {
+       if (chair > 100) return;
+       turn_chair_ = chair;
+     }
+
+     void turn_chair() {
+       return turn_chair_;
+     }
+
+     private:
+      int turn_chair_  = -1
+   #+end_example
+
+** Flow
+   Flow 是子游戏的业务逻辑入口，负责实现消息协议中的所有 `Sub` 函数和 `Cmd` 函数
+   继承子游戏消息协议中的 sub_handler 和 cmd_handler
+
+
+   设计约束：
+   1. Flow 持有 Data 的引用, 不自行维护第二份对局状态
+   2. 所有业务操作先进行必要的合法性校验
+
+      -----
+
+
+* 文件与模型关系
+
+  | 模型      | 文件名        | 说明 |
+  |-----------+---------------+------|
+  | TableSink | table_sink.h  |      |
+  |           | table_sink.cc |      |
+  |-----------+---------------+------|
+  | Data      | data.h        |      |
+  |           | data.cc       |      |
+  |-----------+---------------+------|
+  | Flow      | flow.h        |      |
+  |           | flow_sub.h    |      |
+  |           | flow_cmd.h    |      |
+  |-----------+---------------+------|
