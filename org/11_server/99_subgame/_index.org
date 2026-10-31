@@ -8,3 +8,7 @@
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection true
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+子游戏只负责处理 "游戏开始" -> "游戏结束"
+其他玩家加入桌子, 离开桌子, 准备/取消准备等 都与子游戏无关

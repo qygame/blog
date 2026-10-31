@@ -12,7 +12,7 @@
 
 * 自动生成
   代码自动生成 =消息协议处理函数的声明= && =分发函数=
-  使用的时候只需要实现处理函数即可
+  使用的时候只需要实现处理函数的定义即可
 
   比如 sub_login.proto 中定义的sub消息:
   代码会自动生成sub_login.handle.sub.pb.h(处理sub消息) & sub_login.handle.cmd.pb.h(处理cmd消息)
