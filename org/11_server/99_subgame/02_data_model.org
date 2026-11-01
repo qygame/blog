@@ -12,22 +12,22 @@
 子游戏（SubGame）必须严格遵循以下架构模型进行设计与编码. 各模块应保持明确的职责边界.
 
 * 模块概述
-  子游戏由以下三个核心模块组成：
+  子游戏由以下四个核心模块组成：
   - TableSink: 子游戏入口, 负责模块组织与外部交互
   - Data: 数据层, 负责维护子游戏的数据状态
-  - Flow: 逻辑层, 负责消息协议处理及业务逻辑
-
+  - Flow: 逻辑层, 负责业务逻辑
+  - MessageHandler: 负责Sub消息协议分发与处理
 
   #+begin_example
-                    room::Table
-                        │
-                        ▼
-                     TableSink
-                        │
-              ┌─────────┴─────────┐
-              │                   │
-              ▼                   ▼
-            Flow ───────────────► Data
+                       room::Table
+                            │
+                            ▼
+                        TableSink
+                            │
+          ┌─────────────────┼─────────────────┬
+          │                 │                 │
+          ▼                 │                 │
+    MessageHandler   ───►  Flow   ───►       Data
   #+end_example
 
 
@@ -35,7 +35,7 @@
 ** TableSink
    职责：
    - 继承TableBase, 是子游戏桌子的入口
-   - 持有并管理 Data, Flow 两个模块
+   - 持有并管理 Data, Flow, MessageHandler 三个模块
 
 
    设计约束:
@@ -72,8 +72,7 @@
    #+end_example
 
 ** Flow
-   Flow 是子游戏的业务逻辑入口，负责实现消息协议中的所有 `Sub` 函数和 `Cmd` 函数
-   继承子游戏消息协议中的 sub_handler 和 cmd_handler
+   Flow 负责处理子游戏流程逻辑
 
 
    设计约束：
@@ -81,19 +80,35 @@
    2. 所有业务操作先进行必要的合法性校验
 
       -----
+** MessageHandler
+   MessageHandler 负责消息协议的分发与处理, 继承子游戏消息协议中的 sub_handler
 
+
+   设计约束:
+   1. MessageHandler 持有Flow的引用
+   2. MessageHandler 不持有任何自己的数据
+
+
+   #+attr_shortcode: info
+   #+begin_hint
+   MessageHandler 的主要作用是解耦 消息协议与Flow. 让Flow可以专注游戏流程本身
+   #+end_hint
+
+   -----
 
 * 文件与模型关系
 
-  | 模型      | 文件名        | 说明 |
-  |-----------+---------------+------|
-  | TableSink | table_sink.h  |      |
-  |           | table_sink.cc |      |
-  |-----------+---------------+------|
-  | Data      | data.h        |      |
-  |           | data.cc       |      |
-  |-----------+---------------+------|
-  | Flow      | flow.h        |      |
-  |           | flow_sub.h    |      |
-  |           | flow_cmd.h    |      |
-  |-----------+---------------+------|
+  | 模型           | 文件名         | 说明 |
+  |----------------+----------------+------|
+  | TableSink      | table_sink.h   |      |
+  |                | table_sink.cc  |      |
+  |----------------+----------------+------|
+  | Data           | data.h         |      |
+  |                | data.cc        |      |
+  |----------------+----------------+------|
+  | Flow           | flow.h         |      |
+  |                | flow_sub.h     |      |
+  |                | flow_cmd.h     |      |
+  |----------------+----------------+------|
+  | MessageHandler | sub_handler.cc |      |
+  |----------------+----------------+------|

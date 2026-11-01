@@ -37,8 +37,8 @@
     ├── proto                       // 子游戏使用的proto
     ├── scripts                     //
     │   ├── 11.gd                   // SubGame
+    │   ├── constant.gd             // client自己使用的常量定义
     │   ├── data.gd                 // Data
-    │   ├── define.gd               // 常量定义
     │   ├── message_handler.gd      // 消息处理
     │   ├── sub_flow.gd             // Flow
     │   └── sub_ui.gd               // UI

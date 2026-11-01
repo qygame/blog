@@ -12,13 +12,12 @@
 子游戏（SubGame）必须严格遵循以下架构模型进行设计与编码. 各模块应保持明确的职责边界, 通过信号（Signal）和接口调用进行通信, 避免模块之间产生不必要的耦合
 
 * 模块概述
-  子游戏由以下四个核心模块组成：
+  子游戏由以下五个核心模块组成：
   - SubGame: 子游戏入口, 负责模块组织与外部交互
   - Data: 数据层, 负责维护子游戏的数据状态, 通过信号通知数据变化
-  - Flow: 逻辑层, 负责消息协议处理及业务逻辑
+  - Flow: 逻辑层, 负责业务逻辑
   - UI: 表现层, 负责界面展示与用户交互
-
-  此外，子游戏还包含一个 MessageHandler，负责消息处理与分发。
+  - MessageHandler: 负责Sub消息协议分发与处理
 
   #+begin_example
                          外部系统
@@ -86,7 +85,7 @@
 -----
 
 ** Flow
-   Flow 是子游戏的业务逻辑入口，负责实现消息协议中的所有 `Sub` 函数和 `Cmd` 函数
+   Flow 负责处理子游戏流程逻辑
 
 
    设计约束：
@@ -114,6 +113,21 @@
    3. UI 通过信号对应的处理函数更新界面
 
    ------
+** MessageHandler
+   MessageHandler 负责消息协议的分发与处理
+
+
+   设计约束:
+   1. MessageHandler 持有Flow的引用
+   2. MessageHandler 不持有任何自己的数据
+
+
+   #+attr_shortcode: info
+   #+begin_hint
+   MessageHandler 的主要作用是解耦 消息协议与Flow. 让Flow可以专注游戏流程本身
+   #+end_hint
+
+   -----
 
 
 * 文件与节点绑定关系
