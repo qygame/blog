@@ -16,7 +16,6 @@
       if1 -->|yes| if2{大局结束}
       if1 -->|no| 落子
 
-
       if2 -->|yes| 游戏结束
       if2 -->|no| 游戏开始
 #+end_src
