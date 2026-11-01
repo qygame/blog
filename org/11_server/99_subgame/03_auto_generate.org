@@ -10,6 +10,26 @@
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
-为了减少人为出错. 以下文件会自动生成
 
-table_sink.h
+在src/subgame/CMakeLists.txt中添加子游戏目标, 会自动生成游戏模版
+比如添加了11, 之后执行cmake configure, 会自动生成下面的模板文件
+
+#+begin_example
+  |-- auto_generated           //
+  |   `-- table_sink.h         //
+  |-- proto                    //
+  |   |-- constant.proto       //
+  |   |-- msg.proto            //
+  |   `-- sub_room_rule.proto  //
+  |-- constant.h               //
+  |-- data.cc                  //
+  |-- data.h                   //
+  |-- flow.cc                  //
+  |-- flow.h                   //
+  |-- sub_handler.cc           //
+  `-- table_sink.cc            //
+#+end_example
+
+
+auto_generated目录下的文件, 每次编译都会重新生成
+其他文件, 则只在不存在的时候, 才会自动生成
