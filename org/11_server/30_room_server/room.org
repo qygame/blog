@@ -87,49 +87,6 @@ room server
    1. 玩家财富变更均通过 玩家财富变更记录表 -- 所有财富类型
    2. 战绩表 只 记录桌子信息, 而不记录 玩家输赢信息
 
-** 玩家动作 坐下|起立|离开|解散|换桌(金币场)
-   玩家加入
-   玩家坐下
-   玩家起立
-   玩家离开
-   金币换桌
-*** 旁观的处理
-    : 是否旁观是由服务器根据桌子状态来判断的
-    玩家加入房间的时候
-    如果房间已经开始&&允许旁观, 则可以设置为旁观状态
-    如果房间没有开始, 则是坐下状态
-
-** 玩家状态
-   状态1 UserStatusL
-   状态2 UserStatusH
-   : 两者非互斥关系, UsetStatusL内部为互斥关系, UserStatusH内部为互斥关系
-   : 掉线之后未必为托管状态, 掉线8s之后, 将由掉线状态变为托管状态; 当掉线回来后, 托管状态自动取消
-
-   #+BEGIN_EXAMPLE c++
-//用户状态 low
-enum UserStatusL
-{
-   FREE_L=0;      //没有状态
-   SIT = 1;       //坐下
-   STANDUP =2;    //站立(旁观)
-   READY= 3;      //准备状态
-   PLAYING=4;     //游戏中
-};
-//用户状态 high 与low不互斥
-enum UserStatusH
-{
-   FREE_H =0;     //正常状态
-   TUOGUAN =1;    //托管
-   OFFLINE=2;     //掉线 -- 掉线8s之后设置为托管状态
-};
-   #+END_EXAMPLE
-
-** 椅子视图
-   唯一视图 真实的椅子位置
-   frame: m_player_list与真实椅子视图 是通过CPlayer来转换的
-   subgame: subgame实现了真实的椅子视图
-   client: client存在C视图 与 真实椅子视图(S视图)的转换
-
 ** tableid生成方式
    table 由redis启动的时候预先生成100000-999999
    table_using使用zset记录tableid, 创建time. 后面删除的时候, 根据time来有选择的删除,
