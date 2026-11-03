@@ -1,4 +1,4 @@
-#+title: 玩家模块
+#+title: 玩家动作模块
 #+date: 2026-11-03 18:59:56
 #+hugo_section: docs
 #+hugo_bundle: 11_server/30_room_server/20_table/11_player
