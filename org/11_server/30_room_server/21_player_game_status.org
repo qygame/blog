@@ -23,11 +23,11 @@
 
 #+begin_src mermaid :file result.png
   flowchart TD
-      空闲 -->|Enter| 站立(旁观)
+      空闲 -->|Enter| 站立
       空闲 -->|Sit| 坐下
 
-      站立(旁观) -->|Sit| 坐下
-      坐下 -->|StandUp| 站立(旁观)
+      站立 -->|Sit| 坐下
+      坐下 -->|StandUp| 站立
 
       坐下 -->|Ready| 准备
       准备 -->|CancelReady| 坐下
