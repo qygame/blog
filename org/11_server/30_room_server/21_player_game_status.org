@@ -1,7 +1,7 @@
-#+title: 玩家状态
-#+date: 2026-11-03 04:40:00
+#+title: 玩家游戏状态
+#+date: 2026-11-03 14:38:03
 #+hugo_section: docs
-#+hugo_bundle: 11_server/30_room_server/21_player_status
+#+hugo_bundle: 11_server/30_room_server/21_player_game_status
 #+export_file_name: index
 #+hugo_weight: 21
 #+hugo_draft: false
@@ -9,18 +9,15 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-
-=玩家状态=
-
 #+begin_src C++
-// 用户游戏状态
-enum UserGameStatus {
-  kNotInTable = 0;   // 未在桌子上(空闲)
-  kSit        = 1;   // 坐下
-  kStandUp    = 2;   // 站立(旁观)
-  kReady      = 3;   // 准备状态
-  kPlaying    = 4;   // 游戏中
-}
+  // 用户游戏状态
+  enum UserGameStatus {
+    kNotInTable = 0;   // 未在桌子上(空闲)
+    kSit        = 1;   // 坐下
+    kStandUp    = 2;   // 站立(旁观)
+    kReady      = 3;   // 准备状态
+    kPlaying    = 4;   // 游戏中
+  }
 #+end_src
 
 
@@ -54,7 +51,7 @@ enum UserGameStatus {
 之前玩家动作判断中, 还判断了table_id.
 
 新的逻辑中, 不再需要对table_id 进行判断.
-table_id 改为User 的const常量成员, 在User 的声明周期中不会进行变更.
+table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更.
 因为桌子销毁的时候, 会同时销毁桌子上的User.
 
 #+end_hint

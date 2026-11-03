@@ -1,7 +1,7 @@
-#+title: 房间配置文件
-#+date: 2026-08-17 17:57:37
+#+title: 配置文件
+#+date: 2026-11-03 13:46:38
 #+hugo_section: docs
-#+hugo_bundle: 11_server/30_room_server/11_room_rule_config
+#+hugo_bundle: 11_server/30_room_server/11_config
 #+export_file_name: index
 #+hugo_weight: 11
 #+hugo_draft: false
@@ -9,36 +9,31 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 房间配置文件
+* 配置文件
   #+begin_example
-  房间配置文件
-  |-- RoomRule的配置
-  |   |-- 房间配置 :: 下发给client展示的
-  |   |
-  |   |-- 不需要下发给client的
+  配置文件(FkConfig, GoldConfig)
+  |-- 房间规则的配置RoomRuleConfig :: 用来生成房间规则RoomRule
   |
-  |
-  |-- 场次的特有信息.
+  |-- 场次(房卡场, 金币场, 比赛场)的房间配置 :: 用来生成FkRoomConfig, GoldRoomConfig
   |   例如: 金币场的等级, 允许进入的最小, 最大金币
   #+end_example
 
   #+attr_shortcode: info
   #+begin_hint
-  RoomRule中字段的值, 一部分在配置文件中定义, 一部分交给client决定(通过房间配置下发给client).
-  两者作用生成房间规则RoomRule
+  下发给client 的数据:
+  - 房卡场: ClientFkConfig. ClientFkConfig 是FkConfig中需要下发的部分
+  - 金币场: GoldRoomConfig. 直接下发金币场配置信息即可
   #+end_hint
 
 
 * 设计思路
-  1. 为了减少人为失误, 程序应该保证房间配置文件与房间规则RoomRule完全匹配.
-     也就是说, 配置文件中应该包含房间规则的所有字段, 且不能有多余的字段.
-  2. 每个场次都应该有独立的配置文件. 例如:
+  1. 为了减少人为失误, 程序应该保证配置文件与 {RoomRule, FkRoomConfig/GoldRoomConfig} 完全匹配.
+  2. 每个场次都有自己的配置文件. 例如:
      fk.config, gold.level1.config, gold.level2.config
 
 
 * 代码实现思路
-  1. 为了实现设计原则1, 需要比对房间规则 =proto::RoomRule= 和 =toml配置=, 确保两者完全匹配
-
+  1. 为了实现设计原则1, 需要比对 {=RoomRule=, =FkRoomConfig/GoldRoomConfig}= 和 =配置文件=
      #+begin_src protobuf
        message RoomRule {
          RoomRuleCommon common           = 1;  // 通用房间规则
@@ -46,13 +41,12 @@
        }
      #+end_src
 
-     其中, =proto::RoomRule= 中的 =subgame= 类型为 =bytes=,
-     实际存储的是具体的子游戏 =SubRoomRule=
+     其中, =RoomRule.subgame= 实际存储的是子游戏的 =SubRoomRule=
 
   2. 配置文件统一采用 TOML 格式
 
-  3. 为了方便比对 =proto::RoomRule= 与 =toml 配置=,
-     约定 =proto::RoomRule= 中的每个 ~field~ 对应 TOML 中的一个 ~table~.
+  3. 为了方便比对 ={=RoomRule=, =FkRoomConfig/GoldRoomConfig}= 与 =toml配置=
+     约定 ={=RoomRule=, =FkRoomConfig/GoldRoomConfig}= 只的每个 ~field~ 对应 TOML 中的一个 ~table~
 
 
 * 代码实现v0.1
@@ -76,7 +70,7 @@
      具体类型根据场次的配置定义.
 
   2. 校验配置
-     1) 首先比对 =toml_tables.key= 与 =RoomRule fileds=, 确保完全匹配
+     1) 首先比对 =toml_tables.key= 与 =fileds=, 确保完全匹配
      2) 其次校验配置内容是否符合对应到业务规则.
 
   3. 构造场次配置
