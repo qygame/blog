@@ -23,7 +23,7 @@
 
 #+begin_src mermaid :file result.png
   flowchart TD
-      空闲 -->|EnterTable| 站立(旁观)
+      空闲 -->|Enter| 站立(旁观)
       空闲 -->|Sit| 坐下
 
       站立(旁观) -->|Sit| 坐下
@@ -37,6 +37,9 @@
       游戏中 -->|小局结束| 坐下
       游戏中 -->|大局结束| 空闲
 
+      站立 -->|Leave| 空闲
+      坐下 -->|Leave| 空闲
+      准备 -->|Leave| 空闲
 #+end_src
 
 
