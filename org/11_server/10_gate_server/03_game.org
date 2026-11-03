@@ -32,6 +32,7 @@
   5. RoomServer 处理成功后, 通知GateServer
   6. GateServer 通知client创建成功
   7. client 主动去RoomServer拉取房间数据&&玩家数据, 完成子游戏场景的初始化
+     后续数据的更新(房间数据 && 玩家数据) 会由RoomServer 主动推送
 
   #+attr_shortcode: info
   #+begin_hint

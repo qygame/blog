@@ -1,4 +1,4 @@
-#+title: 桌子
+#+title: 房间模块
 #+date: 2026-11-03 18:52:30
 #+hugo_section: docs
 #+hugo_bundle: 11_server/30_room_server/20_table

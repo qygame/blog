@@ -1,0 +1,23 @@
+#+title: 基础概念
+#+date: 2026-11-03 19:08:13
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/01_base.org
+#+export_file_name: _index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+把现实中的打牌, 下棋等游戏, 抽象为数据模型.
+
+这里描述了这些抽象的概念, 比如桌子应该是什么样的, 房间规则是什么样的.
+以及约定这部分抽象数据模型的职责边界.
+
+子节点就是在描述这些抽象的数据模型. 有:
+
+
+1. 房间规则 RoomRule
+2. 桌子 Table
+3. 房间场次
