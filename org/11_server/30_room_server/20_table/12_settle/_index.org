@@ -1,0 +1,59 @@
+#+title: 游戏结算
+#+date: 2026-11-04 00:41:16
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/12_settle
+#+export_file_name: _index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+思考顺序
+1. 先理清楚 =游戏结算= 模块在处理什么事情
+2. 再去思考该模块, 如何实现的
+   这里实现, 可能更多的是数据的设计
+
+
+=SubSettle= 负责 Table 内部游戏结算流程的组织、结算数据的整理，以及结算结果的分发
+这里有一个重要的区分:
+- 自身需要处理 的事情：由 SubSettle 负责
+- 其他模块需要处理的事情: SubSettle 只负责发起通知、协调流程，不负责实现具体业务
+
+* 设计原则
+  数据的管理者应该负责数据的持久化
+  如果 SubRecord 是录像记录模块，那么录像的写入就应该属于 SubRecord，而不是 SubSettle
+  但这不代表 SubSettle 不应该调用 SubRecor
+
+  我认为应该这样理解:
+  SubSettle: 决定什么时候需要记录本局结算数据, 可以通知 SubRecord 保存本局记录
+  SubRecord: 决定如保存和管理录像数据
+
+
+* 小局游戏结算
+  自身模块需要处理的:
+  1. table 数据记录
+  2. 玩家小局战绩数据, 是否应该直接关联到table 数据呢?
+  3. 玩家小局录像数据
+     小局录像数据在_record中, 但是却是在sub_settle 中被调用并由sub_settl 写入数据
+     仔细思考一下, 是否应该由sub_record 自己处理写入数据.
+     但是那就要在table 的XjGameEnd 中主动调用sub_record 了, 感觉也不是很好
+
+
+  通知其他模块, 玩家小局结算:
+  1. 玩家财富变更 -> 通知ActorServer 处理, 并等待回调结果
+     仔细思考一下流程
+  2. 玩家门票? TODO 再思考是否应该放在这里
+  3. 任务模块
+  4. 排行榜模块
+
+  其他模块的逻辑, 不在此处讨论, 这里只关心 =Table的游戏结算模块=
+
+* 大局游戏结算
+  自身模块需要处理的:
+  1. 玩家大局战绩数据
+
+
+  通知其他模块, 玩家大局结算:
+  1. 任务模块
+  2. 排行榜模块

@@ -9,36 +9,6 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 玩家动作
-  玩家在桌子上的动作包括:
-
-  | Action      | 描述     |
-  |-------------+----------|
-  | Enter       | 加入桌子 |
-  | Sit         | 坐下     |
-  | StandUp     | 站起     |
-  | Leave       | 离开     |
-  | Ready       | 准备     |
-  | CancelReady | 取消准备 |
-  | Host        | 托管     |
-  | CancelHost  | 取消托管 |
-
-  #+attr_shortcode: info
-  #+begin_hint
-  =玩家动作= 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化
-
-  玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息
-  客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作
-  #+end_hint
-
-  #+attr_shortcode: info
-  #+begin_hint
-  玩家动作受 ~TableStatus~ 和 ~UserStatus~ 共同约束
-  #+end_hint
-
-  -----
-
-
 * TableStatus 约束
 
   |             | kFree         | kInProgress | kXjEnd        | kDjEnd |

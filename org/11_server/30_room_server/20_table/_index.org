@@ -22,7 +22,7 @@
   目前主要包含以下模块:
 
   1. sub_player:   负责 =玩家动作 PlayerAction= 的处理
-  2. sub_game_end: 负责游戏结束相关的逻辑
+  2. sub_settle:   负责小局结束/大局结束后的游戏结算
   3. sub_video:    负责录像相关的逻辑
   4. sub_game:     负责子游戏相关的逻辑
   5. sub_dismiss:  负责解散房间
