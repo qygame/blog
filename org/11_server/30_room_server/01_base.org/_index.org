@@ -9,15 +9,12 @@
 #+hugo_custom_front_matter: :bookCollapseSection true
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
+将现实中的游戏（如打牌、下棋等）抽象为统一的数据模型
 
-把现实中的打牌, 下棋等游戏, 抽象为数据模型.
+本部分主要定义游戏中的基础抽象概念, 明确各个模型的数据结构、属性及职责边界.
+例如, 桌子（Table）应该具备哪些属性, 房间规则（RoomRule）应该如何定义, 以及各个模型之间如何协作.
 
-这里描述了这些抽象的概念, 比如桌子应该是什么样的, 房间规则是什么样的.
-以及约定这部分抽象数据模型的职责边界.
+子节点分别描述这些基础数据模型，主要包括：
 
-子节点就是在描述这些抽象的数据模型. 有:
-
-
-1. 房间规则 RoomRule
-2. 桌子 Table
-3. 房间场次
+1. 房间规则
+2. 桌子
