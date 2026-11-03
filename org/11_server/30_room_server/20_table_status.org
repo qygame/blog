@@ -1,0 +1,33 @@
+#+title: 桌子状态
+#+date: 2026-11-03 03:52:37
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table_status
+#+export_file_name: index
+#+hugo_weight: 20
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+=Server Table=
+
+#+begin_src C++
+  enum TableStatus {
+    kFree = 0,       // 空闲
+    kInProgress = 1, // 游戏中
+    kXjEnd = 2,      // 小局结束
+    kDjEnd = 3,      // 大局结束
+  };
+#+end_src
+
+table负责的流程为 游戏开始 - 小局结束 - 大局结束
+
+空闲状态: 桌子创建出来之后的默认状态. 此刻允许玩家坐下
+游 戏 中: 游戏开始之后的状态.
+小局结束: 一局游戏结束之后的状态. 可能有玩家退出, 也可以有新玩家坐下
+          当符合大局结束的条件, 就转为大局结束状态. 否则会等待游戏开始
+          当满足游戏开始的条件后, 会执行游戏开始. 从而转为游戏中的状态
+大局结束: 桌子的最后一个状态. 当位于此状态的时候, 桌子应该等待清除.
+
+-----
