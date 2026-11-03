@@ -1,9 +1,9 @@
 #+title: 玩家动作
-#+date: 2026-11-03 14:37:35
+#+date: 2026-11-03 18:59:30
 #+hugo_section: docs
-#+hugo_bundle: 11_server/30_room_server/23_player_action
+#+hugo_bundle: 11_server/30_room_server/20_table/11_player/02_player_action
 #+export_file_name: index
-#+hugo_weight: 23
+#+hugo_weight: 2
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false

@@ -1,0 +1,33 @@
+#+title: 桌子
+#+date: 2026-11-03 18:52:30
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table
+#+export_file_name: _index
+#+hugo_weight: 20
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+TODO 重写这部分概念
+
+* Table 概述
+Table 是对现实中桌子的一种抽象.
+
+
+* 模块
+Table 只负责自身的逻辑流程. 通过扩展模块, 来增强自身的功能.
+
+主要包含下面的模块:
+
+1. sub_player
+2. sub_game_end
+3. sub_video
+4. sub_subgame
+
+
+* TODO
+  后续的子章节中, 应该有:
+  1. table status
+  2. table 流程图
+  3. 各个模块的介绍
