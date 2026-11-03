@@ -1,256 +1,210 @@
-<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="玩家在桌子上的动作 受 TableStatus 和 UserStatus 共同约束 
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="玩家动作#
+玩家在桌子上的动作包括: 
 
 	
 			
-					动作
+					Action
 					描述
-					TableStatus 约束
-					UserGameStatus 约束
 			
 	
 	
 			
 					Enter
 					加入桌子
-					1. 空闲状态 ✅
-					1. 空闲状态 ✅
-			
-			
-					
-					
-					2. 游戏中. 允许旁观 ✅
-					2. 坐下状态 ❌
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ❌
-			
-			
-					
-					
-					4. 大局结束 ❌
-					4. 准备状态 ❌
-			
-			
-					
-					
-					
-					5. 游戏中   ❌
 			
 			
 					Sit
 					坐下
-					1. 空闲状态 ✅
-					1. 空闲状态 ✅
-			
-			
-					
-					
-					2. 游戏中 ❌
-					2. 坐下状态 ❌
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ✅
-			
-			
-					
-					
-					4. 大局结束 ❌
-					4. 准备状态 ✅
-			
-			
-					
-					
-					
-					5. 游戏中 ❌
 			
 			
 					StandUp
 					站起
-					1. 空闲状态 ✅
-					1. 空闲状态 ❌
-			
-			
-					
-					
-					2. 游戏中 ❌
-					2. 坐下状态 ✅
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ❌
-			
-			
-					
-					
-					4. 大局结束 ✅
-					4. 准备状态 ❌
-			
-			
-					
-					
-					
-					5. 游戏中   ❌
 			
 			
 					Leave
 					离开
-					1. 空闲状态 ✅
-					1. 空闲状态 ✅
-			
-			
-					
-					
-					2. 游戏中 ❌
-					2. 坐下状态 ✅
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ✅
-			
-			
-					
-					
-					4. 大局结束 ✅
-					4. 准备状态 ✅
-			
-			
-					
-					
-					
-					5. 游戏中 ❌
 			
 			
 					Ready
 					准备
-					1. 空闲状态 ✅
-					1. 空闲状态 ❌
-			
-			
-					
-					
-					2. 游戏中 ❌
-					2. 坐下状态 ✅
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ❌
-			
-			
-					
-					
-					4. 大局结束 ❌
-					4. 准备状态 ❌
-			
-			
-					
-					
-					
-					5. 游戏中   ❌
 			
 			
 					CancelReady
 					取消准备
-					1. 空闲状态 ✅
-					1. 空闲状态 ❌
-			
-			
-					
-					
-					2. 游戏中 ❌
-					2. 坐下状态 ❌
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态 ❌
-			
-			
-					
-					
-					4. 大局结束 ❌
-					4. 准备状态 ✅
-			
-			
-					
-					
-					
-					5. 游戏中 ❌
 			
 			
 					Host
 					托管
-					1. 空闲状态 ❌
-					1. 空闲状态 ❌
-			
-			
-					
-					
-					2. 游戏中 ✅
-					2. 坐下状态 ❌
-			
-			
-					
-					
-					3. 小局结束 ❌
-					3. 站立状态 ❌
-			
-			
-					
-					
-					4. 大局结束 ❌
-					4. 准备状态 ❌
-			
-			
-					
-					
-					
-					5. 游戏中. 玩家未托管 ✅
 			
 			
 					CancelHost
 					取消托管
-					1. 空闲状态 ✅
-					1. 空闲状态. 玩家已托管 ✅
-			
-			
-					
-					
-					2. 游戏中 ✅
-					2. 坐下状态. 玩家已托管 ✅
-			
-			
-					
-					
-					3. 小局结束 ✅
-					3. 站立状态. 玩家已托管 ✅
-			
-			
-					
-					
-					4. 大局结束 ✅
-					4. 准备状态. 玩家已托管 ✅
-			
-			
-					
-					
-					
-					5. 游戏中. 玩家已托管 ✅
 			
 	
-"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/23_player_action/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家动作"><meta property="og:description" content="玩家在桌子上的动作 受 TableStatus 和 UserStatus 共同约束 动作 描述 TableStatus 约束 UserGameStatus 约束 Enter 加入桌子 1. 空闲状态 ✅ 1. 空闲状态 ✅ 2. 游戏中. 允许旁观 ✅ 2. 坐下状态 ❌ 3. 小局结束 ✅ 3. 站立状态 ❌ 4. 大局结束 ❌ 4. 准备状态 ❌ 5. 游戏中 ❌ Sit 坐下 1. 空闲状态 ✅ 1. 空闲状态 ✅ 2. 游戏中 ❌ 2. 坐下状态 ❌ 3. 小局结束 ✅ 3. 站立状态 ✅ 4. 大局结束 ❌ 4. 准备状态 ✅ 5. 游戏中 ❌ StandUp 站起 1. 空闲状态 ✅ 1. 空闲状态 ❌ 2. 游戏中 ❌ 2. 坐下状态 ✅ 3. 小局结束 ✅ 3. 站立状态 ❌ 4. 大局结束 ✅ 4. 准备状态 ❌ 5. 游戏中 ❌ Leave 离开 1. 空闲状态 ✅ 1. 空闲状态 ✅ 2. 游戏中 ❌ 2. 坐下状态 ✅ 3. 小局结束 ✅ 3. 站立状态 ✅ 4. 大局结束 ✅ 4. 准备状态 ✅ 5. 游戏中 ❌ Ready 准备 1. 空闲状态 ✅ 1. 空闲状态 ❌ 2. 游戏中 ❌ 2. 坐下状态 ✅ 3. 小局结束 ✅ 3. 站立状态 ❌ 4. 大局结束 ❌ 4. 准备状态 ❌ 5. 游戏中 ❌ CancelReady 取消准备 1. 空闲状态 ✅ 1. 空闲状态 ❌ 2. 游戏中 ❌ 2. 坐下状态 ❌ 3. 小局结束 ✅ 3. 站立状态 ❌ 4. 大局结束 ❌ 4. 准备状态 ✅ 5. 游戏中 ❌ Host 托管 1. 空闲状态 ❌ 1. 空闲状态 ❌ 2. 游戏中 ✅ 2. 坐下状态 ❌ 3. 小局结束 ❌ 3. 站立状态 ❌ 4. 大局结束 ❌ 4. 准备状态 ❌ 5. 游戏中. 玩家未托管 ✅ CancelHost 取消托管 1. 空闲状态 ✅ 1. 空闲状态. 玩家已托管 ✅ 2. 游戏中 ✅ 2. 坐下状态. 玩家已托管 ✅ 3. 小局结束 ✅ 3. 站立状态. 玩家已托管 ✅ 4. 大局结束 ✅ 4. 准备状态. 玩家已托管 ✅ 5. 游戏中. 玩家已托管 ✅"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2026-11-03T14:37:00+00:00"><meta property="article:modified_time" content="2026-11-03T06:48:39+00:00"><title>玩家动作 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/23_player_action/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.e89323d9f92dcc33dd655c8981526daa3dbfd0373ab3c0361cf7e63fb04b2854.js integrity="sha256-6JMj2fktzDPdZVyJgVJtqj2/0Dc6s8A2HPfmP7BLKFQ=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+
+
+玩家动作 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化 
+玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息 
+客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作 
+
+
+玩家动作受 TableStatus 和 UserStatus 共同约束 
+
+
+TableStatus 约束#
+
+	
+			
+					
+					kFree
+					kInProgress
+					kXjEnd
+					kDjEnd
+			
+	
+	
+			
+					Enter
+					✅
+					允许旁观 ✅
+					✅
+					❌
+			
+			
+					Sit
+					有空闲椅子 ✅
+					❌
+					有空闲椅子 ✅
+					❌
+			
+			
+					StandUp
+					✅
+					❌
+					✅
+					❌
+			
+			
+					Leave
+					✅
+					❌
+					✅
+					❌
+			
+			
+					Ready
+					✅
+					❌
+					✅
+					❌
+			
+			
+					CancelReady
+					✅
+					❌
+					✅
+					❌
+			
+			
+					Host
+					❌
+					✅
+					❌
+					❌
+			
+			
+					CancelHost
+					✅
+					✅
+					✅
+					❌
+			
+	
+
+
+UserGameStatus 约束#
+
+	
+			
+					
+					kNotInTable
+					kSit
+					kStandUp
+					kReady
+					kPlaying
+			
+	
+	
+			
+					Enter
+					✅
+					❌
+					❌
+					❌
+					❌
+			
+			
+					Sit
+					✅
+					❌
+					✅
+					❌
+					❌
+			
+			
+					StandUp
+					❌
+					✅
+					❌
+					❌
+					❌
+			
+			
+					Leave
+					❌
+					✅
+					✅
+					✅
+					❌
+			
+			
+					Ready
+					❌
+					✅
+					❌
+					❌
+					❌
+			
+			
+					CancelReady
+					❌
+					❌
+					❌
+					✅
+					❌
+			
+			
+					Host
+					❌
+					❌
+					❌
+					❌
+					✅
+			
+			
+					CancelHost
+					✅
+					✅
+					✅
+					✅
+					✅
+			
+	
+
+
+Action Host/CancelHost#
+玩家托管状态 IsHost 是一个独立的status, 不在UserGameStatus 中. 
+玩家Action Host/CancelHost 需要加上IsHost 的判断 "><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/23_player_action/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家动作"><meta property="og:description" content="玩家动作# 玩家在桌子上的动作包括: Action 描述 Enter 加入桌子 Sit 坐下 StandUp 站起 Leave 离开 Ready 准备 CancelReady 取消准备 Host 托管 CancelHost 取消托管 玩家动作 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化 玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息 客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作 玩家动作受 TableStatus 和 UserStatus 共同约束 TableStatus 约束# kFree kInProgress kXjEnd kDjEnd Enter ✅ 允许旁观 ✅ ✅ ❌ Sit 有空闲椅子 ✅ ❌ 有空闲椅子 ✅ ❌ StandUp ✅ ❌ ✅ ❌ Leave ✅ ❌ ✅ ❌ Ready ✅ ❌ ✅ ❌ CancelReady ✅ ❌ ✅ ❌ Host ❌ ✅ ❌ ❌ CancelHost ✅ ✅ ✅ ❌ UserGameStatus 约束# kNotInTable kSit kStandUp kReady kPlaying Enter ✅ ❌ ❌ ❌ ❌ Sit ✅ ❌ ✅ ❌ ❌ StandUp ❌ ✅ ❌ ❌ ❌ Leave ❌ ✅ ✅ ✅ ❌ Ready ❌ ✅ ❌ ❌ ❌ CancelReady ❌ ❌ ❌ ✅ ❌ Host ❌ ❌ ❌ ❌ ✅ CancelHost ✅ ✅ ✅ ✅ ✅ Action Host/CancelHost# 玩家托管状态 IsHost 是一个独立的status, 不在UserGameStatus 中. 玩家Action Host/CancelHost 需要加上IsHost 的判断"><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2026-11-03T14:37:00+00:00"><meta property="article:modified_time" content="2026-11-03T07:23:43+00:00"><title>玩家动作 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/23_player_action/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.f84ae58f6bae26f9b8cffc0d8b7929a9ffc6820fe9f7d628e6bfb00d36b8b8c4.js integrity="sha256-+Erlj2uuJvm4z/wNi3kpqf/Ggg/p99Yo5r+wDTa4uMQ=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><input type=checkbox id=section-1746b96ec62411fa5887a09b3b846c22 class=toggle>
 <label for=section-1746b96ec62411fa5887a09b3b846c22 class=flex><a href=/blog/docs/10_kernel/>libqykernel</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/10_kernel/02_how_to_use/>使用说明</a></li><li><a href=/blog/docs/10_kernel/03_directory/>目录说明</a></li><li><a href=/blog/docs/10_kernel/10_thread/>多线程问题</a></li><li><input type=checkbox id=section-97192aedcc5af3ecc6c26b13092cd336 class=toggle>
@@ -271,7 +225,7 @@
 <label for=section-afe6f0e83cf17111aaae10d704077660 class=flex><a role=button>子游戏</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/12_client/11_subgame/01_directory_structure/>目录结构</a></li><li><a href=/blog/docs/12_client/11_subgame/02_data_model/>数据模型</a></li><li><a href=/blog/docs/12_client/11_subgame/03_ui_chair/>界面椅子号</a></li></ul></li></ul></li><li><input type=checkbox id=section-d99403f32e6a8e890e93646ab64a826e class=toggle>
 <label for=section-d99403f32e6a8e890e93646ab64a826e class=flex><a role=button>subgames</a>
-<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/13_subgames/11/>五子棋</a></li><li><a href=/blog/docs/13_subgames/22/>保定牌九</a></li></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>玩家动作</h3><label for=toc-control></label></div><aside class="hidden clearfix"><nav id=TableOfContents></nav></aside></header><article class="markdown book-article"><p>玩家在桌子上的动作 受 <code>TableStatus</code> 和 <code>UserStatus</code> 共同约束<br></p><table><thead><tr><th>动作</th><th>描述</th><th>TableStatus 约束</th><th>UserGameStatus 约束</th></tr></thead><tbody><tr><td>Enter</td><td>加入桌子</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ✅</td></tr><tr><td></td><td></td><td>2. 游戏中. 允许旁观 ✅</td><td>2. 坐下状态 ❌</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ❌</td></tr><tr><td></td><td></td><td>4. 大局结束 ❌</td><td>4. 准备状态 ❌</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>Sit</td><td>坐下</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ✅</td></tr><tr><td></td><td></td><td>2. 游戏中 ❌</td><td>2. 坐下状态 ❌</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ✅</td></tr><tr><td></td><td></td><td>4. 大局结束 ❌</td><td>4. 准备状态 ✅</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>StandUp</td><td>站起</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ❌</td></tr><tr><td></td><td></td><td>2. 游戏中 ❌</td><td>2. 坐下状态 ✅</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ❌</td></tr><tr><td></td><td></td><td>4. 大局结束 ✅</td><td>4. 准备状态 ❌</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>Leave</td><td>离开</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ✅</td></tr><tr><td></td><td></td><td>2. 游戏中 ❌</td><td>2. 坐下状态 ✅</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ✅</td></tr><tr><td></td><td></td><td>4. 大局结束 ✅</td><td>4. 准备状态 ✅</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>Ready</td><td>准备</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ❌</td></tr><tr><td></td><td></td><td>2. 游戏中 ❌</td><td>2. 坐下状态 ✅</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ❌</td></tr><tr><td></td><td></td><td>4. 大局结束 ❌</td><td>4. 准备状态 ❌</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>CancelReady</td><td>取消准备</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态 ❌</td></tr><tr><td></td><td></td><td>2. 游戏中 ❌</td><td>2. 坐下状态 ❌</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态 ❌</td></tr><tr><td></td><td></td><td>4. 大局结束 ❌</td><td>4. 准备状态 ✅</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中 ❌</td></tr><tr><td>Host</td><td>托管</td><td>1. 空闲状态 ❌</td><td>1. 空闲状态 ❌</td></tr><tr><td></td><td></td><td>2. 游戏中 ✅</td><td>2. 坐下状态 ❌</td></tr><tr><td></td><td></td><td>3. 小局结束 ❌</td><td>3. 站立状态 ❌</td></tr><tr><td></td><td></td><td>4. 大局结束 ❌</td><td>4. 准备状态 ❌</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中. 玩家未托管 ✅</td></tr><tr><td>CancelHost</td><td>取消托管</td><td>1. 空闲状态 ✅</td><td>1. 空闲状态. 玩家已托管 ✅</td></tr><tr><td></td><td></td><td>2. 游戏中 ✅</td><td>2. 坐下状态. 玩家已托管 ✅</td></tr><tr><td></td><td></td><td>3. 小局结束 ✅</td><td>3. 站立状态. 玩家已托管 ✅</td></tr><tr><td></td><td></td><td>4. 大局结束 ✅</td><td>4. 准备状态. 玩家已托管 ✅</td></tr><tr><td></td><td></td><td></td><td>5. 游戏中. 玩家已托管 ✅</td></tr></tbody></table></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/11_server/30_room_server/21_player_game_status/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=玩家游戏状态>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/13_subgames/11/>五子棋</a></li><li><a href=/blog/docs/13_subgames/22/>保定牌九</a></li></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>玩家动作</h3><label for=toc-control><img src=/blog/icons/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#玩家动作>玩家动作</a></li><li><a href=#tablestatus-约束>TableStatus 约束</a></li><li><a href=#usergamestatus-约束>UserGameStatus 约束</a></li><li><a href=#action-host-cancelhost>Action Host/CancelHost</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=玩家动作>玩家动作<a class=anchor href=#%e7%8e%a9%e5%ae%b6%e5%8a%a8%e4%bd%9c>#</a></h2><p>玩家在桌子上的动作包括:<br></p><table><thead><tr><th>Action</th><th>描述</th></tr></thead><tbody><tr><td>Enter</td><td>加入桌子</td></tr><tr><td>Sit</td><td>坐下</td></tr><tr><td>StandUp</td><td>站起</td></tr><tr><td>Leave</td><td>离开</td></tr><tr><td>Ready</td><td>准备</td></tr><tr><td>CancelReady</td><td>取消准备</td></tr><tr><td>Host</td><td>托管</td></tr><tr><td>CancelHost</td><td>取消托管</td></tr></tbody></table><blockquote class="book-hint info"><p><code>玩家动作</code> 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化<br></p><p>玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息<br>客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作<br></p></blockquote><blockquote class="book-hint info"><p>玩家动作受 <code>TableStatus</code> 和 <code>UserStatus</code> 共同约束<br></p></blockquote><hr><h2 id=tablestatus-约束>TableStatus 约束<a class=anchor href=#tablestatus-%e7%ba%a6%e6%9d%9f>#</a></h2><table><thead><tr><th></th><th>kFree</th><th>kInProgress</th><th>kXjEnd</th><th>kDjEnd</th></tr></thead><tbody><tr><td>Enter</td><td>✅</td><td>允许旁观 ✅</td><td>✅</td><td>❌</td></tr><tr><td>Sit</td><td>有空闲椅子 ✅</td><td>❌</td><td>有空闲椅子 ✅</td><td>❌</td></tr><tr><td>StandUp</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr><tr><td>Leave</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr><tr><td>Ready</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr><tr><td>CancelReady</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td></tr><tr><td>Host</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr><tr><td>CancelHost</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr></tbody></table><hr><h2 id=usergamestatus-约束>UserGameStatus 约束<a class=anchor href=#usergamestatus-%e7%ba%a6%e6%9d%9f>#</a></h2><table><thead><tr><th></th><th>kNotInTable</th><th>kSit</th><th>kStandUp</th><th>kReady</th><th>kPlaying</th></tr></thead><tbody><tr><td>Enter</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr><tr><td>Sit</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr><tr><td>StandUp</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr><tr><td>Leave</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td></tr><tr><td>Ready</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr><tr><td>CancelReady</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td><td>❌</td></tr><tr><td>Host</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr><tr><td>CancelHost</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr></tbody></table><hr><h2 id=action-host-cancelhost>Action Host/CancelHost<a class=anchor href=#action-host-cancelhost>#</a></h2><p>玩家托管状态 IsHost 是一个独立的status, 不在UserGameStatus 中.<br>玩家Action Host/CancelHost 需要加上IsHost 的判断<br></p><table><thead><tr><th></th><th>未托管</th><th>已托管</th></tr></thead><tbody><tr><td>Host</td><td>✅</td><td>❌</td></tr><tr><td>CancelHost</td><td>❌</td><td>✅</td></tr></tbody></table></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/11_server/30_room_server/21_player_game_status/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=玩家游戏状态>
 <span>玩家游戏状态</span>
 </a></span><span><a href=/blog/docs/11_server/30_room_server/room/ class="flex align-center"><span>room</span>
-<img src=/blog/icons/forward.svg class=book-icon alt=Next title=room></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div></main></body></html>
+<img src=/blog/icons/forward.svg class=book-icon alt=Next title=room></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#玩家动作>玩家动作</a></li><li><a href=#tablestatus-约束>TableStatus 约束</a></li><li><a href=#usergamestatus-约束>UserGameStatus 约束</a></li><li><a href=#action-host-cancelhost>Action Host/CancelHost</a></li></ul></nav></div></aside></main></body></html>

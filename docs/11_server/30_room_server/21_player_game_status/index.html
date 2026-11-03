@@ -6,7 +6,7 @@ enum UserGameStatus {
   kReady      = 3;   // 准备状态
   kPlaying    = 4;   // 游戏中
 }flowchart TD
-    空闲 -->|EnterTable| 站立(旁观)
+    空闲 -->|Enter| 站立(旁观)
     空闲 -->|Sit| 坐下
 
     站立(旁观) -->|Sit| 坐下
@@ -19,6 +19,10 @@ enum UserGameStatus {
 
     游戏中 -->|小局结束| 坐下
     游戏中 -->|大局结束| 空闲
+
+    站立 -->|Leave| 空闲
+    坐下 -->|Leave| 空闲
+    准备 -->|Leave| 空闲
 桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作 
 
 玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上. 
@@ -26,7 +30,7 @@ enum UserGameStatus {
 新的逻辑中, 不再需要对table_id 进行判断. 
 table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更. 
 因为桌子销毁的时候, 会同时销毁桌子上的User. 
-"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/21_player_game_status/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家游戏状态"><meta property="og:description" content="// 用户游戏状态 enum UserGameStatus { kNotInTable = 0; // 未在桌子上(空闲) kSit = 1; // 坐下 kStandUp = 2; // 站立(旁观) kReady = 3; // 准备状态 kPlaying = 4; // 游戏中 } flowchart TD 空闲 -->|EnterTable| 站立(旁观) 空闲 -->|Sit| 坐下 站立(旁观) -->|Sit| 坐下 坐下 -->|StandUp| 站立(旁观) 坐下 -->|Ready| 准备 准备 -->|CancelReady| 坐下 准备 -->|游戏开始| 游戏中 游戏中 -->|小局结束| 坐下 游戏中 -->|大局结束| 空闲 桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作 玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上. 之前玩家动作判断中, 还判断了table_id. 新的逻辑中, 不再需要对table_id 进行判断. table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更. 因为桌子销毁的时候, 会同时销毁桌子上的User."><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2026-11-03T14:38:00+00:00"><meta property="article:modified_time" content="2026-11-03T06:48:39+00:00"><title>玩家游戏状态 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/21_player_game_status/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.e89323d9f92dcc33dd655c8981526daa3dbfd0373ab3c0361cf7e63fb04b2854.js integrity="sha256-6JMj2fktzDPdZVyJgVJtqj2/0Dc6s8A2HPfmP7BLKFQ=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/21_player_game_status/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家游戏状态"><meta property="og:description" content="// 用户游戏状态 enum UserGameStatus { kNotInTable = 0; // 未在桌子上(空闲) kSit = 1; // 坐下 kStandUp = 2; // 站立(旁观) kReady = 3; // 准备状态 kPlaying = 4; // 游戏中 } flowchart TD 空闲 -->|Enter| 站立(旁观) 空闲 -->|Sit| 坐下 站立(旁观) -->|Sit| 坐下 坐下 -->|StandUp| 站立(旁观) 坐下 -->|Ready| 准备 准备 -->|CancelReady| 坐下 准备 -->|游戏开始| 游戏中 游戏中 -->|小局结束| 坐下 游戏中 -->|大局结束| 空闲 站立 -->|Leave| 空闲 坐下 -->|Leave| 空闲 准备 -->|Leave| 空闲 桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作 玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上. 之前玩家动作判断中, 还判断了table_id. 新的逻辑中, 不再需要对table_id 进行判断. table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更. 因为桌子销毁的时候, 会同时销毁桌子上的User."><meta property="og:locale" content="en"><meta property="og:type" content="article"><meta property="article:section" content="docs"><meta property="article:published_time" content="2026-11-03T14:38:00+00:00"><meta property="article:modified_time" content="2026-11-03T07:23:43+00:00"><title>玩家游戏状态 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/21_player_game_status/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.f84ae58f6bae26f9b8cffc0d8b7929a9ffc6820fe9f7d628e6bfb00d36b8b8c4.js integrity="sha256-+Erlj2uuJvm4z/wNi3kpqf/Ggg/p99Yo5r+wDTa4uMQ=" crossorigin=anonymous></script></head><body dir=ltr class="book-kind-page book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><input type=checkbox id=section-1746b96ec62411fa5887a09b3b846c22 class=toggle>
 <label for=section-1746b96ec62411fa5887a09b3b846c22 class=flex><a href=/blog/docs/10_kernel/>libqykernel</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/10_kernel/02_how_to_use/>使用说明</a></li><li><a href=/blog/docs/10_kernel/03_directory/>目录说明</a></li><li><a href=/blog/docs/10_kernel/10_thread/>多线程问题</a></li><li><input type=checkbox id=section-97192aedcc5af3ecc6c26b13092cd336 class=toggle>
@@ -55,7 +59,7 @@ table_id 改为User 的const常量成员, 在User 的生命周期中不会进行
 </span></span></span><span style=display:flex><span>  kReady      <span style=color:#555>=</span> <span style=color:#f60>3</span>;   <span style=color:#09f;font-style:italic>// 准备状态
 </span></span></span><span style=display:flex><span>  kPlaying    <span style=color:#555>=</span> <span style=color:#f60>4</span>;   <span style=color:#09f;font-style:italic>// 游戏中
 </span></span></span><span style=display:flex><span>}</span></span></code></pre></div><pre class=mermaid>flowchart TD
-    空闲 --&gt;|EnterTable| 站立(旁观)
+    空闲 --&gt;|Enter| 站立(旁观)
     空闲 --&gt;|Sit| 坐下
 
     站立(旁观) --&gt;|Sit| 坐下
@@ -67,7 +71,11 @@ table_id 改为User 的const常量成员, 在User 的生命周期中不会进行
     准备 --&gt;|游戏开始| 游戏中
 
     游戏中 --&gt;|小局结束| 坐下
-    游戏中 --&gt;|大局结束| 空闲</pre><script src=/blog/mermaid.min.js></script><script>mermaid.initialize({flowchart:{useMaxWidth:!0},theme:"default"})</script><hr><p>桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作<br></p><blockquote class="book-hint info"><p>玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上.<br>之前玩家动作判断中, 还判断了table_id.<br></p><p>新的逻辑中, 不再需要对table_id 进行判断.<br>table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更.<br>因为桌子销毁的时候, 会同时销毁桌子上的User.<br></p></blockquote></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/11_server/30_room_server/20_table_status/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=桌子状态>
+    游戏中 --&gt;|大局结束| 空闲
+
+    站立 --&gt;|Leave| 空闲
+    坐下 --&gt;|Leave| 空闲
+    准备 --&gt;|Leave| 空闲</pre><script src=/blog/mermaid.min.js></script><script>mermaid.initialize({flowchart:{useMaxWidth:!0},theme:"default"})</script><hr><p>桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作<br></p><blockquote class="book-hint info"><p>玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上.<br>之前玩家动作判断中, 还判断了table_id.<br></p><p>新的逻辑中, 不再需要对table_id 进行判断.<br>table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更.<br>因为桌子销毁的时候, 会同时销毁桌子上的User.<br></p></blockquote></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/11_server/30_room_server/20_table_status/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=桌子状态>
 <span>桌子状态</span>
 </a></span><span><a href=/blog/docs/11_server/30_room_server/23_player_action/ class="flex align-center"><span>玩家动作</span>
 <img src=/blog/icons/forward.svg class=book-icon alt=Next title=玩家动作></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div></main></body></html>
