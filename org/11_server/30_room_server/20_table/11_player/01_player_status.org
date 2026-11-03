@@ -46,8 +46,6 @@
 
 -----
 
-桌子状态TableStatus 和 玩家状态UserGameStatus 约束了玩家的动作
-
 
 #+attr_shortcode: info
 #+begin_hint
