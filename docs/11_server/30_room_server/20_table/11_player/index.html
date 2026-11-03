@@ -1,4 +1,55 @@
-<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家动作模块"><meta property="og:locale" content="en"><meta property="og:type" content="website"><title>玩家动作模块 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.94effd0ca8127df0476c18e44f350dde8b03527581ad52ebdb6faf1660defca8.js integrity="sha256-lO/9DKgSffBHbBjkTzUN3osDUnWBrVLr22+vFmDe/Kg=" crossorigin=anonymous></script><link rel=alternate type=application/rss+xml href=https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/index.xml title=QYGame></head><body dir=ltr class="book-kind-section book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
+<!doctype html><html lang=en dir=ltr><head><meta charset=UTF-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content="玩家动作#
+玩家在桌子上的动作包括: 
+
+	
+			
+					Action
+					描述
+			
+	
+	
+			
+					Enter
+					加入桌子
+			
+			
+					Sit
+					坐下
+			
+			
+					StandUp
+					站起
+			
+			
+					Leave
+					离开
+			
+			
+					Ready
+					准备
+			
+			
+					CancelReady
+					取消准备
+			
+			
+					Host
+					托管
+			
+			
+					CancelHost
+					取消托管
+			
+	
+
+
+玩家动作 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化 
+玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息 
+客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作 
+
+
+玩家动作受 TableStatus 和 UserStatus 共同约束 
+"><meta name=theme-color media="(prefers-color-scheme: light)" content="#ffffff"><meta name=theme-color media="(prefers-color-scheme: dark)" content="#343a40"><meta name=color-scheme content="light dark"><meta property="og:url" content="https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/"><meta property="og:site_name" content="QYGame"><meta property="og:title" content="玩家动作模块"><meta property="og:description" content="玩家动作# 玩家在桌子上的动作包括: Action 描述 Enter 加入桌子 Sit 坐下 StandUp 站起 Leave 离开 Ready 准备 CancelReady 取消准备 Host 托管 CancelHost 取消托管 玩家动作 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化 玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息 客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作 玩家动作受 TableStatus 和 UserStatus 共同约束"><meta property="og:locale" content="en"><meta property="og:type" content="website"><title>玩家动作模块 | QYGame</title><link rel=icon href=/blog/favicon.png><link rel=manifest href=/blog/manifest.json><link rel=canonical href=https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/><link rel=stylesheet href=/blog/book.min.e456d10aed65d3bbdca94d70c236a8aa850b8de9fd31e4073ed44adec0702035.css integrity="sha256-5FbRCu1l07vcqU1wwjaoqoULjen9MeQHPtRK3sBwIDU=" crossorigin=anonymous><script defer src=/blog/fuse.min.js></script><script defer src=/blog/en.search.min.43e1595db2a3ab4e430675f244e4b3048bf4cd6985aa4aeea79b1f6170557578.js integrity="sha256-Q+FZXbKjq05DBnXyROSzBIv0zWmFqkrup5sfYXBVdXg=" crossorigin=anonymous></script><link rel=alternate type=application/rss+xml href=https://qygame.github.io/blog/docs/11_server/30_room_server/20_table/11_player/index.xml title=QYGame></head><body dir=ltr class="book-kind-section book-type-docs"><input type=checkbox class="hidden toggle" id=menu-control>
 <input type=checkbox class="hidden toggle" id=toc-control><main class="container flex"><aside class=book-menu><div class=book-menu-content><nav><h2 class=book-brand><a class="flex align-center" href=/blog/><span>QYGame</span></a></h2><div class="book-search hidden"><input type=text id=book-search-input placeholder=Search aria-label=Search maxlength=64 data-hotkeys=s/><div class="book-search-spinner hidden"></div><ul id=book-search-results></ul></div><script>document.querySelector(".book-search").classList.remove("hidden")</script><ul><li><input type=checkbox id=section-1746b96ec62411fa5887a09b3b846c22 class=toggle>
 <label for=section-1746b96ec62411fa5887a09b3b846c22 class=flex><a href=/blog/docs/10_kernel/>libqykernel</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/10_kernel/02_how_to_use/>使用说明</a></li><li><a href=/blog/docs/10_kernel/03_directory/>目录说明</a></li><li><a href=/blog/docs/10_kernel/10_thread/>多线程问题</a></li><li><input type=checkbox id=section-97192aedcc5af3ecc6c26b13092cd336 class=toggle>
@@ -16,8 +67,10 @@
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/30_room_server/01_base.org/01_room_rule/>房间规则</a></li><li><a href=/blog/docs/11_server/30_room_server/01_base.org/02_table/>桌子</a></li></ul></li><li><a href=/blog/docs/11_server/30_room_server/11_config/>配置模块</a></li><li><input type=checkbox id=section-7a63db4feaa2d940e7ffa3556dad2983 class=toggle checked>
 <label for=section-7a63db4feaa2d940e7ffa3556dad2983 class=flex><a href=/blog/docs/11_server/30_room_server/20_table/>房间模块</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/30_room_server/20_table/01_table_status/>桌子状态</a></li><li><input type=checkbox id=section-513cf4822ce8bd201b4d585dbb1ff673 class=toggle checked>
-<label for=section-513cf4822ce8bd201b4d585dbb1ff673 class=flex><a role=button class=active>玩家动作模块</a>
-<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/30_room_server/20_table/11_player/01_player_status/>玩家状态</a></li><li><a href=/blog/docs/11_server/30_room_server/20_table/11_player/02_player_action/>玩家动作</a></li></ul></li></ul></li><li><a href=/blog/docs/11_server/30_room_server/room/>room</a></li><li><a href=/blog/docs/11_server/30_room_server/122_enter_room/>门票</a></li></ul></li><li><input type=checkbox id=section-25ef20cc2a623fb126b894dbfbee4c12 class=toggle>
+<label for=section-513cf4822ce8bd201b4d585dbb1ff673 class=flex><a href=/blog/docs/11_server/30_room_server/20_table/11_player/ class=active>玩家动作模块</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/30_room_server/20_table/11_player/01_player_status/>玩家状态</a></li><li><a href=/blog/docs/11_server/30_room_server/20_table/11_player/02_player_action/>玩家动作</a></li></ul></li><li><input type=checkbox id=section-415947cfd8aa55a237ee0c99b12e55dd class=toggle>
+<label for=section-415947cfd8aa55a237ee0c99b12e55dd class=flex><a href=/blog/docs/11_server/30_room_server/20_table/12_settle/>游戏结算</a>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul></ul></li></ul></li><li><a href=/blog/docs/11_server/30_room_server/room/>room</a></li><li><a href=/blog/docs/11_server/30_room_server/122_enter_room/>门票</a></li></ul></li><li><input type=checkbox id=section-25ef20cc2a623fb126b894dbfbee4c12 class=toggle>
 <label for=section-25ef20cc2a623fb126b894dbfbee4c12 class=flex><a href=/blog/docs/11_server/99_subgame/>子游戏</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/11_server/99_subgame/01_directory_structure/>目录结构</a></li><li><a href=/blog/docs/11_server/99_subgame/02_data_model/>数据模型</a></li><li><a href=/blog/docs/11_server/99_subgame/03_auto_generate/>自动生成</a></li></ul></li><li><a href=/blog/docs/11_server/redis/>redis</a></li></ul></li><li><input type=checkbox id=section-b0f8ffcd0e60ef8b990f9737f3b32d43 class=toggle>
 <label for=section-b0f8ffcd0e60ef8b990f9737f3b32d43 class=flex><a role=button>client</a>
@@ -25,4 +78,7 @@
 <label for=section-afe6f0e83cf17111aaae10d704077660 class=flex><a role=button>子游戏</a>
 <img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/12_client/11_subgame/01_directory_structure/>目录结构</a></li><li><a href=/blog/docs/12_client/11_subgame/02_data_model/>数据模型</a></li><li><a href=/blog/docs/12_client/11_subgame/03_ui_chair/>界面椅子号</a></li></ul></li></ul></li><li><input type=checkbox id=section-d99403f32e6a8e890e93646ab64a826e class=toggle>
 <label for=section-d99403f32e6a8e890e93646ab64a826e class=flex><a role=button>subgames</a>
-<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/13_subgames/11/>五子棋</a></li><li><a href=/blog/docs/13_subgames/22/>保定牌九</a></li></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>玩家动作模块</h3><label for=toc-control></label></div><aside class="hidden clearfix"><nav id=TableOfContents></nav></aside></header><article class="markdown book-article"></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script></footer><label for=menu-control class="hidden book-menu-overlay"></label></div></main></body></html>
+<img src=/blog/icons/chevron-right.svg class=book-icon></label><ul><li><a href=/blog/docs/13_subgames/11/>五子棋</a></li><li><a href=/blog/docs/13_subgames/22/>保定牌九</a></li></ul></li></ul></nav><script>(function(){var e=document.querySelector("aside .book-menu-content");addEventListener("beforeunload",function(){localStorage.setItem("menu.scrollTop",e.scrollTop)}),e.scrollTop=localStorage.getItem("menu.scrollTop")})()</script></div></aside><div class=book-page><header class=book-header><div class="flex align-center justify-between"><label for=menu-control><img src=/blog/icons/menu.svg class=book-icon alt=Menu></label><h3>玩家动作模块</h3><label for=toc-control><img src=/blog/icons/toc.svg class=book-icon alt="Table of Contents"></label></div><aside class="hidden clearfix"><nav id=TableOfContents><ul><li><a href=#玩家动作>玩家动作</a></li></ul></nav></aside></header><article class="markdown book-article"><h2 id=玩家动作>玩家动作<a class=anchor href=#%e7%8e%a9%e5%ae%b6%e5%8a%a8%e4%bd%9c>#</a></h2><p>玩家在桌子上的动作包括:<br></p><table><thead><tr><th>Action</th><th>描述</th></tr></thead><tbody><tr><td>Enter</td><td>加入桌子</td></tr><tr><td>Sit</td><td>坐下</td></tr><tr><td>StandUp</td><td>站起</td></tr><tr><td>Leave</td><td>离开</td></tr><tr><td>Ready</td><td>准备</td></tr><tr><td>CancelReady</td><td>取消准备</td></tr><tr><td>Host</td><td>托管</td></tr><tr><td>CancelHost</td><td>取消托管</td></tr></tbody></table><blockquote class="book-hint info"><p><code>玩家动作</code> 是指玩家在桌子生命周期内能够执行的业务操作, 用于描述玩家与桌子之间的交互行为及其状态变化<br></p><p>玩家动作属于服务端业务层概念, 不等同于 Client-Server 通信协议中的消息<br>客户端发送的玩家动作请求只是触发服务端执行相应玩家动作的一种外部调用方式. 服务端也可以通过内部逻辑、定时任务或其他业务事件触发玩家动作<br></p></blockquote><blockquote class="book-hint info"><p>玩家动作受 <code>TableStatus</code> 和 <code>UserStatus</code> 共同约束<br></p></blockquote></article><footer class=book-footer><div class="flex flex-wrap justify-between"><div></div><div></div></div><div class="flex flex-wrap justify-between"><span><a href=/blog/docs/11_server/30_room_server/20_table/01_table_status/ class="flex align-center"><img src=/blog/icons/backward.svg class=book-icon alt=Previous title=桌子状态>
+<span>桌子状态</span>
+</a></span><span><a href=/blog/docs/11_server/30_room_server/20_table/11_player/01_player_status/ class="flex align-center"><span>玩家状态</span>
+<img src=/blog/icons/forward.svg class=book-icon alt=Next title=玩家状态></a></span></div><script>(function(){function e(e){const t=window.getSelection(),n=document.createRange();n.selectNodeContents(e),t.removeAllRanges(),t.addRange(n)}document.querySelectorAll("pre code").forEach(t=>{t.addEventListener("click",function(){if(window.getSelection().toString())return;e(t.parentElement),navigator.clipboard&&navigator.clipboard.writeText(t.parentElement.textContent)})})})()</script><div class=book-comments></div></footer><label for=menu-control class="hidden book-menu-overlay"></label></div><aside class=book-toc><div class=book-toc-content><nav id=TableOfContents><ul><li><a href=#玩家动作>玩家动作</a></li></ul></nav></div></aside></main></body></html>
