@@ -1,0 +1,60 @@
+#+title: 录像记录模块
+#+date: 2026-11-05 00:47:07
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/14_video_record
+#+export_file_name: index
+#+hugo_weight: 14
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 职责
+  录像记录模块 =SubVideoRecord= 负责记录每一小局的游戏录像, 录像可在client 中回放.
+
+  -----
+
+* 设计说明
+  录像采用 Server -> Client 消息录制 的方式, 只记录服务器下发的消息
+  原因是客户端请求经过服务器处理后, 最终都会转化为服务器下发的广播或通知消息. 因此, 只需要记录服务器下发的数据, 即可还原整局游戏的过程
+
+  #+begin_src C++
+    message TableVideo {
+      message User {
+        int32 chair      = 2;
+        int32 uid        = 2;
+        string name      = 3;
+        string head_url  = 4;
+        int64 score      = 5;
+      }
+
+      message Data {
+        int32 chair    = 1;
+        int32 subcmd   = 2;
+        bytes data     = 3;
+      }
+
+      int32 kindid          = 1;
+      int32 tableid         = 2;
+      TableMode table_mode  = 3;
+      int32 chair_count     = 4;
+      bytes subgame_rule    = 5;
+      repeated User user    = 6;
+      repeated Data data    = 7;
+    }
+  #+end_src
+
+  #+attr_shortcode: info
+  #+begin_hint
+  子游戏消息协议变更, 会导致之前的录像数据失效. 因此, 也应该在录像数据中, 记录子游戏消息协议的版本.
+  #+end_hint
+
+  -----
+
+* 录像数据保存
+  录像数据通常较大, 不建议直接保存在数据库.
+  建议采用 ~文件存储~ + ~数据库索引~ 的方式
+
+  录像文件可以存储在服务器本地磁盘, 也可以根据部署规模使用 MinIO、对象存储等方案
+  数据库只保存录像的索引信息和文件存储位置, 通过 table_record_id 与对应的小局记录建立关联
