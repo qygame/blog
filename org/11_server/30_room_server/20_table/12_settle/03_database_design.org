@@ -32,7 +32,6 @@
 
     CREATE TABLE IF NOT EXISTS table_dj_record (
         game_record_id varchar(128) PRIMARY KEY,
-        -- 桌子数据
         kindid int NOT NULL,
         tableid int NOT NULL,
         tablemode int NOT NULL,
@@ -43,31 +42,33 @@
   #+end_src
 
   #+begin_src sql
-    -- 设置game_rocord_id 为主键
-    -- 建议与table_dj_record 的外键约束
+    -- 设置game_rocord_id, current_game_count 为联合主键
+    -- 建立与table_dj_record 的外键约束
 
     CREATE TABLE IF NOT EXISTS table_xj_record (
-          game_record_id varchar(128) PRIMARY KEY,
-          table_record_id varchar(128) NOT NULL,
-          current_game_count int NOT NULL,
+        game_record_id varchar(128) NOT NULL,
+        table_record_id varchar(128) NOT NULL,
+        current_game_count int NOT NULL,
 
-          CONSTRAINT fk_table_xj_record_table_dj_record
+        PRIMARY KEY (game_record_id, current_game_count),
+        -- 外键约束
+        CONSTRAINT fk_table_xj_record_table_dj_record
             FOREIGN KEY (game_record_id)
             REFERENCES table_dj_record(game_record_id)
-      );
-
-      -- 外键约束
+    );
   #+end_src
 
   #+begin_src sql
-    -- 设置table_record_id 为主键
+    -- 设置table_record_id + uid为联合主键
 
     CREATE TABLE IF NOT EXISTS table_player_record (
-        table_record_id varchar(128) PRIMARY KEY,
+        table_record_id varchar(128) NOT NULL,
         -- 玩家数据
         uid int NOT NULL,
         chair int NOT NULL,
-        score int NOT NULL
+        score int NOT NULL,
+
+        PRIMARY KEY (table_record_id, uid)
     );
   #+end_src
 
@@ -85,7 +86,6 @@
     CREATE TABLE IF NOT EXISTS player_game_record (
         uid bigint NOT NULL,
         game_record_id varchar(32) NOT NULL,
-        -- 方便查询的字段
         kindid int NOT NULL,
         recordtime timestamp DEFAULT CURRENT_TIMESTAMP,
 
