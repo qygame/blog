@@ -33,11 +33,11 @@
     CREATE TABLE IF NOT EXISTS table_dj_record (
         game_record_id varchar(128) PRIMARY KEY,
         kindid int NOT NULL,
-        tableid int NOT NULL,
-        tablemode int NOT NULL,
-        allcount int NOT NULL,
-        playercount int NOT NULL,
-        recordtime timestamp DEFAULT CURRENT_TIMESTAMP
+        table_id int NOT NULL,
+        table_mode int NOT NULL,
+        all_count int NOT NULL,
+        player_count int NOT NULL,
+        record_time timestamp DEFAULT CURRENT_TIMESTAMP
     );
   #+end_src
 
@@ -87,9 +87,9 @@
         uid bigint NOT NULL,
         game_record_id varchar(32) NOT NULL,
         kindid int NOT NULL,
-        recordtime timestamp DEFAULT CURRENT_TIMESTAMP,
+        record_time timestamp DEFAULT CURRENT_TIMESTAMP,
 
-        PRIMARY KEY (uid, recordtime),
+        PRIMARY KEY (uid, record_time),
         CONSTRAINT fk_player_game_record_table_dj_record
             FOREIGN KEY (game_record_id)
             REFERENCES table_dj_record(game_record_id)
