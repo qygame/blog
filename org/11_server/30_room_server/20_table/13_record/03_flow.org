@@ -21,7 +21,7 @@
 * 小局游戏记录
   #+begin_src mermaid :file result.png
     flowchart TD
-        () --> if1{第一局游戏}
+        if1{第一局游戏}
         if1 -->|yes| TableDjRecord --> PlayerGameRecord --> TableXjRecord
         if1 -->|no| TableXjRecord
 
