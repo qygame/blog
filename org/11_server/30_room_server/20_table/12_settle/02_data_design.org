@@ -9,23 +9,36 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* Table 结算数据
-* 玩家小局战绩
-* 玩家大局战绩
+* 设计思路
+  1. 先思考如何对玩家展示战绩信息
+     #+begin_example
+       一个总的显示(大局战绩: 包含自身总输赢, 可能还有总局数等)
+       点开之后, 是各个小局的信息
+       |- 小局1 每个小局除了显示自身, 还要显示对手
+       |- 小局2
+       |- 小局3
+     #+end_example
+  2. 再思考, 除了玩家之外, 是否有其他地方也需要展示记录
+
+  -----
+
+* 设计原则
+
+  1. table 记录了每小局的数据, 是唯一的权限数据.
+  2. table 也应该包含玩家的输赢数据
+
+
+  -----
+
+* table 数据结构
+
+ #+begin_src C++
+   struct TableRecord {
+
+   };
+ #+end_src
 
 
 
 
-  table 记录, table 自身的数据, 以及其中所有玩家的输赢数据
-  player xj, 指向table 记录
-  player dj, 玩家总输赢情况.  xj list
-
-
-  重新设计, 参考下面的查询画面.
-
-  玩家查询战绩, 显示的画面应该是:
-
-  一个总的显示(大局战绩: 包含自身总输赢, 可能还有总局数等). 这个节点下是小局数据的list.
-  |- 小局1 每个小局除了显示自身, 还要显示对手
-  |- 小局2
-  |- 小局3
+  table 的数据结构应该确定了, 接下来是确定玩家小局, 玩家大局的数据结构
