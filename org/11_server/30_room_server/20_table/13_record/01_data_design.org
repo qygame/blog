@@ -1,16 +1,17 @@
 #+title: 数据结构设计
-#+date: 2026-11-04 11:54:43
+#+date: 2026-11-04 23:24:25
 #+hugo_section: docs
-#+hugo_bundle: 11_server/30_room_server/20_table/12_settle/02_data_design
+#+hugo_bundle: 11_server/30_room_server/20_table/13_record/01_data_design
 #+export_file_name: index
-#+hugo_weight: 2
+#+hugo_weight: 1
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
+
 * 设计原则
-  1. 结算数据以桌子数据为唯一权威数据源, 记录一场游戏中桌子自身的数据以及各玩家的输赢信息
+  1. 游戏历史数据以桌子数据为唯一权威数据源, 记录一场游戏中桌子自身的数据以及各玩家的输赢信息
   2. 玩家战绩不再单独设计数据结构, 而是统一记录在桌子结算数据中
   3. 数据结构只负责描述业务数据及其职责, 不负责具体的实现
 

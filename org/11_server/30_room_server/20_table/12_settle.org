@@ -1,0 +1,52 @@
+#+title: 游戏结算模块
+#+date: 2026-11-04 23:25:56
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/12_settle
+#+export_file_name: index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 游戏结算模块
+  =游戏结算SubSettle= 负责组织 Table 内部的游戏结算流程, 包括结算流程的协调 以及结算结果的分发
+
+  SubSettle 只负责结算流程的组织与协调, 不负责具体业务实现
+  - Table 需要处理的事情：由 SubSettle 负责协调Table 中的模块
+  - 其他模块需要处理的事情: SubSettle 负责发起通知
+
+
+  SubSettle 负责组织两种类型的结算:
+  1. 小局结算
+  2. 大局结算
+
+-----
+
+* 小局游戏结算
+  自身模块需要处理:
+  1. 玩家在Table 中的数据变更, 状态变更
+  2. 游戏历史记录
+     1) 桌子结算记录
+     2) 玩家小局战绩
+     3) 桌子小局录像
+
+
+  通知其他模块:
+  1. 玩家财富变更, 通知 =ActorServer= 处理, 并等待回调结果
+  2. 玩家门票? TODO 再思考是否应该放在这里
+  3. 任务模块
+  4. 排行榜模块
+
+     -----
+
+* 大局游戏结算
+  自身模块需要处理:
+  1. 游戏历史记录
+     1) 玩家大局战绩
+
+
+  通知其他模块:
+  1. 任务模块
+  2. 排行榜模块

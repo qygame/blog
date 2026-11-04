@@ -1,0 +1,16 @@
+#+title: 游戏历史记录
+#+date: 2026-11-04 23:19:50
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/13_record
+#+export_file_name: _index
+#+hugo_weight: 13
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+=游戏历史记录SubRecord= 职责:
+
+1. 记录每场游戏的相关数据, 包括游戏配置、桌子信息
+2. 记录玩家在每场游戏中的战绩, 包括小局战绩和大局战绩

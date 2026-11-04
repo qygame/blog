@@ -1,0 +1,37 @@
+#+title: 内部实现流程
+#+date: 2026-11-04 23:37:03
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/13_record/03_flow
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 对外接口
+游戏历史记录模块 =SubRecord= 对外提供的接口只有:
+
+1. TableXjRecord(), 小局游戏记录, 小局结束时候被调用
+2. TableDjRecord(), 大局游戏记录, 大局结束时候被调用
+
+-----
+
+* 小局游戏记录
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        () --> if1{第一局游戏}
+        if1 -->|yes| TableDjRecord --> PlayerGameRecord --> TableXjRecord
+        if1 -->|no| TableXjRecord
+
+        TableXjRecord --> TableXjRecord.players
+  #+end_src
+
+  #+attr_shortcode: info
+  #+begin_hint
+  这里的 TableDjRecord 只是记录了桌子数据, 没有记录 TableDjRecord.players
+  #+end_hint
+
+* 大局游戏记录
+  1. 写入TableDjRecord.players
