@@ -13,8 +13,8 @@
 * 对外接口
 游戏历史记录模块 =SubRecord= 对外提供的接口只有:
 
-1. TableXjRecord(), 小局游戏记录, 小局结束时候被调用
-2. TableDjRecord(), 大局游戏记录, 大局结束时候被调用
+1. XjRecord(), 小局游戏记录
+2. DjRecord(), 大局游戏记录
 
 -----
 

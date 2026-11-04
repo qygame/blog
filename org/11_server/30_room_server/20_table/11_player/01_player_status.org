@@ -9,7 +9,6 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-
 #+begin_src C++
   // 用户游戏状态
   enum UserGameStatus {
