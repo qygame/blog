@@ -10,18 +10,18 @@
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
+TODO 待整理
+
 GateServer 主要由以下模块组成:
 
-1. 登陆模块 =login=
+1. 大厅模块 =lobby=
 
-2. 大厅模块 =lobby=
+2. 游戏模块 =game=
 
-3. 游戏模块 =game=
+3. 任务模块 =task=
 
-4. 任务模块 =task=
+4. 排行榜 =rank=
 
-5. 排行榜 =rank=
+5. 比赛 =match=
 
-6. 比赛 =match=
-
-7. 路由
+6. 路由

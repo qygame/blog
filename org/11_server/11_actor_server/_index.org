@@ -1,0 +1,20 @@
+#+title: ActorServer
+#+date: 2026-11-04 12:06:21
+#+hugo_section: docs
+#+hugo_bundle: 11_server/11_actor_server
+#+export_file_name: _index
+#+hugo_weight: 11
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+ActorServer 负责玩家数据的管理, 拥有玩家数据的唯一权威数据
+
+
+ActorServer 主要由以下模块组成:
+
+1. 登录模块 =Login=
+
+2. 财富管理模块 =Wealth= TODO
