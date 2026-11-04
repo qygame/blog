@@ -1,0 +1,19 @@
+#+title: 结算模块流程
+#+date: 2026-11-04 16:11:47
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/12_settle/04_settle_flow
+#+export_file_name: index
+#+hugo_weight: 4
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 小局游戏结算
+  1. 如果是第一局游戏结束, 写入TableDjRecord, 写入PlayerGameRecord
+     此时的TableDjRecord 只是记录桌子数据
+  2. 写入TableXjRecord, 写入TableVideoRecord
+
+* 大局游戏结算
+  1. 更新TableDjRecord, 写入玩家总输赢数据
