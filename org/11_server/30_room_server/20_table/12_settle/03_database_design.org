@@ -1,0 +1,97 @@
+#+title: 数据库实现
+#+date: 2026-11-04 13:57:11
+#+hugo_section: docs
+#+hugo_bundle: 11_server/30_room_server/20_table/12_settle/03_database_design
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 概述
+  前面定义了结算业务的数据结构, 明确了各类数据的职责及其组织关系, 但并未涉及具体的存储实现
+
+  这里通过数据库表实现上述数据结构, 将业务数据映射为持久化数据, 并通过关联字段建立数据之间的联系.
+
+  -----
+
+
+* 桌子数据
+  将TableDjRecord、TableXjRecord 和 TablePlayerRecord 分别映射为独立的数据库表, 通过关联字段建立数据之间的关系
+
+  1. TableDjRecord 与 TableXjRecord 中通过game_record_id 关联
+     game_recorrd_id 是一场游戏(一大局)的唯一标志
+  2. TableDjRecord/TableXjRecord 与 TablePlayerRecord 通过tabel_record_id 关联
+     TableDjRecord.table_record_id 就是game_record_id
+     TableXjRecord.table_record_id 由game_record_id + current_game_count 的组合生成
+
+
+  #+begin_src sql
+    -- 设置game_record_id 为主键
+
+    CREATE TABLE IF NOT EXISTS table_dj_record (
+        game_record_id varchar(128) PRIMARY KEY,
+        -- 桌子数据
+        kindid int NOT NULL,
+        tableid int NOT NULL,
+        tablemode int NOT NULL,
+        allcount int NOT NULL,
+        playercount int NOT NULL,
+        recordtime timestamp DEFAULT CURRENT_TIMESTAMP
+    );
+  #+end_src
+
+  #+begin_src sql
+    -- 设置game_rocord_id 为主键
+    -- 建议与table_dj_record 的外键约束
+
+    CREATE TABLE IF NOT EXISTS table_xj_record (
+          game_record_id varchar(128) PRIMARY KEY,
+          table_record_id varchar(128) NOT NULL,
+          current_game_count int NOT NULL,
+
+          CONSTRAINT fk_table_xj_record_table_dj_record
+            FOREIGN KEY (game_record_id)
+            REFERENCES table_dj_record(game_record_id)
+      );
+
+      -- 外键约束
+  #+end_src
+
+  #+begin_src sql
+    -- 设置table_record_id 为主键
+
+    CREATE TABLE IF NOT EXISTS table_player_record (
+        table_record_id varchar(128) PRIMARY KEY,
+        -- 玩家数据
+        uid int NOT NULL,
+        chair int NOT NULL,
+        score int NOT NULL
+    );
+  #+end_src
+
+  -----
+
+
+* 玩家数据
+  玩家数据 与 桌子数据的映射, 通过game_record_id 来关联.
+  这里同时增加一些方便过滤查询的字段, 比如增加时间字段, 增加游戏字段(kindid)
+
+  #+begin_src sql
+    -- 设置uid + recordtime 为联合主键
+    -- 建立与table_dj_record 的外键约束
+
+    CREATE TABLE IF NOT EXISTS player_game_record (
+        uid bigint NOT NULL,
+        game_record_id varchar(32) NOT NULL,
+        -- 方便查询的字段
+        kindid int NOT NULL,
+        recordtime timestamp DEFAULT CURRENT_TIMESTAMP,
+
+        PRIMARY KEY (uid, recordtime),
+        CONSTRAINT fk_player_game_record_table_dj_record
+            FOREIGN KEY (game_record_id)
+            REFERENCES table_dj_record(game_record_id)
+    );
+  #+end_src

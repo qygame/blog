@@ -1,4 +1,4 @@
-#+title: 结算数据设计
+#+title: 数据结构设计
 #+date: 2026-11-04 11:54:43
 #+hugo_section: docs
 #+hugo_bundle: 11_server/30_room_server/20_table/12_settle/02_data_design
@@ -9,36 +9,45 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 设计思路
-  1. 先思考如何对玩家展示战绩信息
-     #+begin_example
-       一个总的显示(大局战绩: 包含自身总输赢, 可能还有总局数等)
-       点开之后, 是各个小局的信息
-       |- 小局1 每个小局除了显示自身, 还要显示对手
-       |- 小局2
-       |- 小局3
-     #+end_example
-  2. 再思考, 除了玩家之外, 是否有其他地方也需要展示记录
-
-  -----
-
 * 设计原则
+  1. 结算数据以桌子数据为唯一权威数据源, 记录一场游戏中桌子自身的数据以及各玩家的输赢信息
+  2. 玩家战绩不再单独设计数据结构, 而是统一记录在桌子结算数据中
+  3. 数据结构只负责描述业务数据及其职责, 不负责具体的实现
 
-  1. table 记录了每小局的数据, 是唯一的权限数据.
-  2. table 也应该包含玩家的输赢数据
+     -----
 
 
-  -----
+* 桌子数据
+  桌子结算数据分为两类:
+  1. TableXjRecord: 小局结算数据, 记录每一小局中所有玩家的输赢
+  2. TableDjRecord: 大局结算数据, 记录整场游戏的桌子信息以及所有玩家的总输赢
 
-* table 数据结构
+  #+begin_src C++
+    struct TableXjRecord {
+      int current_game_count; // 第几局
+      std::vector<TablePlayerRecord> players;
+    };
 
- #+begin_src C++
-   struct TableRecord {
+    struct TableDjRecord {
+      // 桌子数据
+      int kindid;
+      int table_id;
+      int table_mode;
+      // 玩家数据
+      std::vector<TablePlayerRecord> players;
+    };
 
-   };
+    struct TablePlayerRecord {
+      int uid;
+      int chair;
+      // 战绩数据
+      int score;
+    };
  #+end_src
 
 
+* 玩家数据
+  玩家战绩不再单独设计数据结构, 直接使用桌子结算数据
 
-
-  table 的数据结构应该确定了, 接下来是确定玩家小局, 玩家大局的数据结构
+  玩家小局战绩: 记录在对应的 TableXjRecord 关联的 TablePlayerRecord 中
+  玩家大局战绩: 记录在对应的 TableDjRecord 关联的 TablePlayerRecord 中
