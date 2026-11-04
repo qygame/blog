@@ -22,7 +22,7 @@
   #+begin_src C++
     message TableVideo {
       message User {
-        int32 chair      = 2;
+        int32 chair      = 1;
         int32 uid        = 2;
         string name      = 3;
         string head_url  = 4;
