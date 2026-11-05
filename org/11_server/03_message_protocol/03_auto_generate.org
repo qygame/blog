@@ -36,7 +36,7 @@
   1. Service Server端接口的声明.
      比如task_service.h, 会自动放在src/task_server/service/auto_generated 目录下
      auto_generated 下的文件, 每次编译都会重新生成
-  2. Service Client 端接口的封装. 包括task_service_stub.h 和 task_service__stub.cc
+  2. Service Client 端接口的封装. 包括task_service_stub.h 和 task_service_stub.cc
      主要目的是简化Service 的调用
 
      #+begin_src C++
