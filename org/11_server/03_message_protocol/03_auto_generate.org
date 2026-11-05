@@ -11,6 +11,11 @@
 
 
 * 自动生成
+  如果是消息协议proto文件, 会自动生成sub handler, cmd handler;
+  如果是Service proto文件, 会自动生成Service Server端, Service Client端文件
+
+  -----
+* 消息协议
   代码自动生成 =消息协议处理函数的声明= && =分发函数=
   使用的时候只需要实现处理函数的定义即可
 
@@ -24,3 +29,24 @@
   为了消息协议与处理函数一一对应 (删除过时的处理函数, 找到未处理的消息协议)
   自动生成的 =消息协议处理函数的声明= 放在了class中
   #+end_hint
+  -----
+
+* Service
+  自动生成如下文件:
+  1. Service Server端接口的声明.
+     比如task_service.h, 会自动放在src/task_server/service/auto_generated 目录下
+     auto_generated 下的文件, 每次编译都会重新生成
+  2. Service Client 端接口的封装. 包括task_service_stub.h 和 task_service__stub.cc
+     主要目的是简化Service 的调用
+
+     #+begin_src C++
+       // task_service_stub.h
+       namespace qy::task_server {
+       void PushTask(const kernel::SessionPtr, const proto::SubPushTask&);
+
+       } // namespace qy::task_server
+
+       // 现在调用流程
+       proto::SubPushTask sub;
+       task_server::PushTask(session, sub);
+     #+end_src
