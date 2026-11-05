@@ -1,0 +1,22 @@
+#+title: RobotServer
+#+date: 2026-11-05 22:36:07
+#+hugo_section: docs
+#+hugo_bundle: 11_server/12_robot_server
+#+export_file_name: _index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+RobotServer 是独立的机器人管理服务, 负责机器人的创建、初始化、分配、运行时管理与回收，为各 RoomServer 提供统一的机器人资源管理能力
+
+
+#+attr_shortcode: info
+#+begin_hint
+1. RobotServer 只负责机器人资源管理, 不负责机器人何时进入 Table、需要多少机器人等业务调度决策.
+   这些调度由Table 的机器人调度模块负责
+
+2. RobotServer 不负责具体的机器人策略实现.
+   机器人策略由各子游戏模块独立实现
+#+end_hint

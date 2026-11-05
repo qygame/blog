@@ -1,0 +1,28 @@
+#+title: 机器人类型
+#+date: 2026-11-05 22:36:28
+#+hugo_section: docs
+#+hugo_bundle: 11_server/12_robot_server/01_robot
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+机器人从业务角度可以分为两种类型:
+
+1. 固定机器人: 具有稳定身份和数据来源的机器人, 通常保存在数据库的robot 表中. 其身份和基础属性可以长期维护, 并支持运营管理
+2. 动态机器人: 没有固定身份, 相关信息在创建时随机生成, 通常不需要持久化存储
+
+-----
+
+两种机器人在运行机制、生命周期和行为策略上没有本质区别. 它们都可以参与游戏, 并由子游戏实现具体的机器人策略
+
+两者的主要区别在于身份来源和运营管理方式:
+
+1. 固定机器人侧重于身份管理和运营控制
+2. 动态机器人侧重于灵活创建和使用, 不需要维护固定身份
+
+
+机器人是否采用固定身份, 取决于业务和运营需求, 而不是技术上的限制
