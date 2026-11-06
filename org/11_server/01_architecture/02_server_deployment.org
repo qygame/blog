@@ -33,3 +33,29 @@
 - 接口协作: Server之间通过明确的接口进行交互, 避免直接耦合其他Server的内部实现
 
 #+end_hint
+
+-----
+
+* 服务器部署图
+  #+begin_src mermaid :file result.png
+    architecture-beta
+    %% client
+    service client(internet)[Client]
+
+    %% Server
+    group servers(server)[Servers]
+    service gate(server)[Gate] in servers
+    service room(server)[Room] in servers
+    gate:R <-- L:room
+
+    %% 数据层
+    group dbs(database)[Databses]
+    service redis(database)[Redis] in dbs
+    service postgres(database)[Postgres] in dbs
+    redis:R -- L:postgres
+
+    %% 指向
+    client:R --> L:gate
+
+    gate:B --> T:redis{group}
+  #+end_src

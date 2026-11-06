@@ -9,30 +9,34 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 服务器架构
+* 服务器架构: 登录流程
   #+begin_src mermaid :file result.png
-    architecture-beta
-    %% client
-    service client(internet)[Client]
-
-    %% Server
-    group servers(server)[Servers]
-    service gate(server)[Gate] in servers
-    service room(server)[Room] in servers
-    gate:R <-- L:room
-
-    %% 数据层
-    group dbs(database)[Databses]
-    service redis(database)[Redis] in dbs
-    service postgres(database)[Postgres] in dbs
-    redis:R -- L:postgres
-
-    %% 指向
-    client:R --> L:gate
-
-    gate:B --> T:redis{group}
+    flowchart TD
+        Client -->|账号,密码| LB集群 -->|转发| LoginServer集群
+        LoginServer -->|GateServer(ip,port),token| LB集群 -->|转发| Client
   #+end_src
 
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        Client -->|token| GateServer --> ActorServer
+  #+end_src
+
+  -----
+* 服务器架构: 消息
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        Client -->|msg| GateServer
+
+        GateServer -->|转发| ActorServer
+        GateServer -->|转发| RoomServer
+        GateServer -->|转发| RankServer集群
+        GateServer -->|转发| TaskServer集群
+
+        ActorServer --> GateServer --> Client
+        RoomServer --> GateServer --> Client
+        RankServer --> GateServer --> Client
+        TaskServer --> GateServer --> Client
+  #+end_src
 
 * 服务器说明
 
