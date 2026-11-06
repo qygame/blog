@@ -20,19 +20,24 @@
 
         Client->>LB: 账号、密码
         LB->>LoginServer: 转发
-        LoginServer-->>LB: 返回GateServer信息,Token
+        LoginServer-->>LB: 在redis生成Token, 返回GateServer信息,Token
         LB-->>Client: 转发
 
         Client->>GateServer: Token
-        GateServer->>ActorServer: 用户登陆
+        GateServer->>ActorServer: 校验Token, 然后通知用户登陆
+        ActorServer-->>GateServer: 下发用户数据
+        GateServer-->>Client: 转发
   #+end_src
 
-  #+begin_src mermaid :file result.png
-    flowchart TD
-        Client -->|token| GateServer --> ActorServer
-  #+end_src
+  1. Client -> LB集群: DNS/Anycast 将域名解析分发给不同的LB (Nginx/Cloud NLB)
+  2. LB集群 -> LoginServer: LB通过轮询在LoginServer 集群中选择LoginServer
+  3. LoginServer 返回GateServer信息: GateServer集群会定时往中redis中写入数据. LoginServer根据策略在集群中选择GateServer
+  4. GateServer -> ActorServer: GateServer根据uid 通过一致性Hash 选择ActorServer
 
+
+  TODO: 待补充断线重连的逻辑
   -----
+
 * 服务器架构: 消息
   #+begin_src mermaid :file result.png
     flowchart TD
@@ -49,57 +54,10 @@
         TaskServer --> GateServer --> Client
   #+end_src
 
-* 服务器说明
 
-  #+begin_example
-    [ 客户端 Client ]
-           │
-           │ 1. DNS / Anycast 将域名解析分发给不同的 LB IP
-           ▼
-    [ LB 集群 (Nginx / Cloud NLB) ] ── (第一层负载：入口分流、解密 HTTPS)
-           │
-           │ 2. LB 通过 HTTP 轮询转发给不同的 LoginServer
-           ▼
-    [ LoginServer 集群 ]            ── (第二层负载：无状态鉴权、业务逻辑计算)
-           │
-           │ 3. Login 查 Redis 挑选最空闲的 Gate，把 Gate IP 返回给 Client
-           ▼
-    [ GateServer 集群 ]             ── (第三层负载：重定向直连，平摊海量长连接)
-           │
-           │ 4. Gate 根据 RoleID 通过一致性 Hash 路由给指定的 Actor
-           ▼
-    [ ActorServer 集群 ]           ── (第四层负载：有状态计算，按 RoleID 动态加载)
-  #+end_example
+* 设计说明
+  1. 分层、集群的设计, 只是对资源的妥协
+     如果计算资源是无限的, 就不需要再去使用分层、集群
 
-
-
-  帐号登陆:
-  loginServer根据 帐号, 密码 与数据库比对. 成功的话:
-  1. 获取gate server 的ip, port (从redis中查询获取, loginServer与GateServer分离)
-  2. 在redis中写入roleID ->token.
-  3. 返回gate server, token给client
-  4. client 去连接gateServer, 并携带token
-  5. gateServer比对redis中的roleID, token 是否一致.
-     如果一致, 则通知ActorServer (这里使用强hash计算出ActorServer)
-  6. ActorServer中处理重复登陆
-     通知old GateServer 踢人; 记录新的GateServer
-
-
-  帐号注册:
-  1. 写入数据库
-  2. 写入成功, 复用帐号登陆逻辑
-
-
-
-  断线重连的逻辑:
-  1. 断线之后, client首先连接GateServer
-     GateServer保存一段时间ttl, 如果在此期间正常连接. 无事发生
-     ttl之后, GateServer删除连接信息, 并通知到ActorServer
-     Client 需要重新连接loginServer分配GateServer
-
-* TODO 重要说明
-
-  1. 分层只是计算资源有限下的妥协之举
-     如果计算资源是无限的, 就不需要去考虑分层
-
-  2. 对于服务器, 最重要的不是分层, 而是灾后重建
+  2. 对于服务器, 最重要的不是分层、集群, 而是灾后重建
+     从错误或崩溃中恢复 才是需要重点考虑的
