@@ -9,8 +9,6 @@
 #+hugo_custom_front_matter: :bookCollapseSection true
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-
-
 * 登录流程
   #+begin_src mermaid :file result.png
     sequenceDiagram

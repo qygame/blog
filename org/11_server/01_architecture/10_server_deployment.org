@@ -1,9 +1,9 @@
 #+title: 服务器部署
-#+date: 2026-11-04 12:13:35
+#+date: 2026-11-06 14:53:17
 #+hugo_section: docs
-#+hugo_bundle: 11_server/01_architecture/02_server_deployment
+#+hugo_bundle: 11_server/01_architecture/10_server_deployment
 #+export_file_name: index
-#+hugo_weight: 2
+#+hugo_weight: 10
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection false

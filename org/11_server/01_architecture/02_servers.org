@@ -1,0 +1,36 @@
+#+title: 服务器组成
+#+date: 2026-11-06 14:53:38
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_servers
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+| 服务器      | 名字       | 职责                             | 状态 | 状态数据      |
+|-------------+------------+----------------------------------+------+---------------|
+| LoginServer | 登陆服务器 | 账号认证、登录验证               | 无   |               |
+| GateServer  | 网关       | 客户端连接管理、消息路由与转发   | 有   | ClientSession |
+| ActorServer | 用户服务器 | 用户数据管理                     | 有   | Users         |
+| RoomServer  | 房间服务器 | 桌子管理                         | 有   | Tables        |
+| RankServer  | 排行榜     | 排行榜数据管理与查询             | 无   |               |
+| TaskServer  | 任务       | 任务管理、任务进度处理与奖励结算 | 无   |               |
+
+-----
+
+#+attr_shortcode: info
+#+begin_hint
+服务器的有状态与无状态设计, 会直接影响故障恢复(Disaster Recovery)的复杂度
+
+1. 无状态服务器
+   服务器实例不持有必须依赖 =本地运行时状态= 才能恢复的业务数据.
+   发生故障时, 直接启动新的实例即可恢复服务, 通常不需要恢复原实例的运行状态
+
+2. 有状态服务器
+   服务器实例持有运行时状态, 例如客户端连接、用户会话、房间状态等
+   发生故障时, 除了启动新的实例, 还需要考虑状态恢复, 包括从持久化存储恢复数据、重建运行时状态, 以及处理客户端重连和请求重新路由等问题
+
+#+end_hint
