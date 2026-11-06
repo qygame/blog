@@ -22,7 +22,7 @@
         Client->>LB: 账号、密码
         LB->>LoginServer: 转发
         LoginServer->>LoginServer: 查询数据库,校验登陆权限
-        LoginServer->>Reids: 获取GateServer列表及负载
+        LoginServer->>Redis: 获取GateServer列表及负载
         Redis-->>LoginServer: 返回GateServer列表
         LoginServer->>LoginServer: 选择GateServer, 生成Token
         LoginServer->>Redis: 保存Token与登陆上下文
@@ -32,9 +32,9 @@
         Client->>GateServer: Token
         GateServer->>Reids: 校验Token
         Reids-->>GateServer: 返回Token对应的上下文
-        GateServer->>GateServer: 创建ClientSession
+        GateServer->>GateServer: 记录map(uid, session)
         GateServer->>ActorServer:  角色登陆(uid)
-        ActorServer->>ActorServer: 加载用户数据
+        ActorServer->>ActorServer: 创建User
         ActorServer-->>GateServer: 返回用户数据
         GateServer-->>Client: 转发
   #+end_src
