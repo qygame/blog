@@ -1,0 +1,20 @@
+#+title: 路由
+#+date: 2026-11-06 14:36:24
+#+hugo_section: docs
+#+hugo_bundle: 11_server/10_gate_server/01_route
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+#+begin_src mermaid :file result.png
+  flowchart TD
+      Client <--> GateServer
+
+      GateServer <-->|Room消息| RoomServer
+      GateServer <-->|Rank消息| RankServer集群
+      GateServer <-->|Task消息| TaskServer集群
+#+end_src

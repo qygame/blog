@@ -9,63 +9,45 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 服务器架构: 登录流程
+* 服务器整体架构图
   #+begin_src mermaid :file result.png
-    sequenceDiagram
-        participant Client
-        participant LB as LB集群
-        participant LoginServer
-        participant GateServer
-        participant ActorServer
-        participant Redis
+    flowchart TB
+        Client["Client"]
+        subgraph Access["接入层"]
+            LB["LoadBalancer 集群"]
+            Login["LoginServer 集群"]
+            Gate["GateServer 集群"]
+        end
+        subgraph Business["业务层"]
+            Actor["ActorServer 集群"]
+            Room["RoomServer 集群"]
+            Rank["RankServer 集群"]
+            Task["TaskServer 集群"]
+        end
+        subgraph Infrastructure["基础设施"]
+            Redis[("Redis")]
+            DB[("Database")]
+        end
 
-        Client->>LB: 账号、密码
-        LB->>LoginServer: 转发
-        LoginServer->>LoginServer: 查询数据库,校验登陆权限
-        LoginServer->>Redis: 获取GateServer列表及负载
-        Redis-->>LoginServer: 返回GateServer列表
-        LoginServer->>LoginServer: 选择GateServer, 生成Token
-        LoginServer->>Redis: 保存Token与登陆上下文
-        LoginServer-->>LB: 返回GateServer Ip、Port以及Token
-        LB-->>Client: 转发
+        Client --> LB
+        Client <-->|长连接| Gate
 
-        Client->>GateServer: Token
-        GateServer->>Redis: 校验Token
-        Redis-->>GateServer: 返回Token对应的上下文
-        GateServer->>GateServer: 记录map(uid, session)
-        GateServer->>ActorServer:  角色登陆(uid)
-        ActorServer->>ActorServer: 创建User
-        ActorServer-->>GateServer: 返回用户数据
-        GateServer-->>Client: 转发
-  #+end_src
+        LB --> Login --> Infrastructure
 
-  1. Client -> LB集群: DNS 或者 Anycast
-  2. LB集群 -> LoginServer: LB通过轮询在LoginServer 集群中选择LoginServer
-  3. LoginServer 返回GateServer信息: GateServer集群定期向redis上报自身数据. LoginServer根据策略在集群中选择合适的GateServer
-  4. GateServer -> ActorServer: GateServer根据uid 通过一致性Hash 选择ActorServer
+        Gate <-->|内部服务通信| Business
 
-
-  TODO: 待补充断线重连的逻辑
-  -----
-
-* 服务器架构: 消息
-  #+begin_src mermaid :file result.png
-    flowchart TD
-        Client -->|msg| GateServer
-
-        GateServer -->|转发| ActorServer
-        GateServer -->|转发| RoomServer
-        GateServer -->|转发| RankServer集群
-        GateServer -->|转发| TaskServer集群
-
-        ActorServer --> GateServer --> Client
-        RoomServer --> GateServer --> Client
-        RankServer --> GateServer --> Client
-        TaskServer --> GateServer --> Client
+        Business --> Infrastructure
   #+end_src
 
 
-* 设计说明
+  接入层: 负责客户端接入、登录认证、连接管理
+  业务层: 负责不同领域的业务逻辑
+  基础设施: 提供缓存、状态存储和持久化能力
+
+
+* 服务器职责
+
+* 设计思想
   1. 分层、集群的设计, 只是对资源的妥协
      如果计算资源是无限的, 就不需要再去使用分层、集群
 
