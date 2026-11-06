@@ -1,0 +1,50 @@
+#+title: 认证流程
+#+date: 2026-11-06 15:25:10
+#+hugo_section: docs
+#+hugo_bundle: 11_server/09_login_server/01_flow
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 认证流程
+  #+begin_src mermaid :file result.png
+    sequenceDiagram
+        participant Client
+        participant LB as LB集群
+        participant LoginServer
+        participant GateServer
+        participant ActorServer
+        participant Redis
+
+        Client->>LB: 账号、密码
+        LB->>LoginServer: 转发
+        LoginServer->>LoginServer: 查询数据库,校验登陆权限
+        LoginServer->>Redis: 获取GateServer列表及负载
+        Redis-->>LoginServer: 返回GateServer列表
+        LoginServer->>LoginServer: 选择GateServer, 生成Token
+        LoginServer->>Redis: 保存Token与登陆上下文
+        LoginServer-->>LB: 返回GateServer Ip、Port以及Token
+        LB-->>Client: 转发
+
+        Client->>GateServer: Token
+        GateServer->>Redis: 校验Token
+        Redis-->>GateServer: 返回Token对应的上下文
+        GateServer->>GateServer: 记录map(uid, session)
+        GateServer->>ActorServer:  角色登陆(uid)
+        ActorServer->>ActorServer: 创建User
+        ActorServer-->>GateServer: 返回用户数据
+        GateServer-->>Client: 转发
+  #+end_src
+
+
+* 路由请求
+  1. Client -> LB集群: 通过DNS 或Anycast 将客户端请求引导至LB
+  2. LB集群 -> LoginServer: LB通过轮询在LoginServer 集群中选择实例
+  3. LoginServer 返回GateServer信息: GateServer集群定期向Redis上报自身状态. LoginServer根据策略在集群中选择合适的GateServer
+  4. GateServer -> ActorServer: GateServer根据uid 通过一致性Hash 选择ActorServer
+
+* TODO 待补充
+  1. 断线重连的逻辑

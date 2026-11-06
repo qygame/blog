@@ -15,7 +15,7 @@
 2. 断线重连
 
 * 处理流程
-  在UserManager中查询用户, 并按一下逻辑处理.
+  在UserManager中查询用户, 并按以下逻辑处理.
   1. 用户不存在: 创建新的User对象, 并插入UserManager
   2. 用户已存在:
      - 如果User中的 =gate_session= 与新的 =gate_session= 不同,
