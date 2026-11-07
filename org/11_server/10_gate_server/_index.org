@@ -10,4 +10,37 @@
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
-GateServer 只负责路由, 不处理任何业务逻辑
+GateServer 职责:
+
+1. 玩家接入管理
+2. 服务路由
+
+
+
+TODO 思路:
+维护数据:
+1. GateServer 维护UserSessions.
+   通过UserSessions 知道应该如何路由
+
+2. GateServer 维护 业务Server List
+   GateServer 通过服务发现, 主动连接 业务Server.
+
+   #+attr_shortcode: info
+   #+begin_hint
+   如果是业务Server 主动连接GateServer, 就会导致需要在业务Server 中维护GateServer List
+   会导致业务Server 逻辑复杂
+   #+end_hint
+
+
+
+路由逻辑:
+client -> Server
+GateServer 通过UserSession, 知道玩家所在的业务server id
+通过Server List, 获得server_id 对应的session
+从而完成 client_session -> UserSession -> Server session 的路由
+
+Server -> Client
+Server 来的消息会携带uid, 从而直接获得UserSession -> client_session
+
+
+这么看, GateServer 确实不处理业务逻辑
