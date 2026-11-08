@@ -1,4 +1,4 @@
-#+title: TODO 数据恢复
+#+title: 数据恢复
 #+date: 2026-11-08 15:10:42
 #+hugo_section: docs
 #+hugo_bundle: 11_server/10_gate_server/04_recovery
@@ -17,6 +17,29 @@
 
 -----
 
-GateServer 挂掉后, 重新拉起新实例. 造成的影响:
+GateServer 挂掉后造成的影响:
 
-1.
+1. 与该GateServer 关联的Client 全部掉线
+
+
+-----
+
+拉起新实例后的流程:
+
+1. Client 掉线后, 需要重新登录验证, 并分配GateServer
+2. 新的GateServer 创建新的UserSession:
+   1) uid, client_session_ 不需要恢复
+   2) actor_server_id 不需要恢复, 通过一致性Hash 获取
+   3) room_server_id 需要恢复, GateServer 需要知道玩家在哪
+3. GateServer 中的ServerList 不需要恢复.
+   ServerList 只是告诉目标Server 在哪里, 不包含路由信息
+
+-----
+
+结论:
+
+1. GateServer 数据恢复比较简单, 只需要恢复UserSession.room_server_id.
+   恢复流程:
+   1) GateServer 通知ActorServer 有玩家登录
+   2) ActorServer 中如果User.room_server_id 不为空, 则通知GateServer
+   3) GateServer 更新UserSession.room_server_id
