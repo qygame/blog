@@ -1,0 +1,24 @@
+#+title: 服务器列表
+#+date: 2026-11-08 14:47:36
+#+hugo_section: docs
+#+hugo_bundle: 11_server/10_gate_server/03_server_list
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+GateServer 还需要维护服务器列表, 作用:
+
+1. 维护当前可用的业务Server 及其连接, 解决目标Server 在哪里、是否可用的问题
+
+------
+
+* Server List维护流程
+  GateServer 通过 Service Center 获取和维护Server List.
+  1. GateServer 启动后, 向Service Center 获取当前可用的Server List, 并主动与各Server 建立连接
+  2. GateServer 订阅Service Center 的服务变更事件.
+     1) 有新Server 上线, 主动建立连接
+     2) 有Server 下线, 关闭对应连接
+     3) Server 信息变化时, 更新对应信息
