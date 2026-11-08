@@ -9,7 +9,9 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-=服务发现= 模块用来维护服务器列表 =ServerList=. ServerList 作用:
+=服务发现= 模块用来维护服务器列表 =ServerList=.
+
+ServerList 作用:
 
 1. 维护当前可用的业务Server 及其连接, 解决目标Server 在哪里、是否可用的问题
 
