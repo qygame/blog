@@ -10,14 +10,14 @@
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
-| 服务器      | 名字       | 职责                             | 状态 | 状态数据     |
-|-------------+------------+----------------------------------+------+--------------|
-| LoginServer | 登陆服务器 | 账号认证、登录验证               | 无   |              |
-| GateServer  | 网关       | 客户端连接管理、消息路由与转发   | 有   | UserSessions |
-| ActorServer | 用户服务器 | 用户数据管理                     | 有   | Users        |
-| RoomServer  | 房间服务器 | 桌子管理                         | 有   | Tables       |
-| RankServer  | 排行榜     | 排行榜数据管理与查询             | 无   |              |
-| TaskServer  | 任务       | 任务管理、任务进度处理与奖励结算 | 无   |              |
+| 服务器      | 名字       | 职责                             | 状态 | 状态数据                 |
+|-------------+------------+----------------------------------+------+--------------------------|
+| LoginServer | 登陆服务器 | 账号认证、登录验证               | 无   |                          |
+| GateServer  | 网关       | 客户端连接管理、消息路由与转发   | 有   | UserSessions, ServerList |
+| ActorServer | 用户服务器 | 用户数据管理                     | 有   | Users                    |
+| RoomServer  | 房间服务器 | 桌子管理                         | 有   | Tables                   |
+| RankServer  | 排行榜     | 排行榜数据管理与查询             | 无   |                          |
+| TaskServer  | 任务       | 任务管理、任务进度处理与奖励结算 | 无   |                          |
 
 -----
 

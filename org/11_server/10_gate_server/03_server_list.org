@@ -22,3 +22,6 @@ GateServer 还需要维护服务器列表, 作用:
      1) 有新Server 上线, 主动建立连接
      2) 有Server 下线, 关闭对应连接
      3) Server 信息变化时, 更新对应信息
+
+
+* TODO 补充: GateServer 主动连接 vs 业务Server 主动连接
