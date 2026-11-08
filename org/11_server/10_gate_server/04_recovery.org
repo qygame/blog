@@ -15,9 +15,8 @@
 1. UserSession
 2. ServerList
 
+-----
 
-* 情形一: 玩家掉线
-* 情形二: GateServer 自身掉线
-* 情形三: 未持有用户的Server 掉线, 比如TaskServer
-* 情形四: ActorServer 掉线
-* 情形五: UserSession 中维护的Server 掉线, 比如RoomServer
+GateServer 挂掉后, 重新拉起新实例. 造成的影响:
+
+1.

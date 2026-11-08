@@ -1,0 +1,16 @@
+#+title: 玩家接入管理
+#+date: 2026-11-08 19:33:11
+#+hugo_section: docs
+#+hugo_bundle: 11_server/10_gate_server/01_user_session
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+玩家管理 =user_manager= 通过管理 =UserSession= 完成对玩家的管理.
+
+UserSession 是玩家在GateServer 中的数据抽象, 主要用来:
+1. 维护用户与各业务 Server 之间的关联关系
