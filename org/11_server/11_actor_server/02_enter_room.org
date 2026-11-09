@@ -31,3 +31,16 @@
 
     Client --> GateServer: 向RoomServer请求Table数据&&玩家数据
   #+end_src
+
+  -----
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Client 创建/加入成功房间后, 主动去RoomServer拉取房间数据&&玩家数据, 完成子游戏场景的初始化
+  后续数据的更新(房间数据 && 玩家数据) 会由RoomServer 主动推送
+  #+end_hint
+
+  #+attr_shortcode: info
+  #+begin_hint
+  TODO 补充门票处理
+  #+end_hint
