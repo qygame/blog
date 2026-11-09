@@ -1,0 +1,35 @@
+#+title: RoomManagerServer
+#+date: 2026-11-09 13:21:15
+#+hugo_section: docs
+#+hugo_bundle: 11_server/12_room_manager_server
+#+export_file_name: _index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+=RoomManagerServer= 负责RoomServer集群及调度
+
+#+attr_shortcode: info
+#+begin_hint
+不直接参与 Room、Table 和玩家的实际管理
+#+end_hint
+
+-----
+
+职责:
+1. Room 配置管理
+   负责统一管理所有 Room 配置信息, 并向 Client 提供配置数据.
+   1) Client 登录成功后, 下发所有Room 配置
+   2) 支持Client 主动拉取Room 配置 (TODO 暂定)
+   3) 负责 Room 配置的加载、管理及更新 (TODO 暂定, Room 配置后续再处理)
+
+2. RoomServer 集群管理
+   负责 RoomServer 集群的注册、状态维护及负载管理
+
+3. RoomServer 调度
+   根据 RoomServer 的运行状态、负载情况及房间配置, 负责房间请求的调度与路由
+   1) 创建房间
+   2) 加入房间

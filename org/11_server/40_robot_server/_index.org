@@ -1,9 +1,9 @@
 #+title: RobotServer
-#+date: 2026-11-05 22:36:07
+#+date: 2026-11-09 13:20:27
 #+hugo_section: docs
-#+hugo_bundle: 11_server/12_robot_server
+#+hugo_bundle: 11_server/40_robot_server
 #+export_file_name: _index
-#+hugo_weight: 12
+#+hugo_weight: 40
 #+hugo_draft: false
 #+hugo_auto_set_lastmod: t
 #+hugo_custom_front_matter: :bookCollapseSection true

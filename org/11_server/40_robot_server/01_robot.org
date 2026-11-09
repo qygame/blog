@@ -1,7 +1,7 @@
 #+title: 机器人类型
-#+date: 2026-11-05 22:36:28
+#+date: 2026-11-09 13:20:43
 #+hugo_section: docs
-#+hugo_bundle: 11_server/12_robot_server/01_robot
+#+hugo_bundle: 11_server/40_robot_server/01_robot
 #+export_file_name: index
 #+hugo_weight: 1
 #+hugo_draft: false
