@@ -13,7 +13,7 @@
 * 流程
   #+begin_src mermaid :file result.png
     participant Client
-    participant GateSever
+    participant GateServer
     participant ActorServer
     participant RoomManagerServer
     participant RoomServer
@@ -29,7 +29,7 @@
     RoomManagerServer -->> ActorServer: 返回结果给client
     ActorServer -->> GateServer: 转发
 
-    Client --> GateServer: 向RoomServer请求Table数据&&玩家数据
+    Client ->> GateServer: 向RoomServer请求Table数据&&玩家数据
   #+end_src
 
   -----
