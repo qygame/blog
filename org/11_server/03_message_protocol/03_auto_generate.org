@@ -14,7 +14,8 @@
   如果是消息协议proto文件, 会自动生成:
   1. sub 协议的 handler
   2. cmd 协议的 handler
-  3. cmd 协议的 sender
+  3. sub 协议的 sender
+  4. cmd 协议的 sender
 
 
   如果是Service proto文件, 会自动生成:
@@ -29,18 +30,19 @@
   |-------------+---------------------+-------------------------------+-------------|
   | sub handler | login.sub_handler.h | 生成Sub协议对应的处理函数声明 | LoginServer |
   | cmd handler | login.cmd_handler.h | 生成Cmd协议对应的处理函数声明 | TestClient  |
-  | cmd sender  | login.sub_sender.h  | 生成Cmd协议对应的发送函数     | LoginServer |
+  | sub sender  | login.sub_sender.h  | 生成Sub协议对应的发送函数     | TestClient  |
+  | cmd sender  | login.cmd_sender.h  | 生成Cmd协议对应的发送函数     | LoginServer |
 
-  1. sub handler 在 LoginServer 中使用并实现其中函数定义.
-     sub handler 存在的意义:
+  sub handler 在 LoginServer 中使用并实现函数定义,
+  cmd handler 在 TestClient 中使用并实现函数定义
+
+  1. handler 存在的意义:
      1) 避免手动维护 { 消息协议, 处理函数 }
      2) 提前解析 kernel::Message -> SubMessage
-  2. cmd handler 在 TestClient  中使用并实现处理函数定义
-     cmd handler 只对TestClient 有意义:
-     1) 避免手动维护 { 消息协议, 处理函数 }
-     2) 提前解析 kernel::Message -> SubMessage
-  3. cmd sender 在 LoginServer 中使用. 存在的意义:
-     1) 避免手动维护 { main_command, sub_command, proto message }
+     3) 不同Server, 处理函数的参数是不一样的(是否携带uid), 通过自动生成避免人为出错
+  2. sender 存在的意思:
+     1) 避免手动维护 { main_command, sub_command, proto message }, 简化调用流程
+     2) 不同Server, 发送函数的参数是不一样的(是否携带uid), 通过自动生成避免人为出错
 
   #+attr_shortcode: info
   #+begin_hint
@@ -48,6 +50,10 @@
   主要用来测试Server 的稳定性
   #+end_hint
 
+  #+attr_shortcode: info
+  #+begin_hint
+  因为已经有sender 了, 代码中不应该再出现kernel::Send函数
+  #+end_hint
   -----
 
 * Service
@@ -70,16 +76,21 @@
   #+begin_src C++
     // task_service_stub.h
     namespace qy::task_server {
-    void PushTask(const kernel::SessionPtr, const proto::SubPushTask&);
+    void Call(const kernel::SessionPtr, const proto::SubPushTask&);
 
     } // namespace qy::task_server
 
 
     // 其他server 中, 调用
     proto::SubPushTask sub;
-    task_server::PushTask(session, sub);
+    task_server::Call(session, sub);
   #+end_src
 
+
+  #+attr_shortcode: info
+  #+begin_hint
+  因为已经有service_stub 了, 代码中不应该再出现 rpc::Call 函数
+  #+end_hint
 -----
 * 设计说明
   #+attr_shortcode: info
