@@ -1,7 +1,7 @@
-#+title: 服务器架构设计
-#+date: 2026-11-04 12:17:40
+#+title: 服务器架构图
+#+date: 2026-11-11 16:43:50
 #+hugo_section: docs
-#+hugo_bundle: 11_server/01_architecture/01_architecture
+#+hugo_bundle: 11_server/01_architecture/03_server_design/01_architecture
 #+export_file_name: index
 #+hugo_weight: 1
 #+hugo_draft: false
@@ -9,7 +9,8 @@
 #+hugo_custom_front_matter: :bookCollapseSection false
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
-* 服务器整体架构图
+
+* 服务器架构图
   #+begin_src mermaid :file result.png
     flowchart TB
         Client["Client"]

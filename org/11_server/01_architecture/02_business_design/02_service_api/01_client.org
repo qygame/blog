@@ -1,0 +1,28 @@
+#+title: 对 Client 接口
+#+date: 2026-11-11 15:52:12
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/02_service_api/01_client
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* TODO 后期补充
+
+
+
+** Event
+   Event 负责的有: 谁来了, 谁走了, 谁发了什么消息.
+   它并不在乎这个消息是怎么来的. 无论是通过socket 网络层而来, 还是在业务层被调用.
+   那么如果把所有Server 部署到单个execute 的时候, 只需要让GateServer 在路由之前, 主动调用其他Server 的Event 接口即可.
+
+   1. 假设消息是 Client -> GateServer -> RankServer
+      独立部署时候: Client -> GateServer -(通过网络层通信, 发送给RankServer) -> RankServer (通过网络层收到message) -> 交给Event 处理
+      集成到一起: Client -> GateServer -> 调用RankServer 的Event 处理. 完全没有问题
+   2. 假设消息是 RankServer -> GateServer -> Client
+      独立部署时候: RankServer -( 通过网络层发送给GateServer) -> GateServer 根据uid 获得ClientSession, 转发给Client -> Client
+      集成到一起: RankServer -> 向message.Session 发送消息 ( 独立部署时候, 这个Session 指向了GateServer, 但是现在这里直接指向了Client) -> Client
+
+      : 总结: 有些Server, 实际感受不到GateServer 的存在.

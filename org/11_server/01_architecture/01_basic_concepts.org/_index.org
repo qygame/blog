@@ -1,0 +1,23 @@
+#+title: 基础概念
+#+date: 2026-11-11 15:13:40
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/01_basic_concepts.org
+#+export_file_name: _index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+一些基础概念. 不同的项目对某些概念的定义可能不一致, 本文档对相关概念进行统一约定, 后续设计与实现均以本文档为准.
+
+-----
+
+系统架构设计主要从以下两个角度进行划分:
+
+1. 业务架构设计
+   关注业务本身, 对系统的业务能力进行划分和组织, 明确各个业务模块的职责、边界以及相互之间的依赖关系
+
+2. 服务器架构设计:
+   关注业务系统的技术实现与运行机制. 核心目标是为业务系统提供稳定、高效、可扩展的运行环境

@@ -1,0 +1,29 @@
+#+title: 服务器设计中基础概念
+#+date: 2026-11-11 15:34:10
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/01_basic_concepts.org/02_server_concepts
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 基础概念
+  1. =server=: 服务器运行实例
+     关注部署, 进程, 资源和运行环境
+     可以有多个service
+
+-----
+
+* 代码组织目录
+  代码应该在 src/server 中
+  #+begin_example
+    |-- common                  //
+    |-- service                 //
+    |-- server                  //
+    |   |-- gate_server         // gate server
+    |   `-- room_server         // room server
+    `-- CMakeLists.txt          //
+  #+end_example

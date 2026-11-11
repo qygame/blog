@@ -1,0 +1,108 @@
+#+title: 对 其他Service 接口
+#+date: 2026-11-11 15:53:01
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/02_service_api/02_service
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 总览
+  Service 的接口调用流程, 可以抽象为:
+
+  #+begin_example
+    Caller -> Endpoint(投递消息给目标Service) -> Service解析处理消息 -> 回调
+  #+end_example
+
+  Service 不关心调用者是进行了本地调用, 还是远程调用. (实际上调用者也不关心 哈哈)
+  双方关心的只是接口的定义: A Function (B)
+
+  -----
+* 接口的定义
+  接口定义的落地方案有很多, 比如可以双方自己写结构体/函数等.
+  最方便的还是使用protouf service
+
+  #+attr_shortcode: info
+  #+begin_hint
+  protobuf service 实际上只是接口的定义; 不等同于远程调用(RPC 调用)
+  #+end_hint
+
+  -----
+* Service 内部接口的实现
+  最理想的模型, 是所有的调用(本地调用, 远程调用) 都通过一个分发函数处理. 比如
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        LocalCaller --> Dispatch --> functions()
+        RemoteCaller --> Dispatch --> functions()
+  #+end_src
+
+  理论上可以, 但由于使用来protobuf service. 所以还需要满足protobuf service 的约束.
+  prtotobuf service 只提供了具体函数, 没有Dispatch(). 所以修改模型为:
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        LocalCaller --> Dispatch --> LocalFunctions
+
+        REmoteCaller --> RemoteFunctions -->LocalFunctions
+  #+end_src
+
+  #+attr_shortcode: info
+  #+begin_hint
+  虽然需要额外处理RemoteFunctions 和 RemoteFunctions -> LocalFunctions 的映射.
+  但好消息是这些动作(代码) 可以自动实现, 不需要手动处理
+  #+end_hint
+
+  -----
+* Endpoint 实现逻辑
+  EndPoint 是Service 的调用入口. 应该根据调用方式细分:
+  1. LocalEndPoint
+  2. RemoteEndPoint
+
+
+  LocalEndPoint 需要能找到Service 的地址(内存中的位置), 同时与Service 约定好投递队列
+  RemoteEndPoint 需要找到Service 的地址(目标所在的网络地址+ service标志), 同时约定好网络协议.
+
+
+  解决方案:
+  1. 通过Service 注册来解决LocalEndPoint, RemoteEndpoint 中寻找Service 的问题
+  2. 通过executor 来解决LocalEndpoint 中的投递问题
+  3. 通过rpc 框架来解决RemoteEndpoint 中的网络约定问题
+
+  #+attr_shortcode: info
+  #+begin_hint
+  RemoteEndpoint中约定的网络协议, 可以自己实现. 比如:
+  1) RemoteEndpoint投递消息 {id:1, 消息内容}, 记录回调{id:1, callback}
+  2) Service 收到处理完消息后, 回复{id:1, 消息内容}
+  3) 调用方收到消息 {id:1, 消息内容}, 再调用callback(消息内容)
+
+  但实际上这些动作rpc 框架已经处理完成了( 参考 libqykernel).
+  #+end_hint
+
+  -----
+** LocalEndpoint 流程
+   1. Caller 注册Service
+      #+begin_src C++
+        ServiceManager::ReigsterLocalService(service_context);
+      #+end_src
+
+      1) 创建Service
+      2) 创建Executor, 绑定Service
+      3) 创建EndPoint, 绑定Executor
+   2. Caller 调用Service 接口
+      #+begin_src C++
+        auto endpoint = service_manager::FindEndpoint(service_context);
+        endpoint->Call(request, responce);
+      #+end_src
+
+      1) 通过ServiceManager 获得目标Service
+      2) 通过endpoint Post 消息
+
+** RemoteEndpoint 流程
+   1. Caller 注册Service
+      #+begin_src C++
+        ServiceManager::ReigsterLocalService(service_context);
+      #+end_src
+      1) 创建EndPoint, 绑定service_context
+   2. Caller 调用Service 接口
+      与LocalEndPoint 一样

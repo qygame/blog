@@ -1,0 +1,17 @@
+#+title: Service 接口
+#+date: 2026-11-11 15:51:25
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/02_service_api
+#+export_file_name: _index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+Service 接口根据调用者, 可以分为两类:
+
+1. 对 Client 接口
+
+2. 对 其他Service 接口

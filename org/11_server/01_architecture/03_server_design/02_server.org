@@ -1,0 +1,32 @@
+#+title: TODO 设计原则
+#+date: 2026-11-11 16:46:38
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/03_server_design/02_server
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+* 微服务
+  微服务不是架构先进性的标志, 它解决的是大型业务系统在 =团队协作=, =独立部署,= =独立扩缩容=, 和 =故障隔离= 方面遇到的问题.
+  如果这些问题还不存在，拆分微服务反而会增加复杂度.
+  可以根据下面情形, 判断是否需要拆分
+
+  | 场景                         | 是否值得拆分 | 原因                   |
+  |------------------------------+--------------+------------------------|
+  | 不同业务模块需要独立扩容     | 是           | 避免整个应用一起扩容   |
+  | 不同团队需要独立开发和发布   | 是           | 减少代码和发布流程耦合 |
+  | 某个模块故障不能影响其他模块 | 可以考虑     | 实现故障隔离           |
+  | 不同业务模块技术栈差异较大   | 可以考虑     | 允许独立选择技术栈     |
+  | 代码量越来越大               | 不一定       | 模块化单体也能解决     |
+
+
+
+  #+attr_shortcode: info
+  #+begin_hint
+  微服务: 关注如何拆分和组织应用程序, 是业务系统的架构组织方式
+  分布式: 关注多个独立计算节点如何协作完成任务
+  #+end_hint
