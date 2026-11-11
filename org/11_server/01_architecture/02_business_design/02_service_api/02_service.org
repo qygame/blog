@@ -34,8 +34,8 @@
   最理想的模型, 是所有的调用(本地调用, 远程调用) 都通过一个分发函数处理. 比如
   #+begin_src mermaid :file result.png
     flowchart TD
-        LocalCaller --> Dispatch --> functions()
-        RemoteCaller --> Dispatch --> functions()
+        LocalCaller --> Dispatch --> functions
+        RemoteCaller --> Dispatch --> functions
   #+end_src
 
   理论上可以, 但由于使用来protobuf service. 所以还需要满足protobuf service 的约束.
