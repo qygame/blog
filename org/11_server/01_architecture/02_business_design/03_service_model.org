@@ -1,0 +1,38 @@
+#+title: service 模型
+#+date: 2026-11-12 22:33:18
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/03_service_model
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+Service 可以认为是一个黑匣子, 根据输入进行输出.
+
+#+begin_src mermaid :file result.png
+  flowchart LR
+      A["Input"] --> B["Service<br/>(Black Box)"]
+      B --> C["Output"]
+      style B fill:#333,stroke:#666,color:#fff,stroke-width:2px
+#+end_src
+
+-----
+Service 的调用对象(输入) 可分为两类:
+1. Client
+2. Other Services
+
+
+Client 都是远程调用( 通过网络)
+Other Services 既可以是远程调用,  也可以是本地调用( 同进程内存调用)
+
+-----
+
+Service Input Handler
+#+begin_example
+Client -> client_handler.h
+Other Service Local -> api_local.h
+Other Service Remote -> api_remote.h
+#+end_example
