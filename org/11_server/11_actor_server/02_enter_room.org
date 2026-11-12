@@ -12,24 +12,25 @@
 
 * 流程
   #+begin_src mermaid :file result.png
-    participant Client
-    participant GateServer
-    participant ActorServer
-    participant RoomManagerServer
-    participant RoomServer
+    sequenceDiagram
+        participant Client
+        participant GateServer
+        participant ActorServer
+        participant RoomManagerServer
+        participant RoomServer
 
-    Client->>GateServer: 创建房间(data)
-    GateServer->>ActorServer: 转发
-    ActorServer->>ActorServer: 校验用户状态
-    ActorServer->>RoomManagerServer: 用户创建房间(data, user)
-    RoomManagerServer ->> RoomManagerServer: 选择RoomServer,校验RoomServer状态
-    RoomManagerServer ->> RoomServer: 用户创建房间(data, user)
-    RoomServer ->>RoomServer: 创建(选择)Table,玩家加入Table
-    RoomServer -->> RoomManagerServer: 返回结果
-    RoomManagerServer -->> ActorServer: 返回结果给client
-    ActorServer -->> GateServer: 转发
+        Client->>GateServer: 创建房间(data)
+        GateServer->>ActorServer: 转发
+        ActorServer->>ActorServer: 校验用户状态
+        ActorServer->>RoomManagerServer: 用户创建房间(data, user)
+        RoomManagerServer ->> RoomManagerServer: 选择RoomServer,校验RoomServer状态
+        RoomManagerServer ->> RoomServer: 用户创建房间(data, user)
+        RoomServer ->>RoomServer: 创建(选择)Table,玩家加入Table
+        RoomServer -->> RoomManagerServer: 返回结果
+        RoomManagerServer -->> ActorServer: 返回结果给client
+        ActorServer -->> GateServer: 转发
 
-    Client ->> GateServer: 向RoomServer请求Table数据&&玩家数据
+        Client ->> GateServer: 向RoomServer请求Table数据&&玩家数据
   #+end_src
 
   -----
