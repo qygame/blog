@@ -36,3 +36,32 @@ Client -> client_handler.h
 Other Service Local -> api_local.h
 Other Service Remote -> api_remote.h
 #+end_example
+
+* Service 自身
+
+  1. 接口
+  2. 内部的handler
+
+
+  接口:
+  HandleClient:
+  - 本地调用, executor 会直接post 到这里
+  - 远程调用, 会在OnRead() 中解包后, 调用到这里
+
+  HandlerApi:
+  1. HandlerLocalAPI:
+     executor post 到这里
+  2. HandlerRemoteApi: 没有具体的接口, 由rpc service 处理了
+
+
+  内部的handler:
+  ClientHandler: 处理来自HandleClient 接口的消息
+
+  ApiLocal: 处理来自 HandlerLocalAPI 接口的消息
+  ApiRemote: 处理远程调用, 直接调用ApiLocal 的业务来处理
+
+* 外部调用者
+  通过endpoint 来解耦Service.
+
+  1. 本地Endpoint, 通过executor post 到service
+  2. 远程Endpoint, 通过rpc service 来调用
