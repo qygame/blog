@@ -17,7 +17,7 @@
   2. =service=: 业务请求处理对象
      负责接受请求, 协议适配, 参数校验, 调用业务模块, 组织响应
      依赖一个或多个 =module=
-  3. =Endpoint=: 访问 Service 的入口
+  3. =Endpoint=: Service 的访问入口
      负责把请求分发到对应的Service
   4. =executor=: 负责消息队列管理, 任务调度
 

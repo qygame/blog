@@ -1,0 +1,72 @@
+#+title: Service 模型
+#+date: 2026-11-15 02:36:15
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/02_service_model
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 模型
+  Service 可以被视为一个黑盒, 它接收外部输入, 根据内部业务逻辑进行处理, 并产生相应的输出
+
+  #+begin_src mermaid :file result.png
+    flowchart LR
+        A["Input"] --> B["Service<br/>(Black Box)"]
+        B --> C["Output"]
+        style B fill:#333,stroke:#666,color:#fff,stroke-width:2px
+  #+end_src
+
+  从外部视角来看, Service 不需要暴露内部实现细节, 只需要定义清晰的输入接口和输出语义
+  -----
+
+* 输入来源
+  Service 的输入主要分为两类:
+  1. Client Message: 来自Client 的请求消息
+  2. Other Services: 来自其他Service 的API 调用
+
+
+  两类输入在调用方式上有所不同:
+  | 输入来源      | 调用方式    | 说明                              |
+  |---------------+-------------+-----------------------------------|
+  | Client        | Remote Call | Client 始终通过网络与Service 通信 |
+  | Other Service | Local Call  | 同进程内, 通过内存直接调用        |
+  | Other Service | Remote Call | 跨进程, 通过网络进行RPC 调用      |
+
+  -----
+* Client 输入处理
+  service 收到的Client 消息, 都是Routed 之后的.
+  Service 通过 ~HandleRoutedClientMessage()~ 接收Routed Client Message,  并交给 ~ClientHandler~ 处理
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Routed: 在client原始消息之上, 拼接路由信息
+  #+end_hint
+
+  -----
+* API 输入处理
+  最理想的模型, 是所有的API调用(本地调用, 远程调用) 都通过一个接口函数处理. 比如
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        LocalCaller --> Dispatch --> functions
+        RemoteCaller --> Dispatch --> functions
+  #+end_src
+
+  理论上可以, 但由于使用了protobuf service. 所以还需要满足protobuf service 的约束.
+  prtotobuf service 只提供了具体函数, 没有Dispatch(). 所以修改模型为:
+  #+begin_src mermaid :file result.png
+    flowchart TD
+        LocalCaller --> Dispatch --> LocalFunctions
+        REmoteCaller --> RemoteFunctions -->LocalFunctions
+  #+end_src
+
+  #+attr_shortcode: info
+  #+begin_hint
+  虽然需要额外处理RemoteFunctions 以及 RemoteFunctions -> LocalFunctions 的映射
+  但好消息是这些动作(代码) 可以自动实现, 不需要手动处理
+  #+end_hint
+  -----
+  Service 通过 ~ApiRemote~ 处理 API 远程调用
+  Service 通过 ~HandleLocalApi~ 接受 API 本地掉用, 并交给 ~ApiLocal~ 处理

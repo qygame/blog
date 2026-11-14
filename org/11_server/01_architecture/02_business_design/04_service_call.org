@@ -1,0 +1,69 @@
+#+title: Service 调用
+#+date: 2026-11-15 03:06:20
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/04_service_call
+#+export_file_name: index
+#+hugo_weight: 4
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 调用模型
+  Service 的调用过程可以抽象为:
+
+  #+begin_example
+  Caller -> Endpoint -> Target Service -> Output
+  #+end_example
+
+  Caller: 调用者, 发起请求
+  Endpoint: 调用入口, 负责将请求投递给目标Service
+  Target Service: 目标Service, 负责处理请求并输出
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Caller 只依赖Endpoint, 不依赖目标Service 的具体位置和通信方式
+  这种设计将调用逻辑与通信方式解耦, 使Caller 可以使用统一的接口访问不同的Service
+  #+end_hint
+
+-----
+* Endpoint
+  EndPoint 是Service 的调用入口, 负责将 Caller 发起的请求投递到目标 Service
+  为了屏蔽不同调用方式的实现差异, Caller 持有统一的 IEndpoint 接口.
+  根据底层通信方式, Endpoint 分为两种实现:
+  1. LocalEndPoint: 用于本地调用
+  2. RemoteEndPoint: 用于远程调用
+
+
+  两种Endpoint 对Caller 是隐藏的, Caller 不需要感知具体使用哪一种实现
+-----
+* Local Endpoint
+  Local Endpoint 是对本地Service 的调用.
+  由于调用双方处于同一各进程, 因此LocalEndpoint 可以通过Executor 间接持有Service, 并通过内存调用完成消息投递.
+
+  创建流程为:
+  1. 创建目标Service
+  2. 创建Executor, 并绑定目标Service
+  3. 创建Local Endpoint, 并绑定Executor
+
+
+  后续只需要通过Executor Post, 就可以向Service 发送消息.
+
+  #+attr_shortcode: info
+  #+begin_hint
+  LocalEndpoint 的调用函数可以根据 Service 的 API 定义自动生成
+  由于C++ 支持函数重载, 因此可以根据API 的参数列表生成同名的调用函数
+  这样, Caller 无需关心底层 API 的具体分发方式, 只需要通过统一的调用入口发起请求
+  #+end_hint
+
+* Remote Endpoint
+  Remote Endpoint 不持有目标Service 对象, 也不直接访问目标Service 的内部实现.
+  它通过协议与目标 Service 通信, 将本地调用转换为网络请求
+
+  当前实现使用Protobuf Service, 因此RemoteEndpoint只需要调用对应的Protobuf Service 接口, 即可完成远程请求
+  调用流程:
+  1. Caller 调用 RemoteEndpoint
+  2. RemoteEndpoint 通过 Protobuf Service 发送 RPC 请求
+  3. RPC 框架将请求转为网络请求发送到目标Service
+  4. 目标Service 处理请求并返回结果
+  5. RPC 框架将响应返回给Caller

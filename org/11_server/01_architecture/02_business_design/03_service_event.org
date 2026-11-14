@@ -1,0 +1,49 @@
+#+title: Service 感知
+#+date: 2026-11-15 02:36:39
+#+hugo_section: docs
+#+hugo_bundle: 11_server/01_architecture/02_business_design/03_service_event
+#+export_file_name: index
+#+hugo_weight: 3
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+Service 除了对外提供调用接口外, 还需要感知运行环境中的外部事件, 并根据事件执行相应的处理逻辑
+从事件来源来看, Service 需要感知的事件主要分为两类:
+
+1. Server Event: 由 Server 运行时产生的事件
+2. Service Event: 由 其他Service 声明周期变化产生的事件
+
+-----
+* Server 事件
+  Server Event 是由 Server 运行时产生的事件, 主要反映网络连接和 Session 状态的变化
+  Service 可以根据自身业务需求, 选择关注和处理相应的事件
+
+  | 事件               | 处理函数           | 说明        |
+  |--------------------+--------------------+-------------|
+  | Event::OnRead      | OnSessonMessage    | 网络消息    |
+  | Event::OnConnected | OnSessionConnected | session连接 |
+  | Event::OnClosed    | OnSessionClosed    | session关闭 |
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Service 不需要处理所有 Server Event, 只需要注册并处理自身业务所关注的事件
+  #+end_hint
+
+-----
+* Service 事件
+  Service Event 用于感知 其他Service 的生命周期变化, 主要包括 Service 上线和下线
+
+  | 事件         | 处理函数             | 说明              |
+  |--------------+----------------------+-------------------|
+  | Service 上线 | OnServiceAvailable   | 有新的Service可用 |
+  | Service 下线 | OnServiceUnavailable | Service不再可用   |
+
+  Service 在初始化阶段, 会自动获取当前已经存在的所有 Service, 并针对每个已有的 Service 调用 OnServiceAvailable
+
+  #+attr_shortcode: info
+  #+begin_hint
+  Service 不需要主动查询其他 Service 的状态. 框架会在初始化阶段同步已有的 Service, 并在运行期间通知 Service 的上线和下线事件
+  #+end_hint
