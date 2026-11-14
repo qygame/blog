@@ -1,0 +1,29 @@
+#+title: 日志规范
+#+date: 2026-11-15 03:53:17
+#+hugo_section: docs
+#+hugo_bundle: 09_common/11_log
+#+export_file_name: index
+#+hugo_weight: 11
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 日志格式
+  事件描述 + [具体错误信息] + 上下文字段
+
+  1. =:= 用于分隔事件描述和具体错误信息
+  2. =,= 用于分隔事件描述和字段
+  3. 具体错误信息可以没有
+  4. 字段使用key=value 格式, 比如 uid=1234
+
+-----
+* 日志原则
+  1. 成功的日志要简洁; 错误的日志要详细
+  2. 相关信息, 一条日志, 不要拆分.
+     比如初始化阶段收集日志, 初始化完成后统一输出.
+     #+begin_example
+     模块名 initialized successfully:
+       资源创建事件
+       资源创建事件
+     #+end_example

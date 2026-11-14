@@ -11,44 +11,31 @@
 
 
 * 自动生成
-  如果是消息协议proto文件, 会自动生成:
-  1. sub 协议的 handler
-  2. cmd 协议的 handler
-  3. sub 协议的 sender
-  4. cmd 协议的 sender
+  Proto 文件本质是Service 接口的定义.
+  Service 接口分为Client Message 和 Other Service API, 因为Proto 文件也与之一一对应.
+  以Gate Service 为例:
+
+  | Service 接口      | Proto文件          |
+  |-------------------+--------------------|
+  | Client Message    | gate.proto         |
+  | Other Service API | gate_service.proto |
+
+-----
+
+* Client Message
+  自动生成目标:
+  | 文件             | 作用                 | 使用对象 |
+  |------------------+----------------------+----------|
+  | client_handler.h | Sub 接口的声明       | Service  |
+  | cmd_sender.h     | Cmd 接口的声明和定义 | Service  |
 
 
-  如果是Service proto文件, 会自动生成:
-  1. Service Server
-  2. Service Client
-
-  -----
-* 消息协议
-  以login.proto 为例:
-
-  |             | 文件                | 作用                          | 所在对象    |
-  |-------------+---------------------+-------------------------------+-------------|
-  | sub handler | login.sub_handler.h | 生成Sub协议对应的处理函数声明 | LoginServer |
-  | cmd handler | login.cmd_handler.h | 生成Cmd协议对应的处理函数声明 | TestClient  |
-  | sub sender  | login.sub_sender.h  | 生成Sub协议对应的发送函数     | TestClient  |
-  | cmd sender  | login.cmd_sender.h  | 生成Cmd协议对应的发送函数     | LoginServer |
-
-  sub handler 在 LoginServer 中使用并实现函数定义,
-  cmd handler 在 TestClient 中使用并实现函数定义
-
-  1. handler 存在的意义:
+  文件的作用:
+  1. handler
      1) 避免手动维护 { 消息协议, 处理函数 }
-     2) 提前解析 kernel::Message -> SubMessage
-     3) 不同Server, 处理函数的参数是不一样的(是否携带uid), 通过自动生成避免人为出错
-  2. sender 存在的意思:
+     2) 解析目标Message
+  2. sender
      1) 避免手动维护 { main_command, sub_command, proto message }, 简化调用流程
-     2) 不同Server, 发送函数的参数是不一样的(是否携带uid), 通过自动生成避免人为出错
-
-  #+attr_shortcode: info
-  #+begin_hint
-  TestClient 是服务器模拟的client, 用来模拟玩家发送消息.
-  主要用来测试Server 的稳定性
-  #+end_hint
 
   #+attr_shortcode: info
   #+begin_hint
@@ -56,45 +43,30 @@
   #+end_hint
   -----
 
-* Service
-  以task_service.proto 为例:
-
-  |                | 文件                 | 作用                      | 调用对象   |
-  |----------------+----------------------+---------------------------+------------|
-  | Service Server | task_service.h       | 生成Service的函数声明     | TaskServer |
-  | Service Client | task_service_stub.h  | 封装对 TaskService 的调用 | 其他Server |
-  |                | task_service_stub.cc |                           |            |
-
-
-  1. Service Server 意义:
-     1) 避免手动维护 { Service 协议, 处理函数 }
-  2. Service Client 意义:
-     1) 简化对TaskService 的调用
-
-
-  task_service_stub 示例:
-  #+begin_src C++
-    // task_service_stub.h
-    namespace qy::task_server {
-    void Call(const kernel::SessionPtr, const proto::SubPushTask&);
-
-    } // namespace qy::task_server
+* API
+  自动生成目标:
+  |                    |                                            |          |
+  | 文件               | 作用                                       | 使用对象 |
+  |--------------------+--------------------------------------------+----------|
+  | api_local.h        | 本地API 接口声明                           | Service  |
+  | api_remote.h       | 远程API 接口声明                           | Service  |
+  | api_remote.cc      | 远程API 接口定义                           | Service  |
+  | service_handler.cc | 绑定本地API 对外接口与ApiLocal             | Service  |
+  |                    | 绑定Client Message 对外接口与ClientHandler | Service  |
+  | endpoint.h         | Service 对外调用入口                       | Caller   |
+  | endpoint_local.h   | LocalEndpoint 的声明和定义                 | Caller   |
+  | endpoint_remote.h  | RemoteEndpoint 的声明和定义                | Caller   |
 
 
-    // 其他server 中, 调用
-    proto::SubPushTask sub;
-    task_server::Call(session, sub);
-  #+end_src
+  1. api_local, api_remote 避免手动维护 { 消息协议, 处理函数 }
+  2. service_handler 避免手动维护 {Service 接口入口, 接口具体实现 }
+  3. endpoint 解耦 Caller 与 Service. 同时静态检查接口是否存在(仅限APIi)
 
-
-  #+attr_shortcode: info
-  #+begin_hint
-  因为已经有service_stub 了, 代码中不应该再出现 rpc::Call 函数
-  #+end_hint
 -----
+
 * 设计说明
   #+attr_shortcode: info
   #+begin_hint
-  为了协议(消息协议或Service协议)与处理函数一一对应 (删除过时的处理函数, 找到未处理的协议)
-  所有的handler 都放在了class 中
+  为了接口定义与处理函数一一对应 (删除过时的处理函数, 找到未处理的协议)
+  处理函数的声明放在了class 中, 在编译链接期就发现问题, 而不是等到运行时候.
   #+end_hint
