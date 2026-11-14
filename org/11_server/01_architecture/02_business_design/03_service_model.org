@@ -10,6 +10,7 @@
 #+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
+* 模型
 Service 可以认为是一个黑匣子, 根据输入进行输出.
 
 #+begin_src mermaid :file result.png
@@ -20,6 +21,7 @@ Service 可以认为是一个黑匣子, 根据输入进行输出.
 #+end_src
 
 -----
+
 Service 的调用对象(输入) 可分为两类:
 1. Client
 2. Other Services
