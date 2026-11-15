@@ -1,0 +1,20 @@
+#+title: ActorService
+#+date: 2026-11-15 17:36:15
+#+hugo_section: docs
+#+hugo_bundle: 11_server/12_actor_service
+#+export_file_name: _index
+#+hugo_weight: 12
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection true
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+ActorService 负责玩家数据的管理, 拥有玩家数据的唯一权威数据
+
+
+ActorService 主要由以下模块组成:
+
+1. 登录模块 =Login=
+
+2. 财富管理模块 =Wealth= TODO

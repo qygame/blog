@@ -1,0 +1,42 @@
+#+title: 数据恢复
+#+date: 2026-11-15 17:33:29
+#+hugo_section: docs
+#+hugo_bundle: 11_server/11_gate_service/04_recovery
+#+export_file_name: index
+#+hugo_weight: 4
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+
+状态数据:
+
+1. UserSession
+
+-----
+
+GateService 挂掉后造成的影响:
+
+1. 与该GateService 关联的Client 全部掉线
+
+
+-----
+
+拉起新实例后的流程:
+
+1. Client 掉线后, 需要重新登录验证, 并分配GateService
+2. 新的GateService 创建新的UserSession:
+   1) uid, client_session_ 不需要恢复
+   2) actor_service_id 不需要恢复, 通过一致性Hash 获取
+   3) room_service_id 需要恢复, GateService 需要知道玩家在哪
+
+-----
+
+结论:
+
+1. GateService 数据恢复比较简单, 只需要恢复UserSession.room_service_id.
+   恢复流程:
+   1) GateService 通知ActorService 有玩家登录
+   2) ActorService 中如果User.room_service_id 不为空, 则通知GateService
+   3) GateService 更新UserSession.room_service_id

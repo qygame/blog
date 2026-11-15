@@ -1,0 +1,38 @@
+#+title: 消息路由模块
+#+date: 2026-11-15 17:30:13
+#+hugo_section: docs
+#+hugo_bundle: 11_server/11_gate_service/02_route
+#+export_file_name: index
+#+hugo_weight: 2
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+* 总览
+#+begin_src mermaid :file result.png
+  flowchart TD
+      Client <--> GateService
+
+      GateService <-->|Actor消息| ActorService
+      GateService <-->|Room消息| RoomService
+      GateService <-->|Rank消息| RankService集群
+      GateService <-->|Task消息| TaskService集群
+#+end_src
+
+1. Client -> Service: GateService根据 =路由策略= 选择Service
+2. Service -> Client: 消息携带uid. GateService 查询 =UserSession= 找到对应的client session
+
+-----
+
+
+* 路由策略
+  路由策略用来指导GateService 如何选择其他Service.
+  业务Service 不同, 使用的策略也不一样, 策略一般依赖 =UserSession= 和 =ServiceList=
+
+  1. 不持有玩家数据的Service, 如RankService, TaskService 等,
+     可以根据ServiceInfo 来选择合适的策略.
+     比如可以使用轮询, 服务器负载等
+  2. 持有玩家数据的Service, 比如 RoomService,
+     应该根据 =UserSession= 中的 room_server_id 来找Service
+  3. ActorService 是比较特殊的一种, 需要根据uid通过一致性Hash 来选择

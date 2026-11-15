@@ -1,0 +1,58 @@
+#+title: 玩家状态
+#+date: 2026-11-15 17:43:57
+#+hugo_section: docs
+#+hugo_bundle: 11_server/14_room_service/20_table/11_player/01_player_status
+#+export_file_name: index
+#+hugo_weight: 1
+#+hugo_draft: false
+#+hugo_auto_set_lastmod: t
+#+hugo_custom_front_matter: :bookCollapseSection false
+#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
+
+#+begin_src C++
+  // 用户游戏状态
+  enum UserGameStatus {
+    kNotInTable = 0;   // 未在桌子上(空闲)
+    kSit        = 1;   // 坐下
+    kStandUp    = 2;   // 站立(旁观)
+    kReady      = 3;   // 准备状态
+    kPlaying    = 4;   // 游戏中
+  }
+#+end_src
+
+
+#+begin_src mermaid :file result.png
+  flowchart TD
+      空闲 -->|Enter| 站立
+      空闲 -->|Sit| 坐下
+
+      站立 -->|Sit| 坐下
+      坐下 -->|StandUp| 站立
+
+      坐下 -->|Ready| 准备
+      准备 -->|CancelReady| 坐下
+
+      准备 -->|游戏开始| 游戏中
+
+      游戏中 -->|小局结束| 坐下
+      游戏中 -->|大局结束| 空闲
+
+      站立 -->|Leave| 空闲
+      坐下 -->|Leave| 空闲
+      准备 -->|Leave| 空闲
+#+end_src
+
+
+-----
+
+
+#+attr_shortcode: info
+#+begin_hint
+玩家还有一个重要数据table_id. 描述了玩家在哪个桌子上.
+之前玩家动作判断中, 还判断了table_id.
+
+新的逻辑中, 不再需要对table_id 进行判断.
+table_id 改为User 的const常量成员, 在User 的生命周期中不会进行变更.
+因为桌子销毁的时候, 会同时销毁桌子上的User.
+
+#+end_hint
