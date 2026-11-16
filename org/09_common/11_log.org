@@ -7,6 +7,14 @@
   2. =,= 用于分隔事件描述和字段
   3. 具体错误信息可以没有
   4. 字段使用key=value 格式, 比如 uid=1234
+  5. 统一使用操作 + failed
+  6. 消息号统一采用 main:sub 样式
+
+
+  例子:
+  #+begin_src C++
+    WARN("Create room failed: user not found, uid={}", uid);
+  #+end_src
 
 -----
 * 日志原则
