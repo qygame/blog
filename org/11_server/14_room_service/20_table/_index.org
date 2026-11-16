@@ -1,13 +1,4 @@
 #+title: 房间模块
-#+date: 2026-11-15 17:42:26
-#+hugo_section: docs
-#+hugo_bundle: 11_server/14_room_service/20_table
-#+export_file_name: _index
-#+hugo_weight: 20
-#+hugo_draft: false
-#+hugo_auto_set_lastmod: t
-#+hugo_custom_front_matter: :bookCollapseSection true
-#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 * 模块职责
   =房间模块= 主要负责管理 =桌子Table=

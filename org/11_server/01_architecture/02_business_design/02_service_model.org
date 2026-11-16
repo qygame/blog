@@ -1,13 +1,4 @@
 #+title: Service 模型
-#+date: 2026-11-15 02:36:15
-#+hugo_section: docs
-#+hugo_bundle: 11_server/01_architecture/02_business_design/02_service_model
-#+export_file_name: index
-#+hugo_weight: 2
-#+hugo_draft: false
-#+hugo_auto_set_lastmod: t
-#+hugo_custom_front_matter: :bookCollapseSection false
-#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 * 模型
   Service 可以被视为一个黑盒, 它接收外部输入, 根据内部业务逻辑进行处理, 并产生相应的输出

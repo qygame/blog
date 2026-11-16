@@ -1,13 +1,4 @@
 #+title: 日志模块
-#+date: 2026-09-11 10:19:15
-#+hugo_section: docs
-#+hugo_bundle: 10_kernel/12_log
-#+export_file_name: index
-#+hugo_weight: 12
-#+hugo_draft: false
-#+hugo_auto_set_lastmod: t
-#+hugo_custom_front_matter: :bookCollapseSection false
-#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 
 进程xxx会生成下面的日志文件:

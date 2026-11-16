@@ -1,13 +1,4 @@
 #+title: 数据模型
-#+date: 2026-10-30 09:46:47
-#+hugo_section: docs
-#+hugo_bundle: 12_client/11_subgame/02_data_model
-#+export_file_name: index
-#+hugo_weight: 2
-#+hugo_draft: false
-#+hugo_auto_set_lastmod: t
-#+hugo_custom_front_matter: :bookCollapseSection false
-#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 子游戏（SubGame）必须严格遵循以下架构模型进行设计与编码. 各模块应保持明确的职责边界, 通过信号（Signal）和接口调用进行通信, 避免模块之间产生不必要的耦合
 

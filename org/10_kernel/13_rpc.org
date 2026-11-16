@@ -1,13 +1,4 @@
 #+title: RPC模块
-#+date: 2026-09-11 10:19:41
-#+hugo_section: docs
-#+hugo_bundle: 10_kernel/12_rpc
-#+export_file_name: index
-#+hugo_weight: 13
-#+hugo_draft: false
-#+hugo_auto_set_lastmod: t
-#+hugo_custom_front_matter: :bookCollapseSection false
-#+hugo_paired_shortcodes: qr %columns %details %hint mermaid %steps tabs tab
 
 * google::protobuf service中的定义
   RpcChannel 是 RPC 调用的通道接口，类似一个网络客户端的抽象。它负责:
