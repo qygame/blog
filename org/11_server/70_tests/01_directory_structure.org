@@ -1,0 +1,29 @@
+#+title: 目录结构
+
+|          | target                 | 目录结构         |
+|----------+------------------------+------------------|
+| 单元测试 | 每个Service 一个Target | 根据Service 组织 |
+| 集成测试 | 每个业务流程一个Target | 根据业务流程组织 |
+
+* 代码目录
+  #+begin_example
+    |-- cmake                     //
+    |-- proto                     //
+    |-- proto_code_generator      //
+    |-- scripts                   //
+    |-- src                       //
+    |-- tests                     // 测试目录
+    |   |-- integration           // 集成测试
+    |   |   |-- auto_generated    //
+    |   |   |-- common            // 公共文件
+    |   |   |-- player_lifecycle  // 具体的测试
+    |   |   `-- CMakeLists.txt    //
+    |   `-- unit                  // 单元测试
+    |       |-- gate              // service/gate
+    |       |-- room              // service/room
+    |       |-- CMakeLists.txt    //
+    |       `-- main.cc           //
+    |-- CMakeLists.txt            //
+    |-- compile_commands.json     //
+    `-- readme.org                //
+  #+end_example
