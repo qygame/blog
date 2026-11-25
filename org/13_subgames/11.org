@@ -10,3 +10,23 @@
       if2 -->|yes| 大局结束
       if2 -->|no| 等待Table通知游戏开始 --> 游戏开始
 #+end_src
+
+* 状态图
+#+begin_src C++
+  enum GameStatus {
+    kFree       = 0; // 空闲，等待首局开始
+    kPreparing  = 1; // 游戏初始化
+    kInProgress = 2; // 游戏中
+    kXjEnd      = 3; // 小局结束
+    kDjEnd      = 4; // 大局结束
+  }
+#+end_src
+
+#+begin_src mermaid :file result.png
+  flowchart TD
+      kFree -->|游戏开始| kPreparing
+      kPreparing -->|初始化完成| kInProgress
+      kInProgress -->|小局结束| kXjEnd
+      kXjEnd -->|游戏开始| kPreparing
+      kXjEnd -->|大局结束| kDjEnd
+#+end_src
